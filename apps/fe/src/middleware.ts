@@ -36,11 +36,11 @@ export function middleware(req: NextRequest) {
   if (host === "admin.localhost") site = "admin";
 
   // Prevent double prefix kalau user akses langsung /_sites/...
-  if (url.pathname.startsWith("/_sites/")) {
+  if (url.pathname.startsWith("/sites/")) {
     return NextResponse.next();
   }
 
-  url.pathname = `/_sites/${site}${url.pathname}`;
+  url.pathname = `/sites/${site}${url.pathname}`;
   return NextResponse.rewrite(url);
 }
 
