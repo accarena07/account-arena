@@ -1,0 +1,17 @@
+{
+  "name": "account-arena",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n BE,FE -c auto \"npm run dev -w @acme/be\" \"npm run dev -w @acme/fe\"",
+    "build": "npm run build -w @acme/be && npm run build -w @acme/fe",
+    "lint": "npm run lint -w @acme/be && npm run lint -w @acme/fe",
+    "typecheck": "npm run typecheck -w @acme/be && npm run typecheck -w @acme/fe"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
