@@ -67,44 +67,51 @@ export default function CreateListingPage() {
       </header>
 
       {/* Progress Bar */}
-      <div className="flex items-center border-b border-slate-200 dark:border-slate-800 mb-8 pb-4">
-        <div className="flex gap-8 w-full">
+      <div className="border-b border-slate-200 dark:border-slate-800 mb-8">
+        <div className="flex items-center gap-8 overflow-x-auto no-scrollbar">
           {[
             { id: 1, label: "Account Info" },
             { id: 2, label: "Media & Screenshots" },
             { id: 3, label: "Pricing & Delivery" },
             { id: 4, label: "Review & Publish" },
-          ].map((s) => (
-            <div
-              key={s.id}
-              className={`flex items-center gap-3 ${
-                step >= s.id
-                  ? "text-[#254294] dark:text-blue-400"
-                  : "text-slate-300 dark:text-slate-600"
-              }`}
-            >
+          ].map((s) => {
+            const isCompleted = step > s.id;
+            const isActive = step === s.id;
+
+            return (
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all ${
-                  step === s.id
-                    ? "bg-[#254294] text-white shadow-lg shadow-blue-900/20"
-                    : step > s.id
-                      ? "bg-[#254294] text-white"
-                      : "bg-slate-100 dark:bg-slate-800 text-slate-400"
+                key={s.id}
+                className={`flex items-center gap-3 pb-4 border-b-2 transition-all whitespace-nowrap min-w-fit ${
+                  isActive
+                    ? "border-[#254294] text-[#254294] dark:border-blue-400 dark:text-blue-400"
+                    : "border-transparent text-slate-400 dark:text-slate-500"
                 }`}
               >
-                {step > s.id ? (
-                  <span className="material-symbols-outlined text-base font-bold">
-                    check
-                  </span>
-                ) : (
-                  s.id
-                )}
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all ${
+                    isCompleted
+                      ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
+                      : isActive
+                        ? "bg-[#254294] text-white dark:bg-blue-600"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500"
+                  }`}
+                >
+                  {isCompleted ? (
+                    <span className="material-symbols-outlined text-sm font-bold">
+                      check
+                    </span>
+                  ) : (
+                    s.id
+                  )}
+                </div>
+                <span
+                  className={`font-bold text-base ${isCompleted ? "text-green-600 dark:text-green-400" : ""}`}
+                >
+                  {s.id}. {s.label}
+                </span>
               </div>
-              <span className="font-bold text-sm tracking-tight">
-                {s.label}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

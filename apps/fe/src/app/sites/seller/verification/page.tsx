@@ -51,7 +51,7 @@ export default function KYCVerificationPage() {
 
       {/* Progress Stepper */}
       <div className="max-w-4xl mx-auto mb-16">
-        <div className="relative flex justify-between items-center text-center px-4 md:px-12">
+        <div className="relative flex justify-between items-start text-center px-4 md:px-12">
           {/* Background Line */}
           <div className="absolute top-6 left-0 w-full h-1 bg-slate-100 dark:bg-slate-800 -z-10 rounded-full"></div>
 
@@ -73,10 +73,10 @@ export default function KYCVerificationPage() {
             return (
               <div
                 key={s.id}
-                className="flex flex-col items-center gap-3 bg-white dark:bg-slate-900 px-2 relative z-10"
+                className="flex flex-col items-center gap-3 relative z-10"
               >
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 border-[4px] ${
+                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 border-4 ${
                     isCompleted
                       ? "bg-green-500 border-green-100 dark:border-green-900/30 text-white shadow-lg shadow-green-500/30 scale-100"
                       : isActive
