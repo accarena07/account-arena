@@ -1,10 +1,12 @@
 export default function RootPage() {
   return (
-    <main className="space-y-4">
-      <h1 className="text-3xl font-semibold tracking-tight">Accarena Multi-Domain FE</h1>
+    <main className="mx-auto max-w-3xl p-6 space-y-4">
+      <h1 className="text-3xl font-semibold tracking-tight">
+        Accarena Multi-Domain FE
+      </h1>
       <p className="text-sm text-zinc-600">
-        Halaman ini biasanya tidak terlihat di production karena request akan di-rewrite oleh middleware berdasarkan
-        domain:
+        Halaman ini biasanya tidak terlihat di production karena request akan
+        di-rewrite oleh middleware berdasarkan domain:
       </p>
 
       <div className="rounded-2xl border border-zinc-200 p-5 shadow-sm">
@@ -22,8 +24,10 @@ export default function RootPage() {
       </div>
 
       <p className="text-sm text-zinc-600">
-        Untuk dev lokal, kamu bisa pakai host header (contoh) <span className="font-mono">seller.localhost</span> /
-        <span className="font-mono"> admin.localhost</span> dengan mapping hosts atau pakai fitur Local Domains di Vercel.
+        Untuk dev lokal, kamu bisa pakai host header (contoh){" "}
+        <span className="font-mono">seller.localhost</span> /
+        <span className="font-mono"> admin.localhost</span> dengan mapping hosts
+        atau pakai fitur Local Domains di Vercel.
       </p>
     </main>
   );

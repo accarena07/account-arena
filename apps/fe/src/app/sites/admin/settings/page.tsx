@@ -1,0 +1,367 @@
+import Link from "next/link";
+
+export default function SettingsPage() {
+  const categories = [
+    {
+      name: "Mobile Legends",
+      listings: "1,240",
+      image:
+        "https://wallpapers.com/images/hd/mobile-legends-avatar-1080-x-1080-px-k0v6p6n9p2p2k0v6.jpg",
+    },
+    {
+      name: "PUBG Mobile",
+      listings: "890",
+      image:
+        "https://e0.pxfuel.com/wallpapers/383/651/desktop-wallpaper-avatar-pubg-mobile.jpg",
+    },
+    { name: "Genshin Impact", listings: "567", image: "" },
+    { name: "Free Fire", listings: "1,102", image: "" },
+    { name: "Valorant", listings: "342", image: "" },
+    { name: "Roblox", listings: "2,150", image: "" },
+  ];
+
+  return (
+    <>
+      <header className="flex justify-between items-start mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+            Platform Settings
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">
+            Configure marketplace commission, game categories, and security
+            protocols
+          </p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 relative hover:bg-slate-50 transition-colors">
+            <span className="material-symbols-outlined text-2xl">
+              notifications
+            </span>
+            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+          </button>
+          <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
+          <div className="flex items-center space-x-3">
+            <div className="text-right">
+              <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
+                Admin Store
+              </p>
+              <p className="text-[11px] font-medium text-slate-500 uppercase tracking-tight">
+                Super Admin
+              </p>
+            </div>
+            <div className="relative">
+              <img
+                alt="Admin"
+                className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiIW9mGAm-LRo-keYX2PsC1g5aOR0BOHwtIILYkiprP0worCQhRZ2FM0Xydk-ZVfgWLSyvxaVCPUKeYxvG_VW3nA5lCdcsWl0QzDgRix_OPHfa5dDY592XYzFYB5ulkKLe6PiBfp2dZ0Jn2NqO3edYQdV2YA-ZyPlYzenzWlETxN_ulMGpmTZFUc91yk5K31_ecA1XHdOouW7WleeXJy-l4wRCXYqlTpOtxojX316nXiG5P0YXbF-883PfXIsjSJGrQY_5gswWJg"
+              />
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Tabs */}
+      <div className="flex space-x-2 mb-8 p-1.5 bg-slate-100/50 dark:bg-slate-800/50 rounded-2xl w-fit">
+        {["General", "Fees & Commission", "Game Categories", "Security"].map(
+          (tab, idx) => (
+            <button
+              key={tab}
+              className={`px-6 py-2.5 rounded-xl text-sm font-bold tracking-tight transition-all ${
+                idx === 0
+                  ? "bg-white dark:bg-slate-900 text-[#21337e] dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-800"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              }`}
+            >
+              {tab}
+            </button>
+          ),
+        )}
+      </div>
+
+      <div className="space-y-10 mb-20">
+        {/* Fees Section */}
+        <section>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+              <span className="material-symbols-outlined mr-3 text-orange-500">
+                payments
+              </span>
+              Fees & Commission Structure
+            </h2>
+            <button className="text-[#21337e] dark:text-blue-400 text-xs font-black uppercase tracking-widest italic hover:opacity-80 transition-all">
+              Add New Tier
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Seller Commission Tiers */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+              <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800">
+                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
+                  Seller Commission Tiers
+                </h3>
+              </div>
+              <table className="w-full text-left">
+                <thead className="border-b border-slate-50 dark:border-slate-800">
+                  <tr>
+                    <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                      Sales Volume (Monthly)
+                    </th>
+                    <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                      Fee (%)
+                    </th>
+                    <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-tighter text-right">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                  {[
+                    { range: "Rp 0 - Rp 10M", fee: "10%" },
+                    { range: "Rp 10M - Rp 50M", fee: "7.5%" },
+                    { range: "Above Rp 50M", fee: "5%" },
+                  ].map((row, idx) => (
+                    <tr key={idx} className="group">
+                      <td className="px-6 py-4 text-sm font-bold text-slate-700 dark:text-slate-300">
+                        {row.range}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="w-16 h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center text-sm font-bold text-slate-900 dark:text-white">
+                          {row.fee}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <button className="text-slate-400 hover:text-red-500 transition-colors">
+                          <span className="material-symbols-outlined text-lg">
+                            delete
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Buyer Service Fees */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+              <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800">
+                <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
+                  Buyer Service Fees
+                </h3>
+              </div>
+              <table className="w-full text-left">
+                <thead className="border-b border-slate-50 dark:border-slate-800">
+                  <tr>
+                    <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                      Transaction Range
+                    </th>
+                    <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                      Flat Fee
+                    </th>
+                    <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-tighter text-right">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                  {[
+                    { type: "Standard Transaction", fee: "Rp 5.000" },
+                    { type: "Express Withdrawal", fee: "Rp 15.000" },
+                  ].map((row, idx) => (
+                    <tr key={idx}>
+                      <td className="px-6 py-4 text-sm font-bold text-slate-700 dark:text-slate-300">
+                        {row.type}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="w-24 h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex items-center text-sm font-bold text-slate-900 dark:text-white">
+                          {row.fee}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <button className="text-slate-400 hover:text-red-500 transition-colors">
+                          <span className="material-symbols-outlined text-lg">
+                            delete
+                          </span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        {/* Game Categories Section */}
+        <section>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+              <span className="material-symbols-outlined mr-3 text-blue-500">
+                grid_view
+              </span>
+              Supported Game Categories
+            </h2>
+            <button className="flex items-center space-x-2 px-5 py-2 bg-[#21337e] text-white rounded-lg text-sm font-bold hover:shadow-lg hover:shadow-blue-500/20 transition-all">
+              <span className="material-symbols-outlined text-lg">add</span>
+              <span>Add New Game</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {categories.map((game, idx) => (
+              <div
+                key={idx}
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-sm group hover:border-[#21337e] transition-all relative overflow-hidden"
+              >
+                <div className="aspect-square rounded-xl bg-slate-100 dark:bg-slate-800 mb-3 overflow-hidden relative">
+                  {game.image ? (
+                    <img
+                      src={game.image}
+                      alt={game.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-300">
+                      <span className="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-700">
+                        image
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute top-2 right-2">
+                    <button className="w-7 h-7 bg-white/90 dark:bg-slate-900/90 rounded-full flex items-center justify-center shadow-sm text-slate-400 hover:text-[#21337e] transition-colors">
+                      <span className="material-symbols-outlined text-lg">
+                        edit
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <h4 className="text-[12px] font-black text-slate-900 dark:text-white truncate uppercase italic tracking-tight">
+                  {game.name}
+                </h4>
+                <div className="mt-1">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase italic tracking-tighter">
+                    Active Listings:
+                  </p>
+                  <p className="text-[11px] font-bold text-slate-500">
+                    {game.listings}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Platform Security Section */}
+        <section>
+          <div className="mb-6">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center">
+              <span className="material-symbols-outlined mr-3 text-red-500">
+                security
+              </span>
+              Platform Security
+            </h2>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-sm space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="space-y-2">
+                <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest italic">
+                  Minimum Withdrawal Limit
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm italic">
+                    Rp
+                  </span>
+                  <input
+                    className="w-full pl-10 pr-6 py-2.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none font-bold text-slate-900 dark:text-white"
+                    defaultValue="50.000"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest italic">
+                  Fraud Detection Sensitivity
+                </label>
+                <div className="relative">
+                  <select className="w-full px-4 py-2.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none font-bold text-slate-900 dark:text-white appearance-none">
+                    <option>Balanced</option>
+                    <option>Conservative</option>
+                    <option>Aggressive</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-orange-50/50 dark:bg-orange-500/5 border border-orange-100 dark:border-orange-500/20 rounded-2xl flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-500/10 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-orange-600">
+                    verified
+                  </span>
+                </div>
+                <div>
+                  <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase italic tracking-tight">
+                    Mandatory KYC for Sellers
+                  </h4>
+                  <p className="text-xs text-orange-700/70 dark:text-orange-400/70 font-bold uppercase italic tracking-tighter">
+                    Require all sellers to verify ID before listing items
+                  </p>
+                </div>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  defaultChecked
+                />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+              </label>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* Floating Bottom Bar (imitating the screenshot's container) */}
+      <div className="fixed bottom-0 left-64 right-0 p-6 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 z-20">
+        <div className="flex justify-between items-center max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center space-y-1 md:space-y-0 md:space-x-8 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic">
+            <p>© 2024 GAMEMARKET Indonesia. All rights reserved.</p>
+            <div className="flex space-x-6">
+              <Link
+                href="#"
+                className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="#"
+                className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
+              >
+                Terms of Service
+              </Link>
+              <Link
+                href="#"
+                className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
+              >
+                System Status
+              </Link>
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <button className="px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+              Discard Changes
+            </button>
+            <button className="px-10 py-2.5 bg-[#21337e] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:shadow-lg hover:shadow-blue-500/20 transition-all shadow-md">
+              Save All Settings
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
