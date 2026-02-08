@@ -362,7 +362,7 @@ export default function KYCVerificationPage() {
                     <span className="material-symbols-outlined text-[100px] text-slate-400 dark:text-slate-500">
                       account_circle
                     </span>
-                    <div className="absolute bottom-6 right-10 bg-white dark:bg-slate-600 px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-500 transform rotate-[-12deg]">
+                    <div className="absolute bottom-6 right-10 bg-white dark:bg-slate-600 px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-500 transform -rotate-12">
                       <p className="text-[8px] font-bold text-slate-400 dark:text-slate-300 uppercase">
                         ID CARD
                       </p>
@@ -604,7 +604,7 @@ export default function KYCVerificationPage() {
                   <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-3">
                     IDENTITY CARD (KTP)
                   </p>
-                  <div className="aspect-[3/2] bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden relative group">
+                  <div className="aspect-3/2 bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden relative group">
                     <img
                       src="https://img.freepik.com/free-photo/young-asian-business-man-isolated-gray-background-doing-ok-sign-with-fingers-excellent-symbol_1187-17482.jpg?w=740"
                       alt="KTP"
@@ -621,7 +621,7 @@ export default function KYCVerificationPage() {
                   <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-3">
                     SELFIE VERIFICATION
                   </p>
-                  <div className="aspect-[3/2] bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden relative group">
+                  <div className="aspect-3/2 bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden relative group">
                     <img
                       src="https://img.freepik.com/free-photo/young-asian-business-man-isolated-gray-background-doing-ok-sign-with-fingers-excellent-symbol_1187-17482.jpg?w=740"
                       alt="Selfie"

@@ -1,36 +1,36 @@
 export default function AdminHome() {
   return (
     <>
-      <header className="flex justify-between items-start mb-10">
+      <header className="flex flex-col xl:flex-row justify-between items-start gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
             Admin General Overview
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-1">
             Global performance and marketplace insights
           </p>
         </div>
-        <div className="flex items-center space-x-6">
-          <div className="relative">
+        <div className="flex flex-col md:flex-row items-center gap-4 w-full xl:w-auto">
+          <div className="relative w-full md:w-auto">
             <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-xl">
               search
             </span>
             <input
-              className="pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none w-72 text-sm transition-all"
+              className="pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none w-full md:w-72 text-sm transition-all"
               placeholder="Search analytics..."
               type="text"
             />
           </div>
-          <div className="flex items-center space-x-4">
-            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 relative hover:bg-slate-50 transition-colors">
+          <div className="flex items-center justify-between w-full md:w-auto gap-4">
+            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 relative hover:bg-slate-50 transition-colors shrink-0">
               <span className="material-symbols-outlined text-2xl">
                 notifications
               </span>
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
             </button>
-            <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
-            <div className="flex items-center space-x-3">
-              <div className="text-right">
+            <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden md:block"></div>
+            <div className="flex items-center gap-3 ml-auto md:ml-0">
+              <div className="text-right hidden md:block">
                 <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
                   Admin Store
                 </p>
@@ -148,70 +148,72 @@ export default function AdminHome() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative">
-          <div className="flex justify-between items-center mb-10">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Revenue Growth
-              </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                Comparison of revenue vs transactions
-              </p>
-            </div>
-            <select className="text-sm font-bold border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-800 py-2 pl-4 pr-10 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
-              <option>Last 30 Days</option>
-              <option>Last 6 Months</option>
-              <option>This Year</option>
-            </select>
-          </div>
-          <div className="relative h-64 w-full bg-slate-50/50 dark:bg-slate-800/20 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden">
-            <div className="absolute inset-0 p-4 flex items-end justify-between px-8">
-              <div className="w-[6%] bg-blue-600/10 h-[30%] rounded-t-lg"></div>
-              <div className="w-[6%] bg-blue-600/10 h-[45%] rounded-t-lg"></div>
-              <div className="w-[6%] bg-blue-600/10 h-[35%] rounded-t-lg"></div>
-              <div className="w-[6%] bg-blue-600/10 h-[60%] rounded-t-lg"></div>
-              <div className="w-[6%] bg-blue-600/10 h-[50%] rounded-t-lg"></div>
-              <div className="w-[6%] bg-blue-600/10 h-[75%] rounded-t-lg"></div>
-              <div className="w-[6%] bg-[#21337e] h-[90%] rounded-t-lg shadow-lg"></div>
-              <div className="w-[6%] bg-blue-600/10 h-[65%] rounded-t-lg"></div>
-              <div className="w-[6%] bg-blue-600/10 h-[40%] rounded-t-lg"></div>
-              <div className="w-[6%] bg-blue-600/10 h-[55%] rounded-t-lg"></div>
-            </div>
-            <svg
-              className="absolute inset-0 w-full h-full p-4 px-8 opacity-40"
-              preserveAspectRatio="none"
-              viewBox="0 0 100 100"
-            >
-              <path
-                d="M0,85 L10,75 L20,78 L30,60 L40,65 L50,45 L60,30 L70,40 L80,50 L90,35 L100,20"
-                fill="none"
-                stroke="#21337e"
-                strokeWidth="3"
-                vectorEffect="non-scaling-stroke"
-                className="drop-shadow-sm"
-              ></path>
-            </svg>
-            <div className="absolute top-4 right-8 flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#21337e]"></span>
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                  Revenue
-                </span>
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-x-auto">
+          <div className="min-w-[600px]">
+            <div className="flex justify-between items-center mb-10">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                  Revenue Growth
+                </h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                  Comparison of revenue vs transactions
+                </p>
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-200"></span>
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                  Transactions
-                </span>
+              <select className="text-sm font-bold border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-800 py-2 pl-4 pr-10 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all">
+                <option>Last 30 Days</option>
+                <option>Last 6 Months</option>
+                <option>This Year</option>
+              </select>
+            </div>
+            <div className="relative h-64 w-full bg-slate-50/50 dark:bg-slate-800/20 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 p-4 flex items-end justify-between px-8">
+                <div className="w-[6%] bg-blue-600/10 h-[30%] rounded-t-lg"></div>
+                <div className="w-[6%] bg-blue-600/10 h-[45%] rounded-t-lg"></div>
+                <div className="w-[6%] bg-blue-600/10 h-[35%] rounded-t-lg"></div>
+                <div className="w-[6%] bg-blue-600/10 h-[60%] rounded-t-lg"></div>
+                <div className="w-[6%] bg-blue-600/10 h-[50%] rounded-t-lg"></div>
+                <div className="w-[6%] bg-blue-600/10 h-[75%] rounded-t-lg"></div>
+                <div className="w-[6%] bg-[#21337e] h-[90%] rounded-t-lg shadow-lg"></div>
+                <div className="w-[6%] bg-blue-600/10 h-[65%] rounded-t-lg"></div>
+                <div className="w-[6%] bg-blue-600/10 h-[40%] rounded-t-lg"></div>
+                <div className="w-[6%] bg-blue-600/10 h-[55%] rounded-t-lg"></div>
+              </div>
+              <svg
+                className="absolute inset-0 w-full h-full p-4 px-8 opacity-40"
+                preserveAspectRatio="none"
+                viewBox="0 0 100 100"
+              >
+                <path
+                  d="M0,85 L10,75 L20,78 L30,60 L40,65 L50,45 L60,30 L70,40 L80,50 L90,35 L100,20"
+                  fill="none"
+                  stroke="#21337e"
+                  strokeWidth="3"
+                  vectorEffect="non-scaling-stroke"
+                  className="drop-shadow-sm"
+                ></path>
+              </svg>
+              <div className="absolute top-4 right-8 flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#21337e]"></span>
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                    Revenue
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-200"></span>
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                    Transactions
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="mt-6 flex justify-between text-[11px] font-bold text-slate-400 px-8 uppercase tracking-widest italic">
-            <span>Oct 01</span>
-            <span>Oct 07</span>
-            <span>Oct 14</span>
-            <span>Oct 21</span>
-            <span>Oct 28</span>
+            <div className="mt-6 flex justify-between text-[11px] font-bold text-slate-400 px-8 uppercase tracking-widest italic">
+              <span>Oct 01</span>
+              <span>Oct 07</span>
+              <span>Oct 14</span>
+              <span>Oct 21</span>
+              <span>Oct 28</span>
+            </div>
           </div>
         </div>
 

@@ -3,36 +3,36 @@ import Link from "next/link";
 export default function TransactionsPage() {
   return (
     <>
-      <header className="flex justify-between items-start mb-10">
+      <header className="flex flex-col xl:flex-row justify-between items-start gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
             Admin Transaction Monitoring
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-1">
             Monitor and manage all platform payment activities
           </p>
         </div>
-        <div className="flex items-center space-x-6">
-          <div className="relative">
+        <div className="flex flex-col md:flex-row items-center gap-4 w-full xl:w-auto">
+          <div className="relative w-full md:w-auto">
             <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-xl">
               search
             </span>
             <input
-              className="pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none w-72 text-sm transition-all"
+              className="pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none w-full md:w-72 text-sm transition-all"
               placeholder="Search transactions..."
               type="text"
             />
           </div>
-          <div className="flex items-center space-x-4">
-            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 relative hover:bg-slate-50 transition-colors">
+          <div className="flex items-center justify-between w-full md:w-auto gap-4">
+            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 relative hover:bg-slate-50 transition-colors shrink-0">
               <span className="material-symbols-outlined text-2xl">
                 notifications
               </span>
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
             </button>
-            <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
-            <div className="flex items-center space-x-3">
-              <div className="text-right">
+            <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden md:block"></div>
+            <div className="flex items-center gap-3 ml-auto md:ml-0">
+              <div className="text-right hidden md:block">
                 <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
                   Admin Store
                 </p>
@@ -54,50 +54,52 @@ export default function TransactionsPage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative">
-          <div className="flex justify-between items-start mb-10">
-            <div>
-              <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1 italic">
-                Total Transaction Volume
-              </p>
-              <h3 className="text-3xl font-bold text-slate-900 dark:text-white leading-tight">
-                Rp 1.458.290.000
-              </h3>
-            </div>
-            <div className="flex items-center space-x-1.5 bg-green-50 dark:bg-green-500/10 px-3 py-1.5 rounded-full border border-green-100 dark:border-green-500/20">
-              <span className="material-symbols-outlined text-green-600 dark:text-green-400 text-xs font-bold">
-                trending_up
-              </span>
-              <span className="text-green-600 dark:text-green-400 text-[11px] font-black uppercase">
-                +18.4%
-              </span>
-            </div>
-          </div>
-          <div className="h-44 w-full flex items-end justify-between space-x-4 px-2">
-            {[
-              { day: "Mon", h: "35%" },
-              { day: "Tue", h: "65%" },
-              { day: "Wed", h: "45%" },
-              { day: "Thu", h: "10%" },
-              { day: "Fri", h: "8%" },
-              { day: "Sat", h: "55%" },
-              { day: "Sun", h: "40%" },
-            ].map((bar) => (
-              <div
-                key={bar.day}
-                className="flex-1 flex flex-col items-center group"
-              >
-                <div className="w-full bg-slate-50 dark:bg-slate-800/50 rounded-t-lg h-32 relative overflow-hidden">
-                  <div
-                    style={{ height: bar.h }}
-                    className="absolute bottom-0 w-full bg-[#21337e] rounded-t-lg transition-all duration-500 group-hover:bg-blue-600"
-                  ></div>
-                </div>
-                <span className="mt-3 text-[10px] font-black text-slate-400 uppercase tracking-widest italic group-hover:text-slate-600 transition-colors">
-                  {bar.day}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-x-auto">
+          <div className="min-w-[600px]">
+            <div className="flex justify-between items-start mb-10">
+              <div>
+                <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1 italic">
+                  Total Transaction Volume
+                </p>
+                <h3 className="text-3xl font-bold text-slate-900 dark:text-white leading-tight">
+                  Rp 1.458.290.000
+                </h3>
+              </div>
+              <div className="flex items-center space-x-1.5 bg-green-50 dark:bg-green-500/10 px-3 py-1.5 rounded-full border border-green-100 dark:border-green-500/20">
+                <span className="material-symbols-outlined text-green-600 dark:text-green-400 text-xs font-bold">
+                  trending_up
+                </span>
+                <span className="text-green-600 dark:text-green-400 text-[11px] font-black uppercase">
+                  +18.4%
                 </span>
               </div>
-            ))}
+            </div>
+            <div className="h-44 w-full flex items-end justify-between space-x-4 px-2">
+              {[
+                { day: "Mon", h: "35%" },
+                { day: "Tue", h: "65%" },
+                { day: "Wed", h: "45%" },
+                { day: "Thu", h: "10%" },
+                { day: "Fri", h: "8%" },
+                { day: "Sat", h: "55%" },
+                { day: "Sun", h: "40%" },
+              ].map((bar) => (
+                <div
+                  key={bar.day}
+                  className="flex-1 flex flex-col items-center group"
+                >
+                  <div className="w-full bg-slate-50 dark:bg-slate-800/50 rounded-t-lg h-32 relative overflow-hidden">
+                    <div
+                      style={{ height: bar.h }}
+                      className="absolute bottom-0 w-full bg-[#21337e] rounded-t-lg transition-all duration-500 group-hover:bg-blue-600"
+                    ></div>
+                  </div>
+                  <span className="mt-3 text-[10px] font-black text-slate-400 uppercase tracking-widest italic group-hover:text-slate-600 transition-colors">
+                    {bar.day}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
