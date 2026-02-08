@@ -2,218 +2,285 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 export default function StoreSettingsPage() {
   return (
-    <div className="flex-1 max-w-[1200px] mx-auto w-full py-6">
-      {/* Header */}
-      <header className="flex items-center justify-between mb-8">
-        <div className="flex-1 max-w-lg">
-          <div className="relative">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-              search
-            </span>
-            <input
-              type="text"
-              placeholder="Search settings..."
-              className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#254294] transition-all"
-            />
-          </div>
+    <div className="flex-1 max-w-6xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4 italic">
+        <Link
+          href="/sites/seller"
+          className="hover:text-slate-600 transition-colors"
+        >
+          Dashboard
+        </Link>
+        <span className="material-symbols-outlined text-xs font-black">
+          chevron_right
+        </span>
+        <span className="text-[#254294] dark:text-blue-400">
+          Store Settings
+        </span>
+      </div>
+
+      <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10">
+        <div className="w-full md:w-auto">
+          <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight uppercase italic tracking-tight">
+            Store Settings
+          </h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 text-[11px] font-bold uppercase tracking-widest italic">
+            Manage your{" "}
+            <span className="text-[#254294] dark:text-blue-400">
+              brand identity
+            </span>{" "}
+            & payout accounts
+          </p>
         </div>
-        <div className="flex items-center gap-6">
-          <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm">
-            <span className="material-symbols-outlined text-xl font-bold">
-              notifications
-            </span>
-            <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-          </button>
-          <div className="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+        <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto pt-6 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
+            <button className="w-11 h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center text-slate-400 relative hover:bg-slate-50 transition-all shadow-sm group">
+              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform font-black italic">
+                notifications
+              </span>
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+            </button>
+            <button className="w-11 h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all shadow-sm group">
+              <span className="material-symbols-outlined text-[20px] font-black italic group-hover:rotate-12 transition-transform">
+                help
+              </span>
+            </button>
+          </div>
+          <div className="hidden sm:flex items-center gap-4 pl-6 border-l border-slate-200 dark:border-slate-800">
             <div className="text-right">
-              <p className="text-sm font-bold text-slate-800 dark:text-white leading-none">
+              <p className="text-sm font-black text-slate-800 dark:text-white leading-none italic">
                 Admin Store
               </p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-[10px] text-slate-400 font-black uppercase italic mt-1.5 tracking-widest">
                 Premium Seller
               </p>
             </div>
             <img
               alt="Profile"
-              className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700"
+              className="w-11 h-11 rounded-full border-2 border-[#254294]/20 shadow-sm object-cover"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
             />
           </div>
         </div>
       </header>
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
-          Store Settings
-        </h1>
-        <p className="text-slate-500 text-sm">
-          Manage your shop profile, payment information, and security settings.
-        </p>
-      </div>
+      <div className="space-y-8 pb-32">
+        {/* Profile Card */}
+        <div className="bg-white dark:bg-slate-900 rounded-4xl border border-slate-200 dark:border-slate-800 p-8 md:p-12 shadow-sm relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full -mr-32 -mt-32 blur-3xl group-hover:bg-[#254294]/5 transition-colors duration-700"></div>
 
-      <div className="space-y-6 pb-24">
-        {/* Section 1: Profil Toko */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
-          <div className="flex items-center gap-3 mb-8">
-            <span className="material-symbols-outlined text-[#254294] dark:text-blue-400">
-              storefront
-            </span>
-            <h2 className="text-lg font-bold text-slate-800 dark:text-white">
-              Profil Toko
-            </h2>
+          <div className="flex items-center gap-5 mb-12 relative z-10">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50/50 dark:bg-blue-900/20 flex items-center justify-center text-[#254294] dark:text-blue-400 border border-blue-100 dark:border-blue-900/10">
+              <span className="material-symbols-outlined text-2xl font-black italic">
+                storefront
+              </span>
+            </div>
+            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase italic tracking-tight">
+              Visual Identity
+            </h3>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-8">
-            {/* Left: Photo Upload */}
-            <div className="w-full md:w-auto flex flex-col gap-3">
-              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                Foto Profil Toko
-              </p>
-              <div className="w-32 h-32 bg-[#FDEAD7] rounded-xl flex items-center justify-center border-2 border-dashed border-orange-200 cursor-pointer overflow-hidden relative group">
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                  className="w-16 h-16 opacity-50"
-                  alt="placeholder"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="material-symbols-outlined text-white">
-                    edit
-                  </span>
+          <div className="flex flex-col lg:flex-row gap-12 relative z-10">
+            <div className="flex flex-col items-center lg:items-start space-y-6">
+              <div className="relative group/avatar">
+                <div className="w-32 h-32 md:w-44 md:h-44 bg-slate-50 dark:bg-slate-800 rounded-3xl md:rounded-4xl flex items-center justify-center border-4 border-dashed border-slate-200 dark:border-slate-700 transition-all hover:border-[#254294] shadow-inner overflow-hidden cursor-pointer">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                    className="w-20 md:w-24 opacity-10 grayscale group-hover/avatar:scale-110 transition-transform"
+                    alt="placeholder"
+                  />
+                  <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center backdrop-blur-sm transition-all">
+                    <span className="material-symbols-outlined text-white text-3xl font-black italic">
+                      photo_camera
+                    </span>
+                  </div>
                 </div>
               </div>
-              <p className="text-[10px] text-slate-400 max-w-[140px] leading-relaxed">
-                Rekomendasi ukuran: 512x512px (PNG, JPG)
-              </p>
+              <div className="text-center lg:text-left space-y-1">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+                  Recommended size
+                </p>
+                <p className="text-[10px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-widest italic">
+                  512x512 PNG/JPG
+                </p>
+              </div>
             </div>
 
-            {/* Right: Form */}
-            <div className="flex-1 space-y-6">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-                  Nama Toko
+            <div className="flex-1 space-y-10">
+              <div className="space-y-3">
+                <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic px-2">
+                  Store Display Name
                 </label>
                 <input
                   type="text"
                   defaultValue="Admin Store"
-                  className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#254294] outline-none dark:text-white text-sm placeholder:text-slate-400 font-medium transition-all"
+                  className="w-full px-6 py-4.5 bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-[#254294] outline-none dark:text-white text-sm font-black italic transition-all shadow-sm"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-                  Bio Toko
+
+              <div className="space-y-3">
+                <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic px-2">
+                  Store Biography
                 </label>
                 <textarea
                   rows={4}
                   defaultValue="Trusted seller akun game terpercaya sejak 2020. Transaksi cepat, aman, dan bergaransi."
-                  className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#254294] outline-none dark:text-white text-sm placeholder:text-slate-400 font-medium resize-none transition-all"
-                ></textarea>
+                  className="w-full px-6 py-4.5 bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-[#254294] outline-none dark:text-white text-sm font-black italic resize-none transition-all shadow-sm leading-relaxed"
+                />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Section 2: Informasi Rekening */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
-          <div className="flex items-center gap-3 mb-8">
-            <span className="material-symbols-outlined text-[#254294] dark:text-blue-400">
-              account_balance
-            </span>
-            <h2 className="text-lg font-bold text-slate-800 dark:text-white">
-              Informasi Rekening
-            </h2>
+        {/* Banking Info */}
+        <div className="bg-white dark:bg-slate-900 rounded-4xl border border-slate-200 dark:border-slate-800 p-8 md:p-12 shadow-sm relative group overflow-hidden">
+          <div className="flex items-center gap-5 mb-12">
+            <div className="w-12 h-12 rounded-2xl bg-orange-50/50 dark:bg-orange-900/20 flex items-center justify-center text-orange-500 border border-orange-100 dark:border-orange-900/10">
+              <span className="material-symbols-outlined text-2xl font-black italic">
+                account_balance
+              </span>
+            </div>
+            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase italic tracking-tight">
+              Payout Channels
+            </h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-                Nama Bank
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
+            <div className="space-y-3">
+              <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic px-2">
+                Primary Bank
               </label>
-              <div className="relative">
-                <select className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#254294] outline-none dark:text-white text-sm font-medium appearance-none transition-all">
+              <div className="relative group/select">
+                <select className="appearance-none w-full px-6 py-4.5 bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-orange-500/5 focus:border-[#FF7D1F] outline-none dark:text-white text-sm font-black italic cursor-pointer transition-all shadow-sm uppercase">
                   <option>Bank Central Asia (BCA)</option>
                   <option>Bank Mandiri</option>
-                  <option>Bank Negara Indonesia (BNI)</option>
-                  <option>Bank Rakyat Indonesia (BRI)</option>
+                  <option>E-Wallet (OVO/DANA)</option>
                 </select>
-                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                  expand_more
+                <span className="material-symbols-outlined absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 group-hover/select:text-[#FF7D1F] pointer-events-none transition-colors">
+                  unfold_more
                 </span>
               </div>
             </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-                Nomor Rekening
+
+            <div className="space-y-3">
+              <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic px-2">
+                Account Number
               </label>
               <input
                 type="text"
                 defaultValue="8421092837"
-                className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#254294] outline-none dark:text-white text-sm placeholder:text-slate-400 font-medium transition-all"
+                className="w-full px-6 py-4.5 bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-orange-500/5 focus:border-[#FF7D1F] outline-none dark:text-white text-sm font-black italic transition-all shadow-sm"
               />
             </div>
           </div>
 
-          <div className="mb-6">
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-              Nama Pemilik Rekening
+          <div className="space-y-3 mb-10">
+            <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic px-2">
+              Legal Beneficiary Name
             </label>
             <input
               type="text"
               defaultValue="ADMIN STORE OFFICIAL"
-              className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#254294] outline-none dark:text-white text-sm placeholder:text-slate-400 font-medium transition-all"
+              className="w-full px-6 py-4.5 bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-orange-500/5 focus:border-[#FF7D1F] outline-none dark:text-white text-sm font-black italic transition-all shadow-sm uppercase tracking-tight"
             />
           </div>
 
-          {/* Blue Info Alert */}
-          <div className="bg-[#EFF6FF] dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-xl p-4 flex gap-3 items-center">
-            <span className="material-symbols-outlined text-[#254294] dark:text-blue-400 text-xl">
-              info
+          <div className="bg-blue-500/5 dark:bg-blue-400/5 border border-blue-100 dark:border-blue-900/30 rounded-3xl p-6 flex items-start gap-5">
+            <span className="material-symbols-outlined text-[#254294] dark:text-blue-400 italic font-black text-2xl">
+              security_update_good
             </span>
-            <p className="text-[11px] font-bold text-[#254294] dark:text-blue-400">
-              Pastikan informasi rekening benar untuk kelancaran proses
-              penarikan saldo (payout).
+            <p className="text-[10px] font-black text-[#254294]/70 dark:text-blue-400/70 uppercase tracking-widest italic leading-relaxed">
+              Verify your bank details twice. Incorrect information will lead to{" "}
+              <span className="text-white bg-[#254294] px-1 rounded">
+                payout delays
+              </span>{" "}
+              and potential escrow helds.
             </p>
           </div>
         </div>
 
-        {/* Section 3: Keamanan */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm">
-          <div className="flex items-center gap-3 mb-8">
-            <span className="material-symbols-outlined text-[#254294] dark:text-blue-400">
-              security
-            </span>
-            <h2 className="text-lg font-bold text-slate-800 dark:text-white">
-              Keamanan
-            </h2>
+        {/* Security Section */}
+        <div className="bg-white dark:bg-slate-900 rounded-4xl border border-slate-200 dark:border-slate-800 p-8 md:p-12 shadow-sm relative group overflow-hidden">
+          <div className="flex items-center gap-5 mb-10 text-slate-400">
+            <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center border border-slate-100 dark:border-slate-800">
+              <span className="material-symbols-outlined text-2xl font-black italic">
+                lock_person
+              </span>
+            </div>
+            <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase italic tracking-tight">
+              Emergency Contact
+            </h3>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-              Nomor WhatsApp Admin
+          <div className="max-w-2xl space-y-4">
+            <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic px-2">
+              Registered WhatsApp Number
             </label>
-            <input
-              type="text"
-              defaultValue="81234567890"
-              className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-[#254294] outline-none dark:text-white text-sm placeholder:text-slate-400 font-medium transition-all"
-            />
-            <p className="mt-2 text-[10px] text-slate-400 leading-relaxed max-w-lg">
-              Nomor ini digunakan tim admin untuk menghubungi Anda jika terjadi
-              masalah pada transaksi.
+            <div className="relative">
+              <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-black italic">
+                +62
+              </span>
+              <input
+                type="text"
+                defaultValue="81234567890"
+                className="w-full pl-16 pr-6 py-4.5 bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-[#254294] outline-none dark:text-white text-sm font-black italic transition-all shadow-sm"
+              />
+            </div>
+            <p className="px-2 text-[10px] text-slate-400 font-bold uppercase italic tracking-widest">
+              Critical for dispute resolution &{" "}
+              <span className="text-[#254294] dark:text-blue-400">
+                order verification
+              </span>
             </p>
           </div>
         </div>
       </div>
 
-      {/* Floating Save Button */}
-      <div className="fixed bottom-6 right-6 md:right-12 z-10">
-        <button className="bg-[#FF7D1F] hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-orange-500/20 flex items-center gap-2 transition-all">
-          <span className="material-symbols-outlined">save</span>
-          Simpan Perubahan
-        </button>
+      {/* Floating Save Actions */}
+      <div className="fixed bottom-10 inset-x-0 flex justify-center z-50 px-6">
+        <div className="max-w-6xl w-full flex justify-end">
+          <div className="flex flex-col items-end gap-4">
+            <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-6 duration-700">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                <span className="text-[10px] font-black uppercase tracking-widest italic text-slate-500">
+                  Unsaved configuration
+                </span>
+              </div>
+              <div className="h-4 w-px bg-slate-200 dark:bg-slate-800"></div>
+              <button className="bg-[#254294] hover:bg-blue-900 text-white px-8 py-3 rounded-xl font-black uppercase tracking-widest italic text-[10px] shadow-xl shadow-blue-900/10 transition-all hover:scale-105 active:scale-95">
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Footer Info */}
+      <footer className="mt-20 pt-10 border-t border-slate-100 dark:border-slate-800 flex flex-col items-center gap-8 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] italic mb-32">
+        <div className="flex flex-col md:flex-row items-center gap-8 text-center">
+          <a href="#" className="hover:text-[#254294] transition-colors">
+            Privacy Module
+          </a>
+          <a href="#" className="hover:text-[#254294] transition-colors">
+            Encryption standards
+          </a>
+          <a href="#" className="hover:text-[#254294] transition-colors">
+            GDPR Compliance
+          </a>
+          <div className="flex items-center gap-3 text-[#254294] dark:text-blue-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+            End-to-end encrypted
+          </div>
+        </div>
+        <div className="text-center">
+          © 2024 AccountArena • Trust Infrasctructure • All Rights Reserved
+        </div>
+      </footer>
     </div>
   );
 }

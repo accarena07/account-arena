@@ -14,109 +14,117 @@ export default function SellerLayout({
 
   const navItems = [
     {
-      name: "Sales Overview",
+      name: "Strategy Dashboard",
       href: "/sites/seller",
-      icon: "grid_view",
+      icon: "dashboard",
     },
     {
-      name: "My Listings",
+      name: "Inventory Hub",
       href: "/sites/seller/listings",
-      icon: "inventory_2",
+      icon: "layers",
     },
     {
-      name: "Payouts",
+      name: "Payout Portfolio",
       href: "/sites/seller/payouts",
-      icon: "payments",
+      icon: "account_balance",
     },
     {
-      name: "Seller Verification",
+      name: "Compliance Check",
       href: "/sites/seller/verification",
       icon: "verified_user",
     },
     {
-      name: "Store Settings",
+      name: "Terminal Config",
       href: "/sites/seller/settings",
-      icon: "settings",
+      icon: "tune",
     },
   ];
 
   return (
-    <div className="bg-[#F8FAFC] dark:bg-[#0F172A] text-slate-800 dark:text-slate-200 min-h-screen">
-      {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
-        <div className="flex items-center gap-2 text-[#254294] dark:text-white">
-          <span className="material-symbols-outlined text-2xl font-bold">
-            sports_esports
-          </span>
-          <h1 className="font-extrabold text-lg tracking-tight">GameMarket</h1>
+    <div className="bg-[#F8FAFC] dark:bg-[#0F172A] text-slate-800 dark:text-slate-200 min-h-screen font-sans">
+      {/* Mobile Header - Premium Glassmorphism */}
+      <div className="md:hidden flex items-center justify-between p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
+        <div className="flex items-center gap-3 text-[#254294] dark:text-white">
+          <div className="w-10 h-10 rounded-xl bg-[#254294] flex items-center justify-center text-white shadow-lg shadow-blue-900/20">
+            <span className="material-symbols-outlined text-2xl font-black italic">
+              bolt
+            </span>
+          </div>
+          <h1 className="font-black text-lg tracking-tighter uppercase italic leading-none">
+            Account<span className="text-[#FF7D1F]">Arena</span>
+          </h1>
         </div>
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+          className="w-10 h-10 flex items-center justify-center text-slate-500 bg-slate-50 dark:bg-slate-800 rounded-xl transition-all active:scale-95"
         >
-          <span className="material-symbols-outlined text-2xl">menu</span>
+          <span className="material-symbols-outlined text-2xl">
+            {isSidebarOpen ? "close" : "menu"}
+          </span>
         </button>
       </div>
 
       {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-slate-950/40 z-40 md:hidden backdrop-blur-sm transition-opacity duration-500 animate-in fade-in"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Precision Engineered Sidebar */}
       <aside
-        className={`w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed h-full z-40 transition-transform duration-300 ease-in-out ${
+        className={`w-72 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed h-full z-50 transition-all duration-500 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
         {/* Header Logo */}
-        <div className="p-6 pb-2 hidden md:block">
-          <div className="flex items-center gap-2 text-[#254294] dark:text-white">
-            <span className="material-symbols-outlined text-3xl font-bold">
-              sports_esports
-            </span>
-            <h1 className="font-extrabold text-xl tracking-tight">
-              GameMarket
-            </h1>
-          </div>
-        </div>
-
-        {/* Mobile Close Button (Optional, but good for UX) */}
-        <div className="md:hidden p-4 flex justify-end">
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="p-2 text-slate-400 hover:text-slate-600"
-          >
-            <span className="material-symbols-outlined">close</span>
-          </button>
-        </div>
-
-        {/* Store Profile Card */}
-        <div className="px-4 mb-2 mt-2 md:mt-0">
-          <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 flex items-center gap-3 border border-slate-100 dark:border-slate-700/50">
-            <div className="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400">
-              <span className="material-symbols-outlined text-xl">
-                storefront
+        <div className="p-8 pb-10 hidden md:block">
+          <div className="flex items-center gap-4 text-[#254294] dark:text-white group cursor-pointer">
+            <div className="w-12 h-12 rounded-2xl bg-[#254294] flex items-center justify-center text-white shadow-2xl shadow-blue-900/40 group-hover:rotate-6 transition-transform">
+              <span className="material-symbols-outlined text-3xl font-black italic">
+                bolt
               </span>
             </div>
             <div>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mb-1">
-                Seller Center
+              <h1 className="font-black text-xl tracking-tighter uppercase italic leading-none">
+                Account<span className="text-[#FF7D1F]">Arena</span>
+              </h1>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-1.5 italic">
+                Seller Console
               </p>
-              <p className="text-sm font-bold text-slate-800 dark:text-white leading-none">
+            </div>
+          </div>
+        </div>
+
+        {/* Store Profile Card - Sidebar Version */}
+        <div className="px-6 mb-10">
+          <div className="bg-slate-50/50 dark:bg-slate-900/50 rounded-3xl p-5 flex items-center gap-4 border border-slate-100 dark:border-slate-800/50 shadow-inner group">
+            <div className="relative">
+              <img
+                alt="Profile"
+                className="w-11 h-11 rounded-2xl object-cover border-2 border-white dark:border-slate-800 shadow-md group-hover:scale-105 transition-transform"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
+              />
+              <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 border-4 border-white dark:border-slate-900 rounded-full"></div>
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-sm font-black text-slate-800 dark:text-white leading-none italic truncate">
                 Admin Store
               </p>
+              <div className="flex items-center gap-1.5 mt-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF7D1F]"></span>
+                <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest italic leading-none">
+                  Pro Tier
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 space-y-1 mt-4 overflow-y-auto">
+        <nav className="flex-1 px-4 space-y-2 mt-2 overflow-y-auto no-scrollbar">
           {navItems.map((item) => {
-            // Refined active logic
             const isActiveLink =
               item.href === "/sites/seller"
                 ? pathname === item.href
@@ -126,48 +134,70 @@ export default function SellerLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setIsSidebarOpen(false)} // Close sidebar on mobile nav
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-bold text-sm ${
+                onClick={() => setIsSidebarOpen(false)}
+                className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group ${
                   isActiveLink
-                    ? "bg-[#254294] text-white shadow-lg shadow-blue-900/20"
-                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
+                    ? "bg-[#254294] text-white shadow-2xl shadow-blue-900/30 -translate-y-0.5"
+                    : "text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900/50 hover:text-[#254294] dark:hover:text-blue-400"
                 }`}
               >
-                <span className="material-symbols-outlined text-[20px]">
+                <span
+                  className={`material-symbols-outlined text-[24px] transition-transform ${isActiveLink ? "font-black italic" : "group-hover:scale-110"}`}
+                >
                   {item.icon}
                 </span>
-                <span>{item.name}</span>
+                <span
+                  className={`text-[11px] font-black uppercase tracking-[0.15em] italic ${isActiveLink ? "opacity-100" : "opacity-80"}`}
+                >
+                  {item.name}
+                </span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Footer Actions */}
-        <div className="p-6 space-y-1 border-t border-slate-100 dark:border-slate-800 mt-auto">
+        {/* Action Footer */}
+        <div className="p-6 space-y-3 bg-slate-50/30 dark:bg-slate-900/30 mt-auto border-t border-slate-100 dark:border-slate-800">
           <button
-            className="w-full flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors rounded-xl text-sm font-bold"
             onClick={() => document.documentElement.classList.toggle("dark")}
+            className="w-full flex items-center justify-between px-5 py-3.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl transition-all hover:bg-slate-50 dark:hover:bg-slate-900 shadow-sm"
           >
-            <span className="material-symbols-outlined text-[20px]">
-              dark_mode
-            </span>
-            Toggle Theme
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-xl text-slate-400">
+                contrast
+              </span>
+              <span className="text-[10px] font-black uppercase tracking-widest italic text-slate-500">
+                Theme Engine
+              </span>
+            </div>
+            <div className="w-8 h-4 bg-slate-200 dark:bg-[#254294] rounded-full relative transition-colors">
+              <div className="absolute top-0.5 left-0.5 dark:left-auto dark:right-0.5 w-3 h-3 bg-white rounded-full transition-all"></div>
+            </div>
           </button>
+
           <Link
             href="/"
-            className="w-full flex items-center gap-3 px-4 py-3 text-[#FF7D1F] hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors rounded-xl text-sm font-bold"
+            className="w-full flex items-center gap-4 px-5 py-4 text-red-500/60 hover:text-red-500 hover:bg-red-50/50 dark:hover:bg-red-950/10 transition-all rounded-2xl"
           >
-            <span className="material-symbols-outlined text-[20px]">
-              swap_horiz
+            <span className="material-symbols-outlined text-xl font-black italic">
+              logout
             </span>
-            Switch to Buyer
+            <span className="text-[11px] font-black uppercase tracking-widest italic">
+              Terminate
+            </span>
           </Link>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="md:ml-64 p-4 md:p-8 transition-all duration-300">
-        {children}
+      {/* Main Content Viewport */}
+      <main
+        className={`transition-all duration-500 min-h-screen ${
+          isSidebarOpen ? "blur-sm md:blur-none" : ""
+        } md:ml-72 p-6 md:p-10 lg:p-14 mb-20 md:mb-0`}
+      >
+        <div className="animate-in fade-in duration-1000 slide-in-from-bottom-2">
+          {children}
+        </div>
       </main>
     </div>
   );

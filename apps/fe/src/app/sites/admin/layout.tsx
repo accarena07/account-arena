@@ -22,7 +22,7 @@ export default function AdminLayout({
   ];
 
   return (
-    <div className="bg-[#f8fafc] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen">
+    <div className="bg-background-light dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen">
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
         <div className="flex items-center gap-3">

@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 export default function PayoutsPage() {
   const [transactions] = useState([
@@ -15,7 +16,7 @@ export default function PayoutsPage() {
       accountName: "Admin Store",
       status: "Success",
       statusColor:
-        "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+        "bg-green-500/10 text-green-600 dark:text-green-400 border-green-200/50 dark:border-green-500/20",
     },
     {
       id: 2,
@@ -27,7 +28,7 @@ export default function PayoutsPage() {
       accountName: "Admin Store",
       status: "Processing",
       statusColor:
-        "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+        "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200/50 dark:border-blue-500/20",
     },
     {
       id: 3,
@@ -39,7 +40,7 @@ export default function PayoutsPage() {
       accountName: "Admin Store",
       status: "Failed",
       statusColor:
-        "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+        "bg-red-500/10 text-red-600 dark:text-red-400 border-red-200/50 dark:border-red-500/20",
     },
     {
       id: 4,
@@ -51,151 +52,156 @@ export default function PayoutsPage() {
       accountName: "Admin Store",
       status: "Success",
       statusColor:
-        "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+        "bg-green-500/10 text-green-600 dark:text-green-400 border-green-200/50 dark:border-green-500/20",
     },
   ]);
 
   return (
-    <div className="flex-1 max-w-[1200px] mx-auto w-full py-6">
-      {/* Header */}
-      <header className="flex items-center justify-between mb-8">
-        <div className="flex-1 max-w-lg">
-          <div className="relative">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-              search
-            </span>
-            <input
-              type="text"
-              placeholder="Search payout history..."
-              className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#254294] transition-all"
-            />
-          </div>
+    <div className="flex-1 max-w-6xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4 italic">
+        <Link
+          href="/sites/seller"
+          className="hover:text-slate-600 transition-colors"
+        >
+          Dashboard
+        </Link>
+        <span className="material-symbols-outlined text-xs font-black">
+          chevron_right
+        </span>
+        <span className="text-[#254294] dark:text-blue-400">Payouts</span>
+      </div>
+
+      <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10">
+        <div className="w-full md:w-auto">
+          <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight uppercase italic tracking-tight">
+            Payout Management
+          </h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 text-[11px] font-bold uppercase tracking-widest italic">
+            Control your{" "}
+            <span className="text-[#254294] dark:text-blue-400">earnings</span>{" "}
+            & withdrawal history
+          </p>
         </div>
-        <div className="flex items-center gap-6">
-          <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm">
-            <span className="material-symbols-outlined text-xl font-bold">
-              notifications
-            </span>
-            <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-          </button>
-          <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm">
-            <span className="material-symbols-outlined text-xl font-bold">
-              help
-            </span>
-          </button>
-          <div className="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-sm font-bold text-slate-800 dark:text-white leading-none">
-                Admin Store
-              </p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                Premium Seller
-              </p>
-            </div>
-            <img
-              alt="Profile"
-              className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
-            />
+        <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto pt-6 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800 text-center md:text-right">
+          <div className="hidden sm:block">
+            <p className="text-sm font-black text-slate-800 dark:text-white leading-none italic">
+              Admin Store
+            </p>
+            <p className="text-[10px] text-slate-400 font-black uppercase italic mt-1.5 tracking-widest">
+              Premium Seller
+            </p>
           </div>
+          <img
+            alt="Profile"
+            className="w-11 h-11 rounded-full border-2 border-[#254294]/20 shadow-sm object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
+          />
         </div>
       </header>
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
-          Seller Payout Management
-        </h1>
-        <p className="text-slate-500 text-sm">
-          Kelola pendapatan dan riwayat penarikan saldo Anda.
-        </p>
-      </div>
-
-      {/* Balance Cards */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 mb-8 shadow-sm">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+      {/* Balance Section */}
+      <div className="bg-white dark:bg-slate-900 rounded-4xl border border-slate-200 dark:border-slate-800 p-8 md:p-12 mb-10 shadow-sm relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full -mr-32 -mt-32 blur-3xl group-hover:bg-[#254294]/10 transition-colors duration-700"></div>
+        <div className="flex flex-col lg:flex-row items-stretch justify-between gap-12 relative z-10">
           {/* Available Balance */}
-          <div className="flex-1 w-full border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800 pb-8 md:pb-0 md:pr-8">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="material-symbols-outlined text-slate-400">
-                account_balance_wallet
-              </span>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                SALDO TERSEDIA
+          <div className="flex-1 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-50/50 dark:bg-blue-900/20 flex items-center justify-center text-[#254294] dark:text-blue-400">
+                <span className="material-symbols-outlined text-2xl font-black italic">
+                  account_balance_wallet
+                </span>
+              </div>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+                Available to Withdraw
               </span>
             </div>
-            <h2 className="text-4xl font-bold text-[#254294] dark:text-blue-400 mb-2">
+            <h2 className="text-4xl md:text-5xl font-black text-[#254294] dark:text-white italic tracking-tighter">
               Rp 14.250.000
             </h2>
-            <div className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
-              <span className="material-symbols-outlined text-sm font-bold">
+            <div className="flex items-center gap-2 text-green-600 dark:text-green-400/80">
+              <span className="material-symbols-outlined text-lg font-black animate-pulse">
                 check_circle
               </span>
-              <p className="text-xs font-bold">Dapat ditarik kapan saja</p>
+              <p className="text-[10px] font-black uppercase italic tracking-widest leading-none">
+                Ready for instant withdrawal
+              </p>
             </div>
           </div>
+
+          {/* Divider */}
+          <div className="hidden lg:block w-px bg-slate-100 dark:bg-slate-800"></div>
 
           {/* Held Balance */}
-          <div className="flex-1 w-full md:px-8 pb-8 md:pb-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="material-symbols-outlined text-slate-400">
-                pending
-              </span>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                SALDO TERTAHAN
+          <div className="flex-1 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                <span className="material-symbols-outlined text-2xl font-black italic">
+                  lock_clock
+                </span>
+              </div>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+                Currently Escrowed
               </span>
             </div>
-            <h2 className="text-4xl font-bold text-slate-300 dark:text-slate-600 mb-2">
+            <h2 className="text-3xl md:text-4xl font-black text-slate-300 dark:text-slate-700 italic tracking-tighter">
               Rp 2.100.000
             </h2>
-            <div className="flex items-center gap-1.5 text-slate-400">
-              <span className="material-symbols-outlined text-sm font-bold">
-                info
-              </span>
-              <p className="text-xs font-medium">Proses verifikasi pesanan</p>
-            </div>
+            <p className="text-[10px] font-black text-slate-400 uppercase italic tracking-widest">
+              * Funds being held for 1 active order
+            </p>
           </div>
 
-          {/* Withdraw Action */}
-          <div className="w-full md:w-auto flex flex-col items-center md:items-end gap-3 pl-8 border-l border-slate-100 dark:border-slate-800">
-            <button className="bg-[#254294] hover:bg-blue-900 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg shadow-blue-900/20 flex items-center gap-2 transition-all w-full md:w-auto justify-center">
-              <span className="material-symbols-outlined">account_balance</span>
-              Tarik Saldo
+          {/* Action */}
+          <div className="flex flex-col justify-center items-center lg:items-end gap-4 min-w-[240px]">
+            <button className="w-full bg-[#254294] hover:bg-blue-900 text-white px-10 py-5 rounded-[1.5rem] font-black uppercase tracking-widest italic shadow-2xl shadow-blue-900/20 flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-95 text-sm">
+              <span className="material-symbols-outlined text-xl italic font-black">
+                payments
+              </span>
+              Withdraw Funds
             </button>
-            <p className="text-[10px] text-slate-400 text-center md:text-right">
-              Estimasi waktu pencairan: 1x24 jam kerja
+            <p className="text-[9px] font-black text-slate-400 uppercase italic tracking-[0.2em]">
+              Processing time: ~24 Business Hours
             </p>
           </div>
         </div>
       </div>
 
-      {/* Transaction History Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <h3 className="font-bold text-slate-800 dark:text-white text-lg">
-            Riwayat Penarikan
-          </h3>
-          <button className="text-[#254294] dark:text-blue-400 text-sm font-bold flex items-center gap-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-4 py-2 rounded-lg transition-colors">
-            <span className="material-symbols-outlined text-lg">download</span>
-            Download Report
+      {/* Transaction History Section */}
+      <div className="bg-white dark:bg-slate-900 rounded-4xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-12 group/history">
+        <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-slate-50/10 dark:bg-slate-800/20">
+          <div>
+            <h3 className="font-black text-slate-900 dark:text-white text-xl italic tracking-tight uppercase">
+              Withdrawal Log
+            </h3>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic mt-1">
+              Your recent financial activities
+            </p>
+          </div>
+          <button className="w-full md:w-auto text-[#254294] dark:text-blue-400 text-[10px] font-black uppercase tracking-widest italic flex items-center justify-center gap-3 hover:bg-white dark:hover:bg-slate-800 px-6 py-3 rounded-xl border border-slate-100 dark:border-slate-800 transition-all shadow-sm active:scale-95 group/down">
+            <span className="material-symbols-outlined text-xl transition-transform group-hover/down:translate-y-0.5">
+              download_done
+            </span>
+            Export XLS Report
           </button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        {/* Desktop Table View */}
+        <div className="hidden lg:block overflow-x-auto">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800/50 text-left">
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  TANGGAL
+              <tr className="bg-slate-50/50 dark:bg-slate-800/30">
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+                  Timestamp
                 </th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  NOMINAL
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+                  Payout Value
                 </th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  REKENING TUJUAN
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+                  Destination Account
                 </th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">
-                  STATUS
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-right">
+                  System Status
                 </th>
               </tr>
             </thead>
@@ -203,46 +209,47 @@ export default function PayoutsPage() {
               {transactions.map((tx) => (
                 <tr
                   key={tx.id}
-                  className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                  className="hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-all group/row"
                 >
-                  <td className="px-6 py-4">
-                    <p className="text-sm font-bold text-slate-800 dark:text-white leading-tight">
+                  <td className="px-8 py-6">
+                    <p className="text-sm font-black text-slate-900 dark:text-white italic tracking-tight uppercase">
                       {tx.date}
                     </p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase italic tracking-tighter">
                       {tx.time}
                     </p>
                   </td>
-                  <td className="px-6 py-4">
-                    <p className="text-sm font-bold text-slate-800 dark:text-white">
+                  <td className="px-8 py-6">
+                    <p className="text-lg font-black text-[#FF7D1F] italic tracking-tight">
                       {tx.amount}
                     </p>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500">
-                        <span className="material-symbols-outlined text-lg">
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-slate-400 border border-slate-100 dark:border-slate-800 shadow-sm group-hover/row:scale-110 transition-transform">
+                        <span className="material-symbols-outlined text-xl italic font-black">
                           account_balance
                         </span>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-800 dark:text-white flex items-center gap-1">
-                          <span className="font-bold">{tx.bank}</span>
-                          <span className="text-slate-400">-</span>
-                          <span className="text-slate-600 dark:text-slate-300 font-medium">
+                        <p className="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2 italic">
+                          <span>{tx.bank}</span>
+                          <span className="text-slate-300">/</span>
+                          <span className="text-slate-600 dark:text-slate-300 font-bold tracking-tight">
                             {tx.accountNumber}
                           </span>
                         </p>
-                        <p className="text-[11px] text-slate-400">
-                          a.n. {tx.accountName}
+                        <p className="text-[10px] font-bold text-slate-400 uppercase italic tracking-widest mt-1">
+                          Ref: {tx.accountName}
                         </p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-8 py-6 text-right">
                     <span
-                      className={`inline-flex px-3 py-1 rounded-full text-[10px] font-bold ${tx.statusColor}`}
+                      className={`inline-flex px-4 py-1.5 rounded-xl border text-[10px] font-black uppercase tracking-widest italic shadow-sm items-center gap-2 ${tx.statusColor}`}
                     >
+                      <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
                       {tx.status}
                     </span>
                   </td>
@@ -252,21 +259,110 @@ export default function PayoutsPage() {
           </table>
         </div>
 
-        {/* Pagination Footer */}
-        <div className="p-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <p className="text-xs text-slate-500 font-medium">
-            Menampilkan 4 dari 24 transaksi
+        {/* Mobile View / Card View */}
+        <div className="lg:hidden divide-y divide-slate-100 dark:divide-slate-800">
+          {transactions.map((tx) => (
+            <div
+              key={tx.id}
+              className="p-6 space-y-6 hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase italic tracking-widest mb-1">
+                    Withdrawal Date
+                  </p>
+                  <p className="text-sm font-black text-slate-900 dark:text-white italic tracking-tight uppercase">
+                    {tx.date}{" "}
+                    <span className="text-slate-300 font-bold mx-1">•</span>{" "}
+                    {tx.time}
+                  </p>
+                </div>
+                <div
+                  className={`px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-widest italic inline-flex items-center gap-1.5 ${tx.statusColor}`}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
+                  {tx.status}
+                </div>
+              </div>
+
+              <div className="flex gap-4 p-5 bg-slate-50/50 dark:bg-black/20 rounded-2xl border border-slate-100 dark:border-slate-800/50 shadow-inner">
+                <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-800">
+                  <span className="material-symbols-outlined text-xl font-black italic">
+                    account_balance
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm font-black text-slate-900 dark:text-white italic tracking-tight mb-1">
+                    {tx.bank} • {tx.accountNumber}
+                  </p>
+                  <p className="text-[9px] font-black text-slate-400 uppercase italic tracking-widest">
+                    Payee: {tx.accountName}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[9px] font-black text-slate-400 uppercase italic tracking-widest mb-1">
+                    Net Payout
+                  </p>
+                  <span className="font-black text-[#FF7D1F] text-2xl italic tracking-tight">
+                    {tx.amount}
+                  </span>
+                </div>
+                <button className="text-[10px] font-black uppercase tracking-widest italic text-[#254294] dark:text-blue-400 flex items-center gap-1">
+                  Details{" "}
+                  <span className="material-symbols-outlined text-lg">
+                    chevron_right
+                  </span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer / Pagination */}
+        <div className="px-8 py-6 bg-slate-50/30 dark:bg-slate-800/20 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest italic text-center md:text-left">
+            Showing <span className="text-slate-900 dark:text-white">4</span> of{" "}
+            <span className="text-slate-900 dark:text-white">24</span> total
+            transactions record
           </p>
-          <div className="flex gap-2">
-            <button className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-500 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-              Previous
+          <div className="flex items-center gap-3">
+            <button
+              className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest italic text-slate-400 opacity-50 cursor-not-allowed"
+              disabled
+            >
+              Prev
             </button>
-            <button className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-white text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-              Next
+            <button className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest italic text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm active:scale-95">
+              Next Log
             </button>
           </div>
         </div>
       </div>
+
+      {/* Global Footer Info */}
+      <footer className="mt-20 pt-10 border-t border-slate-100 dark:border-slate-800 flex flex-col items-center gap-8 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] italic mb-20 md:mb-10">
+        <div className="flex flex-col md:flex-row items-center gap-8 text-center">
+          <a href="#" className="hover:text-[#254294] transition-colors">
+            Payout Policy
+          </a>
+          <a href="#" className="hover:text-[#254294] transition-colors">
+            Bank Partners
+          </a>
+          <a href="#" className="hover:text-[#254294] transition-colors">
+            Tax Information
+          </a>
+          <div className="flex items-center gap-3 text-[#254294] dark:text-blue-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+            Fin-Secured Node
+          </div>
+        </div>
+        <div className="text-center">
+          © 2024 AccountArena • Secure Seller Network • Payout Infrastructure
+        </div>
+      </footer>
     </div>
   );
 }

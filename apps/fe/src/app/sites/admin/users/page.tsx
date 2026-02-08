@@ -164,7 +164,7 @@ export default function UserManagementPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-[#f8fafc] dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+            <thead className="bg-background-light dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
               <tr>
                 <th className="px-8 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">
                   User ID
