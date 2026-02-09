@@ -155,8 +155,8 @@ export default function PayoutsPage() {
           </div>
 
           {/* Action */}
-          <div className="flex flex-col justify-center items-center lg:items-end gap-4 min-w-[240px]">
-            <button className="w-full bg-[#254294] hover:bg-blue-900 text-white px-10 py-5 rounded-[1.5rem] font-black uppercase tracking-widest italic shadow-2xl shadow-blue-900/20 flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-95 text-sm">
+          <div className="flex flex-col justify-center items-center lg:items-end gap-4 min-w-60">
+            <button className="w-full bg-[#254294] hover:bg-blue-900 text-white px-10 py-5 rounded-3xl font-black uppercase tracking-widest italic shadow-2xl shadow-blue-900/20 flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-95 text-sm">
               <span className="material-symbols-outlined text-xl italic font-black">
                 payments
               </span>

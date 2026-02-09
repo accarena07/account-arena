@@ -293,8 +293,8 @@ export default function KYCVerificationPage() {
                   Primary ID Front Scan
                 </label>
                 <div className="relative group cursor-pointer">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-[#254294] to-blue-400 rounded-4xl blur opacity-0 group-hover:opacity-10 transition duration-1000 group-hover:duration-200"></div>
-                  <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-4xl p-12 flex flex-col items-center justify-center text-center bg-slate-50/50 dark:bg-slate-800/30 min-h-[300px] transition-all group-hover:border-[#254294] shadow-inner">
+                  <div className="absolute -inset-1 bg-linear-to-r from-[#254294] to-blue-400 rounded-4xl blur opacity-0 group-hover:opacity-10 transition duration-1000 group-hover:duration-200"></div>
+                  <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-4xl p-12 flex flex-col items-center justify-center text-center bg-slate-50/50 dark:bg-slate-800/30 min-h-75 transition-all group-hover:border-[#254294] shadow-inner">
                     <div className="w-20 h-20 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-blue-900/5 border border-slate-100 dark:border-slate-700 group-hover:scale-110 transition-transform">
                       <span className="material-symbols-outlined text-[#254294] dark:text-blue-400 text-4xl font-black italic">
                         photo_camera
@@ -315,7 +315,7 @@ export default function KYCVerificationPage() {
                   Identity Card Back (Optional)
                 </label>
                 <div className="relative group cursor-pointer">
-                  <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-4xl p-12 flex flex-col items-center justify-center text-center bg-slate-50/50 dark:bg-slate-800/30 min-h-[300px] transition-all group-hover:border-slate-400 shadow-inner">
+                  <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-4xl p-12 flex flex-col items-center justify-center text-center bg-slate-50/50 dark:bg-slate-800/30 min-h-75 transition-all group-hover:border-slate-400 shadow-inner">
                     <div className="w-20 h-20 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-slate-100 dark:border-slate-700">
                       <span className="material-symbols-outlined text-slate-300 dark:text-slate-600 text-4xl font-black italic">
                         cloud_upload
@@ -375,7 +375,7 @@ export default function KYCVerificationPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               <div className="space-y-8">
-                <div className="bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 rounded-4xl p-10 flex flex-col items-center justify-center relative min-h-[350px] shadow-inner overflow-hidden">
+                <div className="bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 rounded-4xl p-10 flex flex-col items-center justify-center relative min-h-87.5 shadow-inner overflow-hidden">
                   <div className="absolute inset-0 bg-blue-500/5 transition-opacity opacity-0 group-hover:opacity-100"></div>
                   <div className="absolute top-6 right-6 bg-green-500 text-white px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest italic flex items-center gap-2 shadow-lg shadow-green-500/20">
                     <span className="material-symbols-outlined text-base">
@@ -394,7 +394,7 @@ export default function KYCVerificationPage() {
                   <h4 className="text-base font-black text-slate-900 dark:text-white uppercase italic tracking-tight">
                     Standard Procedure
                   </h4>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic mt-2 text-center max-w-[250px] leading-relaxed">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic mt-2 text-center max-w-62.5 leading-relaxed">
                     Hold your ID card next to your face clearly in frame
                   </p>
                 </div>
@@ -425,7 +425,7 @@ export default function KYCVerificationPage() {
                 <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic px-2">
                   Live Biometric Feed
                 </label>
-                <div className="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-4xl bg-slate-50/50 dark:bg-slate-800/30 min-h-[500px] flex flex-col items-center justify-center p-12 text-center group transition-all hover:border-[#254294] shadow-inner">
+                <div className="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-4xl bg-slate-50/50 dark:bg-slate-800/30 min-h-125 flex flex-col items-center justify-center p-12 text-center group transition-all hover:border-[#254294] shadow-inner">
                   <div className="w-24 h-24 bg-white dark:bg-slate-800 rounded-3xl flex items-center justify-center mb-8 shadow-xl shadow-blue-900/10 border border-slate-100 dark:border-slate-700 group-hover:scale-110 transition-transform">
                     <span className="material-symbols-outlined text-4xl text-[#254294] dark:text-blue-400 italic font-black">
                       face_unlock
@@ -434,7 +434,7 @@ export default function KYCVerificationPage() {
                   <h4 className="text-xl font-black text-slate-900 dark:text-white uppercase italic tracking-tight mb-4 leading-none">
                     Activate Camera
                   </h4>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic mb-10 max-w-[200px] mx-auto leading-relaxed">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic mb-10 max-w-50 mx-auto leading-relaxed">
                     Our AI will automatically scan and crop for optimal quality
                   </p>
                   <button className="bg-[#254294] hover:bg-blue-900 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest italic shadow-2xl shadow-blue-900/10 flex items-center gap-4 transition-all hover:scale-105 active:scale-95">
