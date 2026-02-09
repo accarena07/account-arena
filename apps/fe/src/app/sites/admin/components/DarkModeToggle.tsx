@@ -3,33 +3,22 @@
 import { useEffect, useState } from "react";
 
 export default function DarkModeToggle() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("theme") === "dark";
+  });
 
   useEffect(() => {
-    // FORCE light mode if no preference has been set yet
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "dark") {
-      setIsDark(true);
+    if (isDark) {
       document.documentElement.classList.add("dark");
     } else {
-      // Default to light regardless of system settings
-      setIsDark(false);
       document.documentElement.classList.remove("dark");
-      if (!savedTheme) localStorage.setItem("theme", "light");
     }
-  }, []);
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }, [isDark]);
 
   const toggleDarkMode = () => {
-    const newDark = !isDark;
-    setIsDark(newDark);
-    if (newDark) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
+    setIsDark((prev) => !prev);
   };
 
   return (

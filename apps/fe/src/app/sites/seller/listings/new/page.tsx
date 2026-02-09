@@ -1,8 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function CreateListingPage() {
   const [step, setStep] = useState(1);
@@ -68,10 +68,12 @@ export default function CreateListingPage() {
               Premium Seller
             </p>
           </div>
-          <img
+          <Image
             alt="Profile"
             className="w-11 h-11 rounded-full border-2 border-[#254294]/20 shadow-sm object-cover"
+            height={44}
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
+            width={44}
           />
         </div>
       </header>
@@ -377,9 +379,11 @@ export default function CreateListingPage() {
                     key={i}
                     className="w-48 h-32 rounded-2xl overflow-hidden border-2 border-slate-100 dark:border-slate-800 shrink-0 transform hover:scale-105 transition-transform cursor-pointer shadow-md"
                   >
-                    <img
+                    <Image
                       alt={`Screenshot ${i}`}
-                      className="w-full h-full object-cover"
+                      className="object-cover"
+                      fill
+                      sizes="192px"
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIBC51fxhgrgBkcfYA03Jp4q19UBjRHkniaexxKWE_Dv0ZUSWM8vSacnWMi_7fe22gKWNItAM7TqQ_HNNKXCmNgN9u4YHs883-IGCvxomuiCMYPEWKhRwVYkS2pKairrbxbIkKivGAvqOcz94f-RLdQPSCGxlAcBdzkfKHvH8CXJzUD8qD9WGM09oVrNkOEwXpRNAa3Bt1pt4PzJPsmd97pG0UqlK4RKGzTtLhtJHablzDILDfV4RZrr2CWTtJwXUuoOJp7XLhQg"
                     />
                   </div>
@@ -647,9 +651,11 @@ export default function CreateListingPage() {
                             : "border-slate-50 dark:border-slate-800 hover:border-[#254294]"
                         }`}
                       >
-                        <img
+                        <Image
                           alt={`Screenshot ${i}`}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          fill
+                          sizes="(min-width:640px) 25vw, 50vw"
                           src={
                             [
                               "https://lh3.googleusercontent.com/aida-public/AB6AXuCSKN6AnBDVSzXUv5vvqy6LSXS-N5XaGixz98-jUzdNY74jHtS3Vh-rp3P6PPn-3wbCIHZahHijrZpZ6IB4FBxH5ipl--aR8l8XdZTPUJy1f6FO-mcuB29RqTxVzb7KRtGtdgGxmL3WWeuqeEcP9Pnzx35KzL__dibhGo7wBTKLHYTaPCKsmcRk9Oy27UjxVkvAgaRzxrC0oA7E20QUCcwTJJUGbYXG-ULnmieRRJbPdSbWd101Oyld2GGb-krVVx-y0shl1DVIrA",

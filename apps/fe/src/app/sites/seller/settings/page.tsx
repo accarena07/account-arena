@@ -1,8 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function StoreSettingsPage() {
   return (
@@ -59,10 +59,12 @@ export default function StoreSettingsPage() {
                 Premium Seller
               </p>
             </div>
-            <img
+            <Image
               alt="Profile"
               className="w-11 h-11 rounded-full border-2 border-[#254294]/20 shadow-sm object-cover"
+              height={44}
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
+              width={44}
             />
           </div>
         </div>
@@ -88,10 +90,12 @@ export default function StoreSettingsPage() {
             <div className="flex flex-col items-center lg:items-start space-y-6">
               <div className="relative group/avatar">
                 <div className="w-32 h-32 md:w-44 md:h-44 bg-slate-50 dark:bg-slate-800 rounded-3xl md:rounded-4xl flex items-center justify-center border-4 border-dashed border-slate-200 dark:border-slate-700 transition-all hover:border-[#254294] shadow-inner overflow-hidden cursor-pointer">
-                  <img
+                  <Image
+                    alt="placeholder"
                     src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
                     className="w-20 md:w-24 opacity-10 grayscale group-hover/avatar:scale-110 transition-transform"
-                    alt="placeholder"
+                    height={96}
+                    width={96}
                   />
                   <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center backdrop-blur-sm transition-all">
                     <span className="material-symbols-outlined text-white text-3xl font-black italic">

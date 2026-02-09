@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function MyListingsPage() {
   const listings = [
@@ -90,10 +91,12 @@ export default function MyListingsPage() {
                 Premium Seller
               </p>
             </div>
-            <img
+            <Image
               alt="Profile"
               className="w-11 h-11 rounded-full border-2 border-[#254294]/20 shadow-sm object-cover"
+              height={44}
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
+              width={44}
             />
           </div>
         </div>
@@ -196,10 +199,12 @@ export default function MyListingsPage() {
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-5">
                       <div className="relative group/img">
-                        <img
+                        <Image
                           alt={item.game}
                           className="w-16 h-12 rounded-xl object-cover bg-slate-100 border border-slate-200 dark:border-slate-700 shrink-0 shadow-sm group-hover/img:scale-110 transition-transform duration-500"
+                          height={48}
                           src={item.image}
+                          width={64}
                         />
                         <div className="absolute inset-0 bg-[#254294]/10 opacity-0 group-hover/img:opacity-100 transition-opacity rounded-xl"></div>
                       </div>
@@ -260,10 +265,12 @@ export default function MyListingsPage() {
               className="p-6 space-y-6 hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-all"
             >
               <div className="flex gap-5">
-                <img
+                <Image
                   alt={item.game}
                   className="w-24 h-20 rounded-2xl object-cover bg-slate-100 border border-slate-200 dark:border-slate-800 shrink-0 shadow-sm"
+                  height={80}
                   src={item.image}
+                  width={96}
                 />
                 <div className="flex-1 min-w-0">
                   <div

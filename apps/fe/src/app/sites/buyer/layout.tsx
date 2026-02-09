@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
 
 export const metadata: Metadata = {
-  title: "Accarena — Buyer",
+  title: "GameMarket - Marketplace Akun Game Terpercaya",
 };
 
 export default function BuyerLayout({
@@ -9,15 +15,5 @@ export default function BuyerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="mx-auto max-w-3xl p-6 space-y-6">
-      <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
-        <div className="text-xs uppercase tracking-wide text-zinc-500">
-          Buyer
-        </div>
-        <div className="text-base font-medium">Accarena Storefront</div>
-      </div>
-      {children}
-    </div>
-  );
+  return <div className={plusJakartaSans.className}>{children}</div>;
 }

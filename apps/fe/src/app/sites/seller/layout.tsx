@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 
@@ -101,10 +102,12 @@ export default function SellerLayout({
         <div className="px-6 mb-10">
           <div className="bg-slate-50/50 dark:bg-slate-900/50 rounded-3xl p-5 flex items-center gap-4 border border-slate-100 dark:border-slate-800/50 shadow-inner group">
             <div className="relative">
-              <img
+              <Image
                 alt="Profile"
                 className="w-11 h-11 rounded-2xl object-cover border-2 border-white dark:border-slate-800 shadow-md group-hover:scale-105 transition-transform"
+                height={44}
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
+                width={44}
               />
               <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 border-4 border-white dark:border-slate-900 rounded-full"></div>
             </div>

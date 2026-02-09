@@ -1,8 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function KYCVerificationPage() {
   const [step, setStep] = useState(1);
@@ -63,10 +63,12 @@ export default function KYCVerificationPage() {
                 Premium Seller
               </p>
             </div>
-            <img
+            <Image
               alt="Profile"
               className="w-11 h-11 rounded-full border-2 border-[#254294]/20 shadow-sm object-cover"
+              height={44}
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
+              width={44}
             />
           </div>
         </div>
@@ -499,10 +501,12 @@ export default function KYCVerificationPage() {
                   </button>
                 </div>
                 <div className="aspect-16/10 bg-slate-900 rounded-3xl overflow-hidden relative group">
-                  <img
+                  <Image
                     src="https://img.freepik.com/free-photo/young-asian-business-man-isolated-gray-background-doing-ok-sign-with-fingers-excellent-symbol_1187-17482.jpg?w=740"
                     alt="KTP Feed"
                     className="w-full h-full object-cover opacity-60 grayscale"
+                    fill
+                    sizes="(min-width:768px) 50vw, 100vw"
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="px-6 py-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl text-[10px] font-black italic text-white uppercase tracking-widest">
@@ -525,10 +529,12 @@ export default function KYCVerificationPage() {
                   </button>
                 </div>
                 <div className="aspect-16/10 bg-slate-900 rounded-3xl overflow-hidden relative group">
-                  <img
+                  <Image
                     src="https://img.freepik.com/free-photo/young-asian-business-man-isolated-gray-background-doing-ok-sign-with-fingers-excellent-symbol_1187-17482.jpg?w=740"
                     alt="Selfie Feed"
                     className="w-full h-full object-cover opacity-60 grayscale blur-[1px]"
+                    fill
+                    sizes="(min-width:768px) 50vw, 100vw"
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="px-6 py-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl text-[10px] font-black italic text-white uppercase tracking-widest">
