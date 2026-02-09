@@ -60,6 +60,20 @@ const listingCards = [
   },
 ];
 
+const gameOptions: Array<[string, boolean]> = [
+  ["Valorant", true],
+  ["Dota 2", false],
+  ["Mobile Legends", false],
+  ["Genshin Impact", false],
+];
+
+const rankOptions: Array<[string, boolean]> = [
+  ["Iron", false],
+  ["Gold", false],
+  ["Diamond", false],
+  ["Radiant", true],
+];
+
 export default function BuyerBrowsePage() {
   useEffect(() => {
     applyInitialTheme();
@@ -153,12 +167,7 @@ export default function BuyerBrowsePage() {
                   Select Game
                 </h3>
                 <div className="space-y-2">
-                  {[
-                    ["Valorant", true],
-                    ["Dota 2", false],
-                    ["Mobile Legends", false],
-                    ["Genshin Impact", false],
-                  ].map(([game, checked]) => (
+                  {gameOptions.map(([game, checked]) => (
                     <label
                       className="group flex cursor-pointer items-center gap-3 rounded-lg p-2 hover:bg-slate-50 dark:hover:bg-slate-700"
                       key={game}
@@ -175,12 +184,7 @@ export default function BuyerBrowsePage() {
                   Rank Tier
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
-                  {[
-                    ["Iron", false],
-                    ["Gold", false],
-                    ["Diamond", false],
-                    ["Radiant", true],
-                  ].map(([tier, active]) => (
+                  {rankOptions.map(([tier, active]) => (
                     <button
                       className={`rounded-lg border px-3 py-2 text-xs font-bold transition-all ${
                         active
