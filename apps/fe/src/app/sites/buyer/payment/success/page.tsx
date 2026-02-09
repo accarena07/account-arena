@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import BuyerHeader from "../../components/BuyerHeader";
+import BuyerTopNav from "../../components/BuyerTopNav";
 
 export default function BuyerPaymentSuccessPage() {
   return (
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors duration-200 dark:bg-background-dark dark:text-slate-100">
-      <BuyerHeader isLoggedIn />
+      <BuyerTopNav isLoggedIn />
 
       <main className="relative mx-auto max-w-4xl px-4 py-12">
         <div className="pointer-events-none absolute top-0 left-0 hidden h-48 w-full overflow-hidden md:block">

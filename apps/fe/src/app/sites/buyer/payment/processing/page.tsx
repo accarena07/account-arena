@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import BuyerHeader from "../../components/BuyerHeader";
+import BuyerTopNav from "../../components/BuyerTopNav";
 
 const INITIAL_SECONDS = 23 * 3600 + 54 * 60 + 12;
 
@@ -26,7 +26,7 @@ export default function BuyerPaymentProcessingPage() {
 
   return (
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors duration-200 dark:bg-background-dark dark:text-slate-100">
-      <BuyerHeader isLoggedIn />
+      <BuyerTopNav isLoggedIn />
 
       <main className="mx-auto max-w-4xl px-4 py-12">
         <div className="flex flex-col items-center justify-center space-y-8">

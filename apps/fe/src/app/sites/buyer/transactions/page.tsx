@@ -1,9 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import Breadcrumb from "../components/Breadcrumb";
 import BuyerFooter from "../components/BuyerFooter";
 import BuyerHeader from "../components/BuyerHeader";
+import StatusBadge from "../components/StatusBadge";
+import type { BuyerTransactionListItem } from "../types";
 
-const transactions = [
+const transactions: BuyerTransactionListItem[] = [
   {
     game: "Valorant",
     date: "12 Okt 2023, 14:20",
@@ -11,7 +14,7 @@ const transactions = [
     orderId: "TRX-99281723",
     total: "Rp 1.262.500",
     status: "Selesai",
-    statusClass: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
+    statusVariant: "completed",
     action: "Lihat Detail",
     actionClass:
       "border-2 border-primary text-primary hover:bg-primary hover:text-white",
@@ -25,7 +28,7 @@ const transactions = [
     orderId: "TRX-99452011",
     total: "Rp 2.424.000",
     status: "Menunggu Pembayaran",
-    statusClass: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
+    statusVariant: "pending_payment",
     action: "Bayar Sekarang",
     actionClass: "bg-secondary text-white hover:brightness-110 shadow-md shadow-orange-500/20",
     actionHref: "/transactions/pending-payment",
@@ -38,7 +41,7 @@ const transactions = [
     orderId: "TRX-99511377",
     total: "Rp 5.555.000",
     status: "Sedang Diproses",
-    statusClass: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+    statusVariant: "in_progress",
     action: "Lihat Status",
     actionClass:
       "border-2 border-primary text-primary hover:bg-primary hover:text-white",
@@ -53,17 +56,14 @@ export default function BuyerTransactionsPage() {
       <BuyerHeader isLoggedIn searchPlaceholder="Cari transaksi..." />
 
       <main className="relative z-0 mx-auto max-w-250 px-4 py-8 md:px-6">
-        <nav className="mb-8 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <Link className="transition-colors hover:text-primary" href="/">
-            Home
-          </Link>
-          <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <Link className="transition-colors hover:text-primary" href="#">
-            Akun Saya
-          </Link>
-          <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <span className="font-semibold text-slate-900 dark:text-slate-100">Riwayat Transaksi</span>
-        </nav>
+        <Breadcrumb
+          className="mb-8"
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Akun Saya", href: "#" },
+            { label: "Riwayat Transaksi" },
+          ]}
+        />
 
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-extrabold">Riwayat Transaksi</h1>
@@ -131,16 +131,7 @@ export default function BuyerTransactionsPage() {
                   </div>
 
                   <div className="flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-700">
-                    <span className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold ${trx.statusClass}`}>
-                      <span className="material-symbols-outlined text-sm">
-                        {trx.status === "Selesai"
-                          ? "check_circle"
-                          : trx.status === "Sedang Diproses"
-                            ? "hourglass_top"
-                            : "schedule"}
-                      </span>
-                      {trx.status}
-                    </span>
+                    <StatusBadge label={trx.status} variant={trx.statusVariant} />
                     <Link className={`rounded-xl px-5 py-2 text-xs font-bold transition-all ${trx.actionClass}`} href={trx.actionHref}>
                       {trx.action}
                     </Link>

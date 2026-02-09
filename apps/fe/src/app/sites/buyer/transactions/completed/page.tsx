@@ -1,6 +1,12 @@
 import Image from "next/image";
-import Link from "next/link";
+import Breadcrumb from "../../components/Breadcrumb";
+import BuyerFooter from "../../components/BuyerFooter";
 import BuyerHeader from "../../components/BuyerHeader";
+import PaymentSummaryCard from "../../components/PaymentSummaryCard";
+import PaymentMethodCard from "../../components/PaymentMethodCard";
+import StatusBadge from "../../components/StatusBadge";
+import SupportHelpCard from "../../components/SupportHelpCard";
+import TransactionProgressStepper from "../../components/TransactionProgressStepper";
 
 export default function BuyerTransactionCompletedPage() {
   return (
@@ -8,17 +14,14 @@ export default function BuyerTransactionCompletedPage() {
       <BuyerHeader isLoggedIn searchPlaceholder="Search for game accounts..." />
 
       <main className="mx-auto max-w-300 px-4 py-8 md:px-6">
-        <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <Link className="transition-colors hover:text-primary" href="/">
-            Home
-          </Link>
-          <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <Link className="transition-colors hover:text-primary" href="/transactions">
-            Daftar Transaksi
-          </Link>
-          <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <span className="font-medium text-slate-900 dark:text-slate-100">TRX-9921048821</span>
-        </nav>
+        <Breadcrumb
+          className="mb-6"
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Daftar Transaksi", href: "/transactions" },
+            { label: "TRX-9921048821" },
+          ]}
+        />
 
         <div className="mb-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-800">
           <div className="flex flex-col items-start justify-between gap-4 border-b border-slate-100 p-6 dark:border-slate-700 md:flex-row md:items-center md:p-8">
@@ -29,35 +32,13 @@ export default function BuyerTransactionCompletedPage() {
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <span className="flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-sm font-bold text-green-600 dark:bg-green-900/30 dark:text-green-400">
-                <span className="material-symbols-outlined text-[18px]">verified</span>
-                Pesanan Selesai
-              </span>
+              <StatusBadge className="rounded-full px-4 py-2 text-sm" label="Pesanan Selesai" variant="completed" />
               <span className="text-sm font-medium text-slate-400 dark:text-slate-500">Selesai pada 25 Okt 2023, 10:15</span>
             </div>
           </div>
 
           <div className="bg-slate-50/50 px-8 py-10 dark:bg-slate-900/50">
-            <div className="relative mx-auto flex max-w-2xl items-center justify-between">
-              <div className="absolute top-1/2 left-0 z-0 h-1 w-full -translate-y-1/2 bg-green-500"></div>
-
-              {[
-                "Pending",
-                "Sedang Diproses",
-                "Selesai",
-              ].map((label, idx) => (
-                <div className="relative z-10 flex flex-col items-center gap-3" key={label}>
-                  <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white shadow-lg shadow-green-500/30 ${
-                      idx === 2 ? "ring-4 ring-white dark:ring-slate-900" : ""
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-sm">check</span>
-                  </div>
-                  <span className="text-xs font-bold tracking-wider text-green-600 uppercase dark:text-green-400">{label}</span>
-                </div>
-              ))}
-            </div>
+            <TransactionProgressStepper middleLabel="Sedang Diproses" state="completed" />
           </div>
         </div>
 
@@ -145,75 +126,32 @@ export default function BuyerTransactionCompletedPage() {
           </div>
 
           <div className="space-y-8">
-            <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-800">
-              <div className="flex items-center justify-between border-b border-slate-100 p-6 dark:border-slate-700">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">payments</span>
-                  <h2 className="text-lg font-bold">Rincian Pembayaran</h2>
-                </div>
-              </div>
-              <div className="space-y-4 p-6">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">Harga Akun</span>
-                  <span className="font-bold">Rp 1.250.000</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">Service Fee</span>
-                  <span className="font-bold">Rp 12.500</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">Kode Unik</span>
-                  <span className="font-bold text-secondary">+ Rp 312</span>
-                </div>
-                <div className="flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-700">
-                  <span className="text-sm font-bold tracking-wider uppercase">Total Bayar</span>
-                  <span className="text-2xl font-extrabold text-secondary">Rp 1.262.812</span>
-                </div>
-                <div className="pt-4">
-                  <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 py-3 text-sm font-bold transition-colors hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700" type="button">
-                    <span className="material-symbols-outlined text-[20px]">download</span>
-                    Download Invoice
-                  </button>
-                </div>
-              </div>
-            </section>
+            <PaymentSummaryCard
+              action={{
+                className: "border border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700",
+                icon: "download",
+                label: "Download Invoice",
+              }}
+              rows={[
+                { label: "Harga Akun", value: "Rp 1.250.000" },
+                { label: "Service Fee", value: "Rp 12.500" },
+                { label: "Kode Unik", value: "+ Rp 312", valueClassName: "text-secondary" },
+              ]}
+              totalValue="Rp 1.262.812"
+            />
 
-            <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-800">
-              <div className="flex items-center gap-2 border-b border-slate-100 p-6 dark:border-slate-700">
-                <span className="material-symbols-outlined text-primary">account_balance_wallet</span>
-                <h2 className="text-lg font-bold">Metode Pembayaran</h2>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-12 items-center justify-center rounded border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-700">
-                      <span className="text-[10px] font-black italic text-blue-900 dark:text-blue-400">BCA</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold">BCA Virtual Account</p>
-                      <p className="text-xs font-bold tracking-tight text-green-500 uppercase">Sudah Dibayar</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
+            <PaymentMethodCard
+              methodName="BCA Virtual Account"
+              methodSubtitle="Sudah Dibayar"
+              methodSubtitleClassName="font-bold tracking-tight text-green-500 uppercase"
+            />
 
-            <div className="relative overflow-hidden rounded-2xl bg-primary p-6 text-white">
-              <div className="relative z-10">
-                <h4 className="mb-2 flex items-center gap-2 font-bold">
-                  <span className="material-symbols-outlined text-sm">help_outline</span>
-                  Butuh Bantuan?
-                </h4>
-                <p className="mb-4 text-xs text-blue-100/80">Tim support kami tersedia 24/7 untuk membantu kendala transaksi Anda.</p>
-                <button className="w-full rounded-lg bg-white/10 py-2.5 text-sm font-bold backdrop-blur-sm transition-colors hover:bg-white/20" type="button">
-                  Tiket Bantuan
-                </button>
-              </div>
-              <span className="material-symbols-outlined absolute -right-6 -bottom-6 rotate-12 text-9xl text-white/5">support_agent</span>
-            </div>
+            <SupportHelpCard description="Tim support kami tersedia 24/7 untuk membantu kendala transaksi Anda." />
           </div>
         </div>
       </main>
+
+      <BuyerFooter />
     </div>
   );
 }

@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
-import { applyInitialTheme, toggleDarkMode } from "../components/theme";
+import Breadcrumb from "../components/Breadcrumb";
+import BuyerFooter from "../components/BuyerFooter";
+import BuyerTopNav from "../components/BuyerTopNav";
 
 const listingCards = [
   {
@@ -75,79 +76,19 @@ const rankOptions: Array<[string, boolean]> = [
 ];
 
 export default function BuyerBrowsePage() {
-  useEffect(() => {
-    applyInitialTheme();
-  }, []);
-
   return (
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors duration-300 dark:bg-background-dark dark:text-slate-100">
-      <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95">
-        <div className="mx-auto flex h-20 max-w-360 items-center justify-between gap-4 px-4 md:gap-8 md:px-6">
-          <div className="shrink-0">
-            <Link className="flex items-center gap-2" href="/">
-              <div className="rounded-lg bg-primary p-2">
-                <span className="material-symbols-outlined text-white">sports_esports</span>
-              </div>
-              <span className="hidden text-xl font-bold tracking-tight text-primary uppercase dark:text-white sm:block">
-                GameMarket
-              </span>
-            </Link>
-          </div>
-
-          <div className="relative hidden max-w-2xl flex-1 sm:flex">
-            <span className="material-symbols-outlined absolute top-1/2 left-4 -translate-y-1/2 text-slate-400">search</span>
-            <input
-              className="w-full rounded-full border-slate-200 bg-slate-50 py-2.5 pr-4 pl-12 text-sm outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
-              placeholder="Search for game accounts, skins, or items..."
-              type="text"
-            />
-          </div>
-
-          <div className="flex shrink-0 items-center gap-2 md:gap-4">
-            <button
-              className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
-              onClick={toggleDarkMode}
-              type="button"
-            >
-              <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
-              <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
-            </button>
-            <div className="mx-1 hidden h-8 w-px bg-slate-200 md:block dark:bg-slate-700"></div>
-            <Link
-              className="px-3 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:text-primary dark:text-slate-200"
-              href="/login"
-            >
-              Login
-            </Link>
-            <Link
-              className="rounded-lg bg-secondary px-4 py-2.5 text-sm font-bold whitespace-nowrap text-white shadow-lg shadow-orange-500/20 transition-all hover:brightness-110 md:px-6"
-              href="/register"
-            >
-              Register
-            </Link>
-            <button
-              className="hidden items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-bold whitespace-nowrap text-white transition-all hover:brightness-110 xl:flex"
-              type="button"
-            >
-              <span className="material-symbols-outlined text-sm">storefront</span>
-              Sell Account
-            </button>
-          </div>
-        </div>
-      </nav>
+      <BuyerTopNav searchPlaceholder="Search for game accounts, skins, or items..." />
 
       <main className="mx-auto max-w-360 px-4 py-8 md:px-6">
-        <nav className="mb-8 flex items-center gap-2 overflow-x-auto whitespace-nowrap text-xs text-slate-500 md:text-sm dark:text-slate-400">
-          <Link className="hover:text-primary" href="/">
-            Home
-          </Link>
-          <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <Link className="hover:text-primary" href="/browse">
-            Games
-          </Link>
-          <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <span className="font-medium text-slate-900 dark:text-slate-100">Browse Accounts</span>
-        </nav>
+        <Breadcrumb
+          className="mb-8 text-xs md:text-sm"
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Games", href: "/browse" },
+            { label: "Browse Accounts" },
+          ]}
+        />
 
         <div className="flex flex-col gap-8 lg:flex-row">
           <aside className="w-full shrink-0 space-y-6 lg:w-72">
@@ -367,92 +308,7 @@ export default function BuyerBrowsePage() {
         </div>
       </main>
 
-      <footer className="mt-20 bg-primary py-16 text-slate-300">
-        <div className="mx-auto grid max-w-360 grid-cols-1 gap-12 px-6 md:grid-cols-4">
-          <div className="space-y-6">
-            <div className="flex items-center gap-2">
-              <div className="rounded-lg bg-white/10 p-2 backdrop-blur-sm">
-                <span className="material-symbols-outlined text-white">sports_esports</span>
-              </div>
-              <span className="text-xl font-bold tracking-tight text-white uppercase">GameMarket</span>
-            </div>
-            <p className="max-w-xs text-sm leading-relaxed">
-              The most trusted marketplace to buy and sell premium game accounts and items with verified security.
-            </p>
-            <div className="flex items-center gap-4">
-              {["public", "photo_camera", "language"].map((icon) => (
-                <Link
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 transition-colors hover:bg-white/10"
-                  href="#"
-                  key={icon}
-                >
-                  <span className="material-symbols-outlined text-xl">{icon}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="mb-6 font-bold text-white">Marketplace</h4>
-            <ul className="space-y-4 text-sm">
-              {[
-                "Browse Accounts",
-                "Item & Skins",
-                "Top Up Voucher",
-                "Game Top Up",
-              ].map((item) => (
-                <li key={item}>
-                  <Link className="transition-colors hover:text-white" href="#">
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-6 font-bold text-white">Support</h4>
-            <ul className="space-y-4 text-sm">
-              {["Help Center", "How to Sell", "Safety Tips", "Term & Conditions"].map((item) => (
-                <li key={item}>
-                  <Link className="transition-colors hover:text-white" href="#">
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-6 font-bold text-white">Newsletter</h4>
-            <p className="mb-4 text-sm">Get updates on new premium listings.</p>
-            <div className="relative">
-              <input
-                className="w-full rounded-lg border border-white/10 bg-white/5 py-3.5 pr-12 pl-4 text-sm outline-none focus:border-transparent focus:ring-secondary"
-                placeholder="Your email address"
-                type="email"
-              />
-              <button
-                className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center justify-center rounded-md bg-secondary p-2 text-white transition-all hover:brightness-110"
-                type="button"
-              >
-                <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="mx-auto mt-16 flex max-w-360 flex-col items-center justify-between gap-4 border-t border-white/5 px-6 pt-8 text-[11px] font-medium text-slate-400 md:flex-row">
-          <p>© 2024 GAMEMARKET Indonesia. All rights reserved.</p>
-          <div className="flex gap-8">
-            {["Privacy Policy", "Terms of Use", "Contact Us"].map((item) => (
-              <Link className="transition-colors hover:text-white" href="#" key={item}>
-                {item}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </footer>
+      <BuyerFooter />
     </div>
   );
 }

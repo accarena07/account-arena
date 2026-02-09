@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
-import { applyInitialTheme, toggleDarkMode } from "../components/theme";
+import Breadcrumb from "../components/Breadcrumb";
+import BuyerFooter from "../components/BuyerFooter";
+import BuyerTopNav from "../components/BuyerTopNav";
 
 const gallery = [
   "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1800&q=80",
@@ -47,69 +48,18 @@ const recommendations = [
 ];
 
 export default function BuyerAccountDetailPage() {
-  useEffect(() => {
-    applyInitialTheme();
-  }, []);
-
   return (
     <div className="bg-background-light text-slate-900 transition-colors duration-200 dark:bg-background-dark dark:text-slate-100">
-      <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/80">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link className="flex items-center gap-2" href="/">
-            <div className="rounded-lg bg-primary p-1.5">
-              <span className="material-symbols-outlined text-white">sports_esports</span>
-            </div>
-            <span className="text-xl font-bold tracking-tight text-primary uppercase dark:text-white">GameMarket</span>
-          </Link>
-
-          <div className="mx-8 hidden max-w-lg flex-1 md:flex">
-            <div className="relative w-full">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                <span className="material-symbols-outlined text-sm">search</span>
-              </span>
-              <input
-                className="block w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-10 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
-                placeholder="Cari akun, item, atau game..."
-                type="text"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <button
-              className="rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
-              onClick={toggleDarkMode}
-              type="button"
-            >
-              <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
-              <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
-            </button>
-            <Link className="hidden text-sm font-medium hover:text-primary sm:block" href="/login">
-              Login
-            </Link>
-            <Link className="rounded-xl bg-secondary px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-orange-600" href="/register">
-              Register
-            </Link>
-            <button className="hidden items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white lg:flex" type="button">
-              <span className="material-symbols-outlined text-sm">storefront</span>
-              Sell Account
-            </button>
-          </div>
-        </div>
-      </nav>
+      <BuyerTopNav searchPlaceholder="Cari akun, item, atau game..." />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <Link className="hover:text-primary" href="/">
-            Beranda
-          </Link>
-          <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <Link className="hover:text-primary" href="/browse">
-            Valorant
-          </Link>
-          <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <span className="font-medium text-slate-900 dark:text-white">Radiant Rank Account - 150+ Skins</span>
-        </nav>
+        <Breadcrumb
+          items={[
+            { label: "Beranda", href: "/" },
+            { label: "Valorant", href: "/browse" },
+            { label: "Radiant Rank Account - 150+ Skins" },
+          ]}
+        />
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="space-y-8 lg:col-span-2">
@@ -144,15 +94,9 @@ export default function BuyerAccountDetailPage() {
             </div>
 
             <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <div className="mb-6 flex overflow-x-auto border-b border-slate-100 dark:border-slate-800">
-                <button className="border-b-2 border-primary px-6 py-3 font-bold whitespace-nowrap text-primary" type="button">Detail Akun</button>
-                <button className="border-b-2 border-transparent px-6 py-3 font-medium whitespace-nowrap text-slate-500 hover:text-slate-700 dark:hover:text-slate-300" type="button">
-                  Riwayat Transaksi
-                </button>
-                <button className="border-b-2 border-transparent px-6 py-3 font-medium whitespace-nowrap text-slate-500 hover:text-slate-700 dark:hover:text-slate-300" type="button">
-                  Ulasan Pembeli
-                </button>
-              </div>
+            <div className="mb-6 flex overflow-x-auto border-b border-slate-100 dark:border-slate-800">
+              <button className="border-b-2 border-primary px-6 py-3 font-bold whitespace-nowrap text-primary" type="button">Detail Akun</button>
+            </div>
 
               <div className="space-y-8">
                 <div>
@@ -226,10 +170,6 @@ export default function BuyerAccountDetailPage() {
                 >
                   Beli Sekarang
                 </Link>
-                <button className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-50 py-4 font-bold text-slate-700 transition-all hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700" type="button">
-                  <span className="material-symbols-outlined text-sm">chat_bubble_outline</span>
-                  Tanya Penjual
-                </button>
               </div>
               <div className="mt-6 flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 p-3 dark:border-blue-800/50 dark:bg-blue-900/20">
                 <span className="material-symbols-outlined mt-0.5 text-sm text-primary">verified_user</span>
@@ -331,75 +271,7 @@ export default function BuyerAccountDetailPage() {
         </section>
       </main>
 
-      <footer className="mt-24 bg-primary text-white">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-            <div className="space-y-4 md:col-span-1">
-              <div className="flex items-center gap-2">
-                <div className="rounded-lg bg-white p-1.5">
-                  <span className="material-symbols-outlined text-primary">sports_esports</span>
-                </div>
-                <span className="text-xl font-bold uppercase">GameMarket</span>
-              </div>
-              <p className="text-sm leading-relaxed text-blue-200">
-                Marketplace terpercaya untuk jual beli item dan akun game. Keamanan transaksi adalah prioritas utama
-                kami.
-              </p>
-            </div>
-
-            <div>
-              <h5 className="mb-4 text-sm font-bold tracking-wider uppercase">Marketplace</h5>
-              <ul className="space-y-2 text-sm text-blue-200">
-                <li><Link className="hover:text-white" href="#">Akun Game</Link></li>
-                <li><Link className="hover:text-white" href="#">Item & Skin</Link></li>
-                <li><Link className="hover:text-white" href="#">Top Up Voucher</Link></li>
-                <li><Link className="hover:text-white" href="#">Game Coins</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h5 className="mb-4 text-sm font-bold tracking-wider uppercase">Bantuan</h5>
-              <ul className="space-y-2 text-sm text-blue-200">
-                <li><Link className="hover:text-white" href="#">Pusat Bantuan</Link></li>
-                <li><Link className="hover:text-white" href="#">Cara Berjualan</Link></li>
-                <li><Link className="hover:text-white" href="#">Syarat & Ketentuan</Link></li>
-                <li><Link className="hover:text-white" href="#">Kebijakan Privasi</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h5 className="mb-4 text-sm font-bold tracking-wider uppercase">Kontak Kami</h5>
-              <div className="mb-6 flex gap-4">
-                {[
-                  ["facebook", "Facebook"],
-                  ["photo_camera", "Instagram"],
-                  ["public", "Website"],
-                ].map(([icon, label]) => (
-                  <Link className="rounded-lg bg-blue-800 p-2 transition-colors hover:bg-blue-700" href="#" key={label}>
-                    <span className="material-symbols-outlined text-[20px]">{icon}</span>
-                  </Link>
-                ))}
-              </div>
-              <div className="flex items-center gap-2 text-xs text-blue-300">
-                <span className="material-symbols-outlined text-sm">mail</span>
-                support@gamemarket.id
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-blue-800 pt-8 text-xs text-blue-400 md:flex-row">
-            <p>© 2024 GAMEMARKET Indonesia. All rights reserved.</p>
-            <button
-              className="flex cursor-pointer items-center gap-2 rounded-full bg-blue-900/50 px-3 py-1.5 hover:bg-blue-900"
-              onClick={toggleDarkMode}
-              type="button"
-            >
-              <span className="material-symbols-outlined text-xs">dark_mode</span>
-              Toggle Theme
-            </button>
-          </div>
-        </div>
-      </footer>
+      <BuyerFooter />
     </div>
   );
 }

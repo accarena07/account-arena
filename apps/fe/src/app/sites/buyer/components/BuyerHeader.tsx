@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { applyInitialTheme, toggleDarkMode } from "./theme";
+import { useState } from "react";
+import ThemeToggleButton from "./ThemeToggleButton";
 
 type BuyerHeaderProps = {
   isLoggedIn?: boolean;
@@ -16,10 +16,6 @@ export default function BuyerHeader({
 }: BuyerHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    applyInitialTheme();
-  }, []);
 
   return (
     <>
@@ -81,18 +77,10 @@ export default function BuyerHeader({
           </div>
 
           <div className="relative flex items-center gap-2 md:gap-4">
-            <button
-              className="rounded-full p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-              onClick={toggleDarkMode}
-              type="button"
-            >
-              <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
-              <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
-            </button>
+            <ThemeToggleButton className="text-slate-500 dark:text-slate-400" />
 
             {!isLoggedIn ? (
               <>
-                <span className="material-symbols-outlined text-slate-500 md:hidden">search</span>
                 <div className="hidden items-center gap-4 md:flex">
                   <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400" href="/login">
                     Login

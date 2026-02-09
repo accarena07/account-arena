@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Inter, Poppins } from "next/font/google";
-import { applyInitialTheme, toggleDarkMode } from "../components/theme";
+import ThemeToggleButton from "../components/ThemeToggleButton";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
@@ -11,10 +11,6 @@ export default function BuyerRegisterPage() {
   const [otpMethod, setOtpMethod] = useState<"whatsapp" | "email">("whatsapp");
   const [showToast, setShowToast] = useState(false);
   const [showTncModal, setShowTncModal] = useState(false);
-
-  useEffect(() => {
-    applyInitialTheme();
-  }, []);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,14 +23,7 @@ export default function BuyerRegisterPage() {
       className={`${inter.className} bg-background-light flex min-h-screen items-center justify-center p-4 transition-colors duration-300 dark:bg-background-dark`}
     >
       <div className="fixed top-6 right-6 z-50">
-        <button
-          className="rounded-full bg-white p-3 text-gray-600 shadow-lg transition-all hover:scale-110 dark:bg-slate-800 dark:text-gray-300"
-          onClick={toggleDarkMode}
-          type="button"
-        >
-          <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
-          <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
-        </button>
+        <ThemeToggleButton className="bg-white p-3 text-gray-600 shadow-lg transition-all hover:scale-110 dark:bg-slate-800 dark:text-gray-300" />
       </div>
 
       {showTncModal ? (

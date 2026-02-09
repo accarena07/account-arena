@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import ThemeInitializer from "./components/ThemeInitializer";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -15,5 +16,10 @@ export default function BuyerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className={plusJakartaSans.className}>{children}</div>;
+  return (
+    <div className={plusJakartaSans.className}>
+      <ThemeInitializer />
+      {children}
+    </div>
+  );
 }

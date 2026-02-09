@@ -93,27 +93,7 @@ export default function BuyerLandingPage() {
               >
                 Mulai Belanja
               </Link>
-              <button
-                className="rounded-2xl border border-white/20 bg-white/10 px-8 py-4 font-extrabold text-white backdrop-blur-[10px] transition-all hover:bg-white/20"
-                type="button"
-              >
-                Lihat Promo
-              </button>
             </div>
-          </div>
-          <div className="absolute right-6 bottom-6 z-10 flex gap-3 md:right-8 md:bottom-8">
-            <button
-              className="rounded-full bg-white/10 p-2 text-white backdrop-blur-md transition-colors hover:bg-white/20 md:p-3"
-              type="button"
-            >
-              <span className="material-symbols-outlined">chevron_left</span>
-            </button>
-            <button
-              className="rounded-full bg-white/10 p-2 text-white backdrop-blur-md transition-colors hover:bg-white/20 md:p-3"
-              type="button"
-            >
-              <span className="material-symbols-outlined">chevron_right</span>
-            </button>
           </div>
         </section>
 

@@ -1,6 +1,12 @@
 import Image from "next/image";
-import Link from "next/link";
+import Breadcrumb from "../../components/Breadcrumb";
+import BuyerFooter from "../../components/BuyerFooter";
 import BuyerHeader from "../../components/BuyerHeader";
+import PaymentSummaryCard from "../../components/PaymentSummaryCard";
+import PaymentMethodCard from "../../components/PaymentMethodCard";
+import StatusBadge from "../../components/StatusBadge";
+import SupportHelpCard from "../../components/SupportHelpCard";
+import TransactionProgressStepper from "../../components/TransactionProgressStepper";
 
 export default function BuyerTransactionPendingPage() {
   return (
@@ -8,17 +14,14 @@ export default function BuyerTransactionPendingPage() {
       <BuyerHeader isLoggedIn searchPlaceholder="Search for game accounts..." />
 
       <main className="mx-auto max-w-300 px-4 py-8 md:px-6">
-        <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <Link className="transition-colors hover:text-primary" href="/">
-            Home
-          </Link>
-          <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <Link className="transition-colors hover:text-primary" href="/transactions">
-            Daftar Transaksi
-          </Link>
-          <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <span className="font-medium text-slate-900 dark:text-slate-100">TRX-9921048821</span>
-        </nav>
+        <Breadcrumb
+          className="mb-6"
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Daftar Transaksi", href: "/transactions" },
+            { label: "TRX-9921048821" },
+          ]}
+        />
 
         <div className="mb-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-800">
           <div className="flex flex-col items-start justify-between gap-4 border-b border-slate-100 p-6 dark:border-slate-700 md:flex-row md:items-center md:p-8">
@@ -34,13 +37,7 @@ export default function BuyerTransactionPendingPage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="flex items-center gap-2 rounded-full bg-orange-100 px-4 py-2 text-sm font-bold text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-orange-400 opacity-75"></span>
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-orange-500"></span>
-                </span>
-                Menunggu Pembayaran
-              </span>
+              <StatusBadge className="rounded-full px-4 py-2 text-sm" label="Menunggu Pembayaran" showPing variant="pending_payment" />
               <span className="text-sm font-medium text-slate-400 dark:text-slate-500">
                 Berakhir dalam: <span className="font-bold text-red-500">23:59:59</span>
               </span>
@@ -48,29 +45,7 @@ export default function BuyerTransactionPendingPage() {
           </div>
 
           <div className="bg-slate-50/50 px-8 py-10 dark:bg-slate-900/50">
-            <div className="relative mx-auto flex max-w-2xl items-center justify-between">
-              <div className="absolute top-1/2 left-0 z-0 h-1 w-full -translate-y-1/2 bg-slate-200 dark:bg-slate-700"></div>
-              <div className="absolute top-1/2 left-0 z-0 h-1 w-[0%] -translate-y-1/2 bg-primary"></div>
-
-              <div className="relative z-10 flex flex-col items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white ring-4 ring-white shadow-lg shadow-primary/30 dark:ring-slate-900">
-                  <span className="material-symbols-outlined text-sm">payments</span>
-                </div>
-                <span className="text-xs font-bold tracking-wider text-primary uppercase">Pending</span>
-              </div>
-              <div className="relative z-10 flex flex-col items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 text-slate-400 dark:bg-slate-700">
-                  <span className="material-symbols-outlined text-sm">hourglass_empty</span>
-                </div>
-                <span className="text-xs font-bold tracking-wider text-slate-400 uppercase">Diproses</span>
-              </div>
-              <div className="relative z-10 flex flex-col items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200 text-slate-400 dark:bg-slate-700">
-                  <span className="material-symbols-outlined text-sm">verified_user</span>
-                </div>
-                <span className="text-xs font-bold tracking-wider text-slate-400 uppercase">Selesai</span>
-              </div>
-            </div>
+            <TransactionProgressStepper state="pending" />
           </div>
         </div>
 
@@ -150,147 +125,34 @@ export default function BuyerTransactionPendingPage() {
           </div>
 
           <div className="space-y-8">
-            <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-800">
-              <div className="flex items-center gap-2 border-b border-slate-100 p-6 dark:border-slate-700">
-                <span className="material-symbols-outlined text-primary">payments</span>
-                <h2 className="text-lg font-bold">Rincian Pembayaran</h2>
-              </div>
-              <div className="space-y-4 p-6">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">Harga Akun</span>
-                  <span className="font-bold">Rp 1.250.000</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">Service Fee</span>
-                  <span className="font-bold">Rp 12.500</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500 dark:text-slate-400">Kode Unik</span>
-                  <span className="font-bold text-secondary">+ Rp 312</span>
-                </div>
-                <div className="flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-700">
-                  <span className="text-sm font-bold tracking-wider uppercase">Total Bayar</span>
-                  <span className="text-2xl font-extrabold text-secondary">Rp 1.262.812</span>
-                </div>
-              </div>
-              <div className="flex justify-center bg-slate-50 p-4 dark:bg-slate-700/40">
-                <Link
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-extrabold text-white transition-all hover:bg-blue-800"
-                  href="/payment/processing"
-                >
-                  <span className="material-symbols-outlined text-xl">account_balance_wallet</span>
-                  Bayar Sekarang
-                </Link>
-              </div>
-            </section>
+            <PaymentSummaryCard
+              action={{
+                className: "bg-primary text-white hover:bg-blue-800",
+                href: "/payment/processing",
+                icon: "account_balance_wallet",
+                label: "Bayar Sekarang",
+              }}
+              rows={[
+                { label: "Harga Akun", value: "Rp 1.250.000" },
+                { label: "Service Fee", value: "Rp 12.500" },
+                { label: "Kode Unik", value: "+ Rp 312", valueClassName: "text-secondary" },
+              ]}
+              totalValue="Rp 1.262.812"
+            />
 
-            <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-800">
-              <div className="flex items-center gap-2 border-b border-slate-100 p-6 dark:border-slate-700">
-                <span className="material-symbols-outlined text-primary">account_balance_wallet</span>
-                <h2 className="text-lg font-bold">Metode Pembayaran</h2>
-              </div>
-              <div className="p-6">
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-12 items-center justify-center rounded border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-700">
-                      <span className="text-[10px] font-black italic text-blue-900 dark:text-blue-400">BCA</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold">BCA Virtual Account</p>
-                      <p className="text-xs text-slate-500">Otomatis Terverifikasi</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-700/60">
-                  <p className="mb-1 text-[10px] font-bold tracking-widest text-slate-400 uppercase">Nomor VA</p>
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-lg font-extrabold text-primary">8077 0895 2210 12</span>
-                    <button className="p-1 text-primary hover:text-blue-700" type="button">
-                      <span className="material-symbols-outlined text-[20px]">content_copy</span>
-                    </button>
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center gap-3 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
-                  <span className="material-symbols-outlined text-sm text-blue-600">info</span>
-                  <p className="text-[11px] text-blue-700 dark:text-blue-300">Harap transfer nominal yang sesuai hingga angka terakhir.</p>
-                </div>
-              </div>
-            </section>
+            <PaymentMethodCard
+              accountNumber="8077 0895 2210 12"
+              infoText="Harap transfer nominal yang sesuai hingga angka terakhir."
+              methodName="BCA Virtual Account"
+              methodSubtitle="Otomatis Terverifikasi"
+            />
 
-            <div className="relative overflow-hidden rounded-2xl bg-primary p-6 text-white">
-              <div className="relative z-10">
-                <h4 className="mb-2 flex items-center gap-2 font-bold">
-                  <span className="material-symbols-outlined text-sm">help_outline</span>
-                  Butuh Bantuan?
-                </h4>
-                <p className="mb-4 text-xs text-blue-100/80">Tim support kami tersedia 24/7 untuk membantu kendala transaksi Anda.</p>
-                <button className="w-full rounded-lg bg-white/10 py-2.5 text-sm font-bold backdrop-blur-sm transition-colors hover:bg-white/20" type="button">
-                  Tiket Bantuan
-                </button>
-              </div>
-              <span className="material-symbols-outlined absolute -right-6 -bottom-6 rotate-12 text-9xl text-white/5">support_agent</span>
-            </div>
+            <SupportHelpCard description="Tim support kami tersedia 24/7 untuk membantu kendala transaksi Anda." />
           </div>
         </div>
       </main>
 
-      <footer className="mt-20 bg-primary py-16 text-slate-300">
-        <div className="mx-auto grid max-w-360 grid-cols-1 gap-12 px-6 md:grid-cols-4">
-          <div className="space-y-6">
-            <div className="flex items-center gap-2">
-              <div className="rounded-lg bg-white/10 p-2 backdrop-blur-sm">
-                <span className="material-symbols-outlined text-white">sports_esports</span>
-              </div>
-              <span className="text-xl font-bold tracking-tight text-white uppercase">GameMarket</span>
-            </div>
-            <p className="text-sm leading-relaxed text-slate-400">
-              The most trusted marketplace to buy and sell premium game accounts and items with verified security.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="mb-6 font-bold text-white">Marketplace</h4>
-            <ul className="space-y-4 text-sm">
-              <li><Link className="transition-colors hover:text-white" href="#">Browse Accounts</Link></li>
-              <li><Link className="transition-colors hover:text-white" href="#">Item & Skins</Link></li>
-              <li><Link className="transition-colors hover:text-white" href="#">Top Up Voucher</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-6 font-bold text-white">Support</h4>
-            <ul className="space-y-4 text-sm">
-              <li><Link className="transition-colors hover:text-white" href="#">Help Center</Link></li>
-              <li><Link className="transition-colors hover:text-white" href="#">How to Sell</Link></li>
-              <li><Link className="transition-colors hover:text-white" href="#">Safety Tips</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-6 font-bold text-white">Newsletter</h4>
-            <p className="mb-4 text-sm">Get updates on new premium listings.</p>
-            <div className="relative">
-              <input
-                className="w-full rounded-lg border-white/10 bg-white/5 py-3 px-4 text-sm outline-none focus:border-transparent focus:ring-secondary"
-                placeholder="Your email address"
-                type="email"
-              />
-              <button className="absolute top-1/2 right-2 -translate-y-1/2 rounded-md bg-secondary p-1.5 text-white transition-all hover:brightness-110" type="button">
-                <span className="material-symbols-outlined">arrow_forward</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="mx-auto mt-16 flex max-w-360 flex-col items-center justify-between gap-4 border-t border-white/5 px-6 pt-8 text-xs font-medium md:flex-row">
-          <p>© 2024 GAMEMARKET Indonesia. All rights reserved.</p>
-          <div className="flex gap-8">
-            <Link className="hover:text-white" href="#">Privacy Policy</Link>
-            <Link className="hover:text-white" href="#">Terms of Use</Link>
-            <Link className="hover:text-white" href="#">Contact Us</Link>
-          </div>
-        </div>
-      </footer>
+      <BuyerFooter />
     </div>
   );
 }
