@@ -173,7 +173,7 @@ export default function CreateListingPage() {
                     className="sr-only peer"
                     defaultChecked
                   />
-                  <div className="w-12 h-6.5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4.5 after:w-4.5 after:transition-all dark:border-gray-600 peer-checked:bg-[#FF7D1F]"></div>
+                  <div className="w-12 h-6.5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4.5 after:w-4.5 after:transition-all dark:border-gray-600 peer-checked:bg-[#FF7D1F]"></div>
                 </label>
               </div>
 
@@ -206,7 +206,7 @@ export default function CreateListingPage() {
               <div className="bg-slate-50/50 dark:bg-black/20 p-8 rounded-4xl border border-slate-100 dark:border-slate-800 shadow-inner relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                 <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-8 italic flex items-center gap-2">
-                  <span className="w-4 h-[2px] bg-slate-200 dark:bg-slate-800"></span>
+                  <span className="w-4 h-0.5 bg-slate-200 dark:bg-slate-800"></span>
                   Earnings Breakdown
                 </h3>
                 <div className="space-y-5">
@@ -449,7 +449,7 @@ export default function CreateListingPage() {
                       $427.50
                     </span>
                   </div>
-                  <div className="w-16 h-16 bg-[#FF7D1F]/10 rounded-[1.5rem] flex items-center justify-center text-[#FF7D1F]">
+                  <div className="w-16 h-16 bg-[#FF7D1F]/10 rounded-3xl flex items-center justify-center text-[#FF7D1F]">
                     <span className="material-symbols-outlined text-3xl font-black italic">
                       savings
                     </span>
@@ -490,7 +490,7 @@ export default function CreateListingPage() {
               </div>
             </div>
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <button className="w-full md:w-3/4 bg-[#254294] hover:bg-blue-900 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest italic shadow-2xl shadow-blue-900/30 flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-95 text-lg">
+              <button className="w-full md:w-3/4 bg-[#254294] hover:bg-blue-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest italic shadow-2xl shadow-blue-900/30 flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-95 text-lg">
                 <span className="material-symbols-outlined font-black text-2xl italic">
                   rocket_launch
                 </span>
@@ -568,7 +568,7 @@ export default function CreateListingPage() {
                     </label>
                     <textarea
                       placeholder="Describe everything: inventory, rare skins, login method, winrate, etc..."
-                      className="w-full h-full min-h-[300px] px-6 py-5 bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200 dark:border-slate-800 rounded-4xl focus:ring-4 focus:ring-blue-500/5 focus:border-[#254294] outline-none dark:text-white placeholder:text-slate-300 font-bold text-sm resize-none transition-all shadow-inner italic leading-relaxed"
+                      className="w-full h-full min-h-75 px-6 py-5 bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200 dark:border-slate-800 rounded-4xl focus:ring-4 focus:ring-blue-500/5 focus:border-[#254294] outline-none dark:text-white placeholder:text-slate-300 font-bold text-sm resize-none transition-all shadow-inner italic leading-relaxed"
                     ></textarea>
                   </div>
                 </div>

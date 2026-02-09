@@ -32,12 +32,12 @@ export default function BuyerLoginPage() {
           onClick={toggleDarkMode}
           type="button"
         >
-          <span className="material-symbols-outlined dark:!hidden">dark_mode</span>
-          <span className="material-symbols-outlined !hidden dark:!inline-block">light_mode</span>
+          <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
+          <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
         </button>
       </div>
 
-      <main className="mx-auto flex min-h-[700px] w-full max-w-6xl flex-col overflow-hidden bg-white shadow-2xl dark:bg-slate-900 lg:flex-row lg:rounded-3xl">
+      <main className="mx-auto flex min-h-175 w-full max-w-6xl flex-col overflow-hidden bg-white shadow-2xl dark:bg-slate-900 lg:flex-row lg:rounded-3xl">
         <div className="relative flex flex-col items-center justify-center overflow-hidden bg-primary p-12 text-white lg:w-1/2">
           <div
             className="absolute inset-0 opacity-20"

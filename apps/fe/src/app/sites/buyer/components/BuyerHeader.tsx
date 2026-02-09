@@ -26,13 +26,13 @@ export default function BuyerHeader({
       {profileMenuOpen ? (
         <button
           aria-label="Close profile menu overlay"
-          className="fixed inset-0 z-[55] bg-slate-900/40 backdrop-blur-[2px]"
+          className="fixed inset-0 z-55 bg-slate-900/40 backdrop-blur-[2px]"
           onClick={() => setProfileMenuOpen(false)}
           type="button"
         />
       ) : null}
 
-      <header className="sticky top-0 z-[60] border-b border-slate-200 bg-white/90 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/90">
+      <header className="sticky top-0 z-60 border-b border-slate-200 bg-white/90 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/90">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:h-20 md:px-6">
           {!isLoggedIn ? (
             <button
@@ -86,8 +86,8 @@ export default function BuyerHeader({
               onClick={toggleDarkMode}
               type="button"
             >
-              <span className="material-symbols-outlined dark:!hidden">dark_mode</span>
-              <span className="material-symbols-outlined !hidden dark:!inline-block">light_mode</span>
+              <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
+              <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
             </button>
 
             {!isLoggedIn ? (
@@ -142,13 +142,13 @@ export default function BuyerHeader({
                 </button>
 
                 {profileMenuOpen ? (
-                  <div className="absolute top-14 right-0 z-[70] w-72 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-800 md:top-16">
+                  <div className="absolute top-14 right-0 z-70 w-72 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-800 md:top-16">
                     <div className="border-b border-slate-50 p-5 dark:border-slate-700">
                       <div className="flex items-center gap-4">
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-lg font-bold text-white">FW</div>
                         <div>
                           <h4 className="font-bold text-slate-900 dark:text-white">Felix Wijaya</h4>
-                          <p className="max-w-[160px] truncate text-xs text-slate-500">felix.wijaya@example.com</p>
+                          <p className="max-w-40 truncate text-xs text-slate-500">felix.wijaya@example.com</p>
                         </div>
                       </div>
                     </div>
@@ -210,7 +210,7 @@ export default function BuyerHeader({
 
       {!isLoggedIn ? (
         <div
-          className={`fixed top-0 left-0 bottom-0 z-[60] w-[280px] overflow-y-auto bg-white shadow-2xl transition-transform duration-300 dark:bg-background-dark md:hidden ${
+          className={`fixed top-0 left-0 bottom-0 z-60 w-70 overflow-y-auto bg-white shadow-2xl transition-transform duration-300 dark:bg-background-dark md:hidden ${
             mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >

@@ -65,7 +65,7 @@ export default function BuyerLandingPage() {
       <BuyerHeader />
 
       <main className="container mx-auto px-4 py-6 md:py-8">
-        <section className="relative mb-10 min-h-112.5 overflow-hidden rounded-2xl bg-linear-to-br from-[#1e293b] to-[#0f172a] md:mb-16 md:h-[500px] md:rounded-3xl">
+        <section className="relative mb-10 min-h-112.5 overflow-hidden rounded-2xl bg-linear-to-br from-[#1e293b] to-background-dark md:mb-16 md:h-125 md:rounded-3xl">
           <Image
             alt="Futuristic gaming background"
             className="absolute inset-0 h-full w-full object-cover opacity-50 mix-blend-overlay"
@@ -166,7 +166,7 @@ export default function BuyerLandingPage() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8">
             {listings.map((listing) => (
               <div
-                className="group overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-lg transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900"
+                className="group overflow-hidden rounded-4xl border border-slate-100 bg-white shadow-lg transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900"
                 key={listing.title}
               >
                 <div className="relative h-52 overflow-hidden md:h-56">
