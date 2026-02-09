@@ -55,7 +55,7 @@ export default function BuyerPaymentPage() {
         <div className="flex flex-col gap-8 lg:flex-row">
           <div className="flex-1 space-y-6">
             <div className="mb-2 flex items-center gap-3">
-              <Link className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-slate-800" href="/sites/buyer/account-detail">
+              <Link className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-slate-800" href="/account-detail">
                 <span className="material-symbols-outlined text-slate-500">arrow_back</span>
               </Link>
               <h1 className="text-2xl font-bold">Secure Checkout</h1>
@@ -237,7 +237,7 @@ export default function BuyerPaymentPage() {
               <div className="mt-8 space-y-4">
                 <Link
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:bg-blue-700 active:scale-[0.98]"
-                  href="/sites/buyer/payment/processing"
+                  href="/payment/processing"
                 >
                   <span className="material-symbols-outlined">lock</span>
                   Pay Now (Rp 1.267.500)

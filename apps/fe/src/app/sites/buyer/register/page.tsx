@@ -181,13 +181,13 @@ export default function BuyerRegisterPage() {
             <div className="mb-8 flex border-b border-gray-100 dark:border-slate-800">
               <a
                 className="flex-1 border-b-2 border-transparent py-4 text-center font-semibold text-gray-400 transition-all duration-200 hover:text-gray-600 dark:hover:text-gray-200"
-                href="/sites/buyer/login"
+                href="/login"
               >
                 Masuk
               </a>
               <a
                 className="flex-1 border-b-2 border-primary py-4 text-center font-semibold text-primary transition-all duration-200 dark:border-secondary dark:text-secondary"
-                href="/sites/buyer/register"
+                href="/register"
               >
                 Daftar
               </a>
@@ -325,7 +325,7 @@ export default function BuyerRegisterPage() {
               <div className="pt-4 text-center">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Sudah punya akun?{" "}
-                  <a className="font-bold text-primary hover:underline dark:text-secondary" href="/sites/buyer/login">
+                  <a className="font-bold text-primary hover:underline dark:text-secondary" href="/login">
                     Masuk di sini
                   </a>
                 </p>

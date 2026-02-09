@@ -73,7 +73,7 @@ export default function BuyerPaymentProcessingPage() {
               </button>
               <Link
                 className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-6 py-4 font-bold text-slate-700 transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-                href="/sites/buyer/payment/success"
+                href="/payment/success"
               >
                 <span className="material-symbols-outlined text-xl">refresh</span>
                 <span>Cek Status Pembayaran</span>
@@ -102,7 +102,7 @@ export default function BuyerPaymentProcessingPage() {
             </div>
           </div>
 
-          <Link className="flex items-center gap-2 text-sm font-semibold text-slate-500 transition-colors hover:text-primary dark:text-slate-400" href="/sites/buyer">
+          <Link className="flex items-center gap-2 text-sm font-semibold text-slate-500 transition-colors hover:text-primary dark:text-slate-400" href="/">
             <span className="material-symbols-outlined text-lg">arrow_back</span>
             Kembali ke Beranda
           </Link>

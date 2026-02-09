@@ -89,7 +89,7 @@ export default function BuyerLandingPage() {
             <div className="flex flex-col gap-4 sm:flex-row">
               <Link
                 className="rounded-2xl bg-secondary px-8 py-4 text-center font-extrabold text-white shadow-lg shadow-orange-500/30 transition-all hover:-translate-y-1"
-                href="/sites/buyer/browse"
+                href="/browse"
               >
                 Mulai Belanja
               </Link>
@@ -125,7 +125,7 @@ export default function BuyerLandingPage() {
             </div>
             <Link
               className="flex items-center gap-1 text-sm font-bold text-primary hover:underline dark:text-blue-400"
-              href="/sites/buyer/browse"
+              href="/browse"
             >
               Lihat Semua Game <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
@@ -206,7 +206,7 @@ export default function BuyerLandingPage() {
                   </div>
                   <Link
                     className="block w-full rounded-2xl bg-primary py-3.5 text-center font-bold text-white transition-colors hover:bg-blue-900"
-                    href="/sites/buyer/account-detail"
+                    href="/account-detail"
                   >
                     Beli Sekarang
                   </Link>

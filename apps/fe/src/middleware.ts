@@ -35,9 +35,14 @@ export function middleware(req: NextRequest) {
   if (host === "seller.localhost") site = "seller";
   if (host === "admin.localhost") site = "admin";
 
-  // Prevent double prefix kalau user akses langsung /_sites/...
+  // Normalisasi URL lama: /sites/{site}/... -> /...
+  // Supaya URL publik tetap bersih (tanpa /sites dan tanpa /buyer).
   if (url.pathname.startsWith("/sites/")) {
-    return NextResponse.next();
+    const parts = url.pathname.split("/").filter(Boolean); // ["sites", "{site}", ...]
+    const cleanPath = `/${parts.slice(2).join("/")}`;
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = cleanPath === "/" ? "/" : cleanPath;
+    return NextResponse.redirect(redirectUrl);
   }
 
   url.pathname = `/sites/${site}${url.pathname}`;

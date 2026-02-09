@@ -17,7 +17,7 @@ export default function BuyerOtpPage() {
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    router.push("/sites/buyer/login/reset-password");
+    router.push("/login/reset-password");
   }
 
   return (
@@ -90,7 +90,7 @@ export default function BuyerOtpPage() {
               </button>
               <a
                 className="block w-full rounded-xl bg-transparent py-3 text-center font-medium text-gray-500 transition-all hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-slate-800"
-                href="/sites/buyer/login"
+                href="/login"
               >
                 Kembali ke Login
               </a>

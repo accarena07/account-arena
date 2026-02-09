@@ -45,7 +45,7 @@ export default function BuyerHeader({
           ) : null}
 
           <div className="flex items-center gap-6 md:gap-8">
-            <Link className="flex items-center gap-2" href="/sites/buyer">
+            <Link className="flex items-center gap-2" href="/">
               <div className="rounded-lg bg-primary p-1.5 md:p-2">
                 <span className="material-symbols-outlined text-xl text-white md:text-2xl">videogame_asset</span>
               </div>
@@ -56,12 +56,12 @@ export default function BuyerHeader({
 
             {!isLoggedIn ? (
               <nav className="hidden items-center gap-6 md:flex">
-                <Link className="text-sm font-semibold text-primary dark:text-white" href="/sites/buyer">
+                <Link className="text-sm font-semibold text-primary dark:text-white" href="/">
                   Home
                 </Link>
                 <Link
                   className="text-sm font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-400 dark:hover:text-white"
-                  href="/sites/buyer/browse"
+                  href="/browse"
                 >
                   Games
                 </Link>
@@ -94,12 +94,12 @@ export default function BuyerHeader({
               <>
                 <span className="material-symbols-outlined text-slate-500 md:hidden">search</span>
                 <div className="hidden items-center gap-4 md:flex">
-                  <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400" href="/sites/buyer/login">
+                  <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400" href="/login">
                     Login
                   </Link>
                   <Link
                     className="rounded-xl bg-secondary px-6 py-2.5 font-bold text-white transition-colors hover:bg-orange-600"
-                    href="/sites/buyer/register"
+                    href="/register"
                   >
                     Register
                   </Link>
@@ -163,7 +163,7 @@ export default function BuyerHeader({
                       </Link>
                       <Link
                         className="group flex items-center justify-between rounded-xl px-4 py-3 transition-all hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                        href="/sites/buyer/transactions"
+                        href="/transactions"
                         onClick={() => setProfileMenuOpen(false)}
                       >
                         <div className="flex items-center gap-3">
@@ -184,7 +184,7 @@ export default function BuyerHeader({
                     <div className="border-t border-slate-50 p-2 dark:border-slate-700">
                       <Link
                         className="group flex items-center gap-3 rounded-xl px-4 py-3 transition-all hover:bg-red-50 dark:hover:bg-red-900/10"
-                        href="/sites/buyer"
+                        href="/"
                         onClick={() => setProfileMenuOpen(false)}
                       >
                         <span className="material-symbols-outlined text-slate-400 group-hover:text-red-500">logout</span>
@@ -237,12 +237,12 @@ export default function BuyerHeader({
               </div>
             </div>
             <nav className="mb-8 flex flex-col gap-4">
-              <Link className="flex items-center gap-3 text-base font-bold text-primary dark:text-white" href="/sites/buyer">
+              <Link className="flex items-center gap-3 text-base font-bold text-primary dark:text-white" href="/">
                 <span className="material-symbols-outlined text-xl">home</span> Home
               </Link>
               <Link
                 className="flex items-center gap-3 text-base font-semibold text-slate-600 hover:text-primary dark:text-slate-400"
-                href="/sites/buyer/browse"
+                href="/browse"
               >
                 <span className="material-symbols-outlined text-xl">sports_esports</span> Games
               </Link>
@@ -261,11 +261,11 @@ export default function BuyerHeader({
               <div className="grid grid-cols-2 gap-3">
                 <Link
                   className="flex items-center justify-center rounded-xl border border-slate-200 py-3 text-sm font-bold text-slate-600 dark:border-slate-800 dark:text-slate-400"
-                  href="/sites/buyer/login"
+                  href="/login"
                 >
                   Login
                 </Link>
-                <Link className="flex items-center justify-center rounded-xl bg-secondary py-3 text-sm font-bold text-white" href="/sites/buyer/register">
+                <Link className="flex items-center justify-center rounded-xl bg-secondary py-3 text-sm font-bold text-white" href="/register">
                   Register
                 </Link>
               </div>

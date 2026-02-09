@@ -95,7 +95,7 @@ export default function BuyerLoginPage() {
               </button>
               <a
                 className="flex-1 border-b-2 border-transparent py-4 text-center font-semibold text-gray-400 transition-all duration-200 hover:text-gray-600 dark:hover:text-gray-200"
-                href="/sites/buyer/register"
+                href="/register"
               >
                 Daftar
               </a>
@@ -119,7 +119,7 @@ export default function BuyerLoginPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Kata Sandi</label>
-                    <a className="text-sm text-primary hover:underline dark:text-blue-400" href="/sites/buyer/login/otp">
+                    <a className="text-sm text-primary hover:underline dark:text-blue-400" href="/login/otp">
                       Lupa kata sandi?
                     </a>
                   </div>

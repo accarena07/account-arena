@@ -14,7 +14,7 @@ export default function KYCVerificationPage() {
       {/* Breadcrumb */}
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4 italic">
         <Link
-          href="/sites/seller"
+          href="/"
           className="hover:text-slate-600 transition-colors"
         >
           Dashboard

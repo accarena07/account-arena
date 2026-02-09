@@ -34,7 +34,7 @@ export default function CreateListingPage() {
       <header className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
         <div className="flex items-center gap-5 w-full md:w-auto">
           <Link
-            href="/sites/seller/listings"
+            href="/listings"
             className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-[#254294] transition-all hover:scale-105 shadow-sm group"
           >
             <span className="material-symbols-outlined font-black group-hover:-translate-x-1 transition-transform">

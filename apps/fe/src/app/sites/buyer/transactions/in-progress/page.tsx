@@ -9,11 +9,11 @@ export default function BuyerTransactionInProgressPage() {
 
       <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-6">
         <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <Link className="transition-colors hover:text-primary" href="/sites/buyer">
+          <Link className="transition-colors hover:text-primary" href="/">
             Home
           </Link>
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <Link className="transition-colors hover:text-primary" href="/sites/buyer/transactions">
+          <Link className="transition-colors hover:text-primary" href="/transactions">
             Daftar Transaksi
           </Link>
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>

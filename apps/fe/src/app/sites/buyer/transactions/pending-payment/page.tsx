@@ -9,11 +9,11 @@ export default function BuyerTransactionPendingPage() {
 
       <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-6">
         <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <Link className="transition-colors hover:text-primary" href="/sites/buyer">
+          <Link className="transition-colors hover:text-primary" href="/">
             Home
           </Link>
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <Link className="transition-colors hover:text-primary" href="/sites/buyer/transactions">
+          <Link className="transition-colors hover:text-primary" href="/transactions">
             Daftar Transaksi
           </Link>
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -176,7 +176,7 @@ export default function BuyerTransactionPendingPage() {
               <div className="flex justify-center bg-slate-50 p-4 dark:bg-slate-700/40">
                 <Link
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-extrabold text-white transition-all hover:bg-blue-800"
-                  href="/sites/buyer/payment/processing"
+                  href="/payment/processing"
                 >
                   <span className="material-symbols-outlined text-xl">account_balance_wallet</span>
                   Bayar Sekarang

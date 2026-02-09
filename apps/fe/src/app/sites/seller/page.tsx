@@ -77,7 +77,7 @@ export default function SellerDashboardPage() {
           </p>
         </div>
         <Link
-          href="/sites/seller/listings/new"
+          href="/listings/new"
           className="w-full md:w-auto bg-[#254294] hover:bg-blue-900 text-white px-10 py-4.5 rounded-2xl font-black uppercase tracking-widest italic flex items-center justify-center gap-4 shadow-2xl shadow-blue-900/20 transition-all transform hover:scale-[1.02] active:scale-95 text-xs"
         >
           <span className="material-symbols-outlined text-[24px] font-black italic">
@@ -302,7 +302,7 @@ export default function SellerDashboardPage() {
               ))}
             </div>
             <Link
-              href="/sites/seller/listings"
+              href="/listings"
               className="mt-12 w-full text-center text-[#254294] dark:text-blue-400 text-[11px] font-black uppercase tracking-widest italic group-hover:translate-x-1 transition-all flex items-center justify-center gap-2 hover:underline decoration-2"
             >
               Management Console{" "}

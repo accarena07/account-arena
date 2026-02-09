@@ -68,9 +68,9 @@ export default function BuyerBrowsePage() {
   return (
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors duration-300 dark:bg-background-dark dark:text-slate-100">
       <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95">
-        <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between gap-4 px-4 md:gap-8 md:px-6">
+        <div className="mx-auto flex h-20 max-w-360 items-center justify-between gap-4 px-4 md:gap-8 md:px-6">
           <div className="shrink-0">
-            <Link className="flex items-center gap-2" href="/sites/buyer">
+            <Link className="flex items-center gap-2" href="/">
               <div className="rounded-lg bg-primary p-2">
                 <span className="material-symbols-outlined text-white">sports_esports</span>
               </div>
@@ -101,13 +101,13 @@ export default function BuyerBrowsePage() {
             <div className="mx-1 hidden h-8 w-px bg-slate-200 md:block dark:bg-slate-700"></div>
             <Link
               className="px-3 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:text-primary dark:text-slate-200"
-              href="/sites/buyer/login"
+              href="/login"
             >
               Login
             </Link>
             <Link
               className="rounded-lg bg-secondary px-4 py-2.5 text-sm font-bold whitespace-nowrap text-white shadow-lg shadow-orange-500/20 transition-all hover:brightness-110 md:px-6"
-              href="/sites/buyer/register"
+              href="/register"
             >
               Register
             </Link>
@@ -124,11 +124,11 @@ export default function BuyerBrowsePage() {
 
       <main className="mx-auto max-w-[1440px] px-4 py-8 md:px-6">
         <nav className="mb-8 flex items-center gap-2 overflow-x-auto whitespace-nowrap text-xs text-slate-500 md:text-sm dark:text-slate-400">
-          <Link className="hover:text-primary" href="/sites/buyer">
+          <Link className="hover:text-primary" href="/">
             Home
           </Link>
           <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <Link className="hover:text-primary" href="/sites/buyer/browse">
+          <Link className="hover:text-primary" href="/browse">
             Games
           </Link>
           <span className="material-symbols-outlined text-xs">chevron_right</span>
@@ -312,7 +312,7 @@ export default function BuyerBrowsePage() {
 
                     <Link
                       className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold text-white transition-colors hover:bg-blue-900"
-                      href="/sites/buyer/account-detail"
+                      href="/account-detail"
                     >
                       <span className="material-symbols-outlined text-sm">shopping_cart</span>
                       Beli Sekarang

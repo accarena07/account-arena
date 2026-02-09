@@ -55,7 +55,7 @@ export default function BuyerAccountDetailPage() {
     <div className="bg-background-light text-slate-900 transition-colors duration-200 dark:bg-background-dark dark:text-slate-100">
       <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/80">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link className="flex items-center gap-2" href="/sites/buyer">
+          <Link className="flex items-center gap-2" href="/">
             <div className="rounded-lg bg-primary p-1.5">
               <span className="material-symbols-outlined text-white">sports_esports</span>
             </div>
@@ -84,10 +84,10 @@ export default function BuyerAccountDetailPage() {
               <span className="material-symbols-outlined dark:!hidden">dark_mode</span>
               <span className="material-symbols-outlined !hidden dark:!inline-block">light_mode</span>
             </button>
-            <Link className="hidden text-sm font-medium hover:text-primary sm:block" href="/sites/buyer/login">
+            <Link className="hidden text-sm font-medium hover:text-primary sm:block" href="/login">
               Login
             </Link>
-            <Link className="rounded-xl bg-secondary px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-orange-600" href="/sites/buyer/register">
+            <Link className="rounded-xl bg-secondary px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-orange-600" href="/register">
               Register
             </Link>
             <button className="hidden items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white lg:flex" type="button">
@@ -100,11 +100,11 @@ export default function BuyerAccountDetailPage() {
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <Link className="hover:text-primary" href="/sites/buyer">
+          <Link className="hover:text-primary" href="/">
             Beranda
           </Link>
           <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <Link className="hover:text-primary" href="/sites/buyer/browse">
+          <Link className="hover:text-primary" href="/browse">
             Valorant
           </Link>
           <span className="material-symbols-outlined text-xs">chevron_right</span>
@@ -222,7 +222,7 @@ export default function BuyerAccountDetailPage() {
               <div className="space-y-3">
                 <Link
                   className="block w-full rounded-2xl bg-primary py-4 text-center font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-900"
-                  href="/sites/buyer/payment"
+                  href="/payment"
                 >
                   Beli Sekarang
                 </Link>
@@ -290,7 +290,7 @@ export default function BuyerAccountDetailPage() {
               <h2 className="text-2xl font-bold">Rekomendasi Lainnya</h2>
               <p className="text-slate-500">Pilihan akun terbaik untukmu hari ini</p>
             </div>
-            <Link className="flex items-center gap-1 font-bold text-primary hover:underline" href="/sites/buyer/browse">
+            <Link className="flex items-center gap-1 font-bold text-primary hover:underline" href="/browse">
               Lihat Semua
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
@@ -320,7 +320,7 @@ export default function BuyerAccountDetailPage() {
                       <span className="block text-[10px] text-slate-400">Harga</span>
                       <span className="text-lg font-extrabold text-secondary">{item.price}</span>
                     </div>
-                    <Link className="rounded-lg bg-primary/10 p-2 text-primary transition-all hover:bg-primary hover:text-white" href="/sites/buyer/account-detail">
+                    <Link className="rounded-lg bg-primary/10 p-2 text-primary transition-all hover:bg-primary hover:text-white" href="/account-detail">
                       <span className="material-symbols-outlined text-sm">shopping_bag</span>
                     </Link>
                   </div>

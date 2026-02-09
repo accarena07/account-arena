@@ -19,7 +19,7 @@ export default function BuyerResetPasswordPage() {
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    router.push("/sites/buyer/login");
+    router.push("/login");
   }
 
   return (
@@ -141,7 +141,7 @@ export default function BuyerResetPasswordPage() {
             <div className="mt-8 text-center">
               <a
                 className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-primary dark:text-gray-400 dark:hover:text-white"
-                href="/sites/buyer/login"
+                href="/login"
               >
                 <span className="material-symbols-outlined text-base">arrow_back</span>
                 Kembali ke Halaman Login

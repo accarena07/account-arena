@@ -49,7 +49,7 @@ export default function MyListingsPage() {
       {/* Breadcrumb */}
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4 italic">
         <Link
-          href="/sites/seller"
+          href="/"
           className="hover:text-slate-600 transition-colors"
         >
           Dashboard
@@ -74,7 +74,7 @@ export default function MyListingsPage() {
         </div>
         <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto pt-6 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
           <Link
-            href="/sites/seller/listings/new"
+            href="/listings/new"
             className="bg-[#254294] hover:bg-blue-900 text-white px-6 py-3.5 rounded-2xl font-black uppercase tracking-widest italic shadow-xl shadow-blue-900/10 flex items-center gap-3 transition-all text-[10px] hover:scale-105 active:scale-95"
           >
             <span className="material-symbols-outlined font-black text-lg">

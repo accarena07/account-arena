@@ -55,14 +55,14 @@ export default function BuyerPaymentSuccessPage() {
             <div className="mx-auto flex max-w-sm flex-col gap-4">
               <Link
                 className="group flex w-full items-center justify-center gap-3 rounded-xl bg-primary px-6 py-4 font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:bg-blue-700"
-                href="/sites/buyer/transactions"
+                href="/transactions"
               >
                 <span>Lihat Detail Pesanan</span>
                 <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">receipt_long</span>
               </Link>
               <Link
                 className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-6 py-4 font-bold text-slate-700 transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-                href="/sites/buyer"
+                href="/"
               >
                 <span className="material-symbols-outlined text-xl">home</span>
                 <span>Kembali ke Beranda</span>

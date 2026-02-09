@@ -15,7 +15,7 @@ const transactions = [
     action: "Lihat Detail",
     actionClass:
       "border-2 border-primary text-primary hover:bg-primary hover:text-white",
-    actionHref: "/sites/buyer/transactions/completed",
+    actionHref: "/transactions/completed",
     image: "https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=1200&q=80",
   },
   {
@@ -28,7 +28,7 @@ const transactions = [
     statusClass: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
     action: "Bayar Sekarang",
     actionClass: "bg-secondary text-white hover:brightness-110 shadow-md shadow-orange-500/20",
-    actionHref: "/sites/buyer/transactions/pending-payment",
+    actionHref: "/transactions/pending-payment",
     image: "https://images.unsplash.com/photo-1528747045269-390fe33c19f3?auto=format&fit=crop&w=1200&q=80",
   },
   {
@@ -42,7 +42,7 @@ const transactions = [
     action: "Lihat Status",
     actionClass:
       "border-2 border-primary text-primary hover:bg-primary hover:text-white",
-    actionHref: "/sites/buyer/transactions/in-progress",
+    actionHref: "/transactions/in-progress",
     image: "https://images.unsplash.com/photo-1580327344181-c1163234e5a0?auto=format&fit=crop&w=1200&q=80",
   },
 ];
@@ -54,7 +54,7 @@ export default function BuyerTransactionsPage() {
 
       <main className="relative z-0 mx-auto max-w-[1000px] px-4 py-8 md:px-6">
         <nav className="mb-8 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <Link className="transition-colors hover:text-primary" href="/sites/buyer">
+          <Link className="transition-colors hover:text-primary" href="/">
             Home
           </Link>
           <span className="material-symbols-outlined text-xs">chevron_right</span>

@@ -16,27 +16,27 @@ export default function SellerLayout({
   const navItems = [
     {
       name: "Strategy Dashboard",
-      href: "/sites/seller",
+      href: "/",
       icon: "dashboard",
     },
     {
       name: "Inventory Hub",
-      href: "/sites/seller/listings",
+      href: "/listings",
       icon: "layers",
     },
     {
       name: "Payout Portfolio",
-      href: "/sites/seller/payouts",
+      href: "/payouts",
       icon: "account_balance",
     },
     {
       name: "Compliance Check",
-      href: "/sites/seller/verification",
+      href: "/verification",
       icon: "verified_user",
     },
     {
       name: "Terminal Config",
-      href: "/sites/seller/settings",
+      href: "/settings",
       icon: "tune",
     },
   ];
@@ -129,7 +129,7 @@ export default function SellerLayout({
         <nav className="flex-1 px-4 space-y-2 mt-2 overflow-y-auto no-scrollbar">
           {navItems.map((item) => {
             const isActiveLink =
-              item.href === "/sites/seller"
+              item.href === "/"
                 ? pathname === item.href
                 : pathname?.startsWith(item.href);
 
