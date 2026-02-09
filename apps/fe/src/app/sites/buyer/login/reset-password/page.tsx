@@ -32,8 +32,8 @@ export default function BuyerResetPasswordPage() {
           onClick={toggleDarkMode}
           type="button"
         >
-          <span className="material-symbols-outlined dark:!hidden">dark_mode</span>
-          <span className="material-symbols-outlined !hidden dark:!inline-block">light_mode</span>
+          <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
+          <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
         </button>
       </div>
 
@@ -45,7 +45,7 @@ export default function BuyerResetPasswordPage() {
         }}
       ></div>
 
-      <main className="relative z-10 w-full max-w-[500px]">
+      <main className="relative z-10 w-full max-w-125">
         <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-900">
           <div className="p-8 lg:p-12">
             <div className="mb-10 text-center">

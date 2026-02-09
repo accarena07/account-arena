@@ -95,8 +95,8 @@ export default function BuyerBrowsePage() {
               onClick={toggleDarkMode}
               type="button"
             >
-              <span className="material-symbols-outlined dark:!hidden">dark_mode</span>
-              <span className="material-symbols-outlined !hidden dark:!inline-block">light_mode</span>
+              <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
+              <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
             </button>
             <div className="mx-1 hidden h-8 w-px bg-slate-200 md:block dark:bg-slate-700"></div>
             <Link
@@ -122,7 +122,7 @@ export default function BuyerBrowsePage() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-[1440px] px-4 py-8 md:px-6">
+      <main className="mx-auto max-w-360 px-4 py-8 md:px-6">
         <nav className="mb-8 flex items-center gap-2 overflow-x-auto whitespace-nowrap text-xs text-slate-500 md:text-sm dark:text-slate-400">
           <Link className="hover:text-primary" href="/">
             Home
@@ -136,7 +136,7 @@ export default function BuyerBrowsePage() {
         </nav>
 
         <div className="flex flex-col gap-8 lg:flex-row">
-          <aside className="w-full flex-shrink-0 space-y-6 lg:w-72">
+          <aside className="w-full shrink-0 space-y-6 lg:w-72">
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-800">
               <div className="mb-6 flex items-center justify-between">
                 <h2 className="flex items-center gap-2 text-lg font-bold">
@@ -228,7 +228,7 @@ export default function BuyerBrowsePage() {
               </div>
             </div>
 
-            <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-blue-900 p-6 text-white shadow-lg">
+            <div className="group relative overflow-hidden rounded-2xl bg-linear-to-br from-primary to-blue-900 p-6 text-white shadow-lg">
               <div className="relative z-10">
                 <span className="mb-2 inline-block rounded bg-white/20 px-2 py-1 text-[10px] font-bold uppercase">Exclusive</span>
                 <h4 className="mb-1 font-bold">Secure Transactions</h4>
@@ -276,7 +276,7 @@ export default function BuyerBrowsePage() {
                       sizes="(min-width: 1280px) 28vw, (min-width: 768px) 45vw, 100vw"
                       src={listing.image}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                    <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent"></div>
                     <div className="absolute top-4 left-4">
                       <span
                         className={`${listing.badgeClass} rounded px-2.5 py-1 text-[10px] font-extrabold tracking-widest text-white uppercase shadow-lg`}
@@ -364,7 +364,7 @@ export default function BuyerBrowsePage() {
       </main>
 
       <footer className="mt-20 bg-primary py-16 text-slate-300">
-        <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-12 px-6 md:grid-cols-4">
+        <div className="mx-auto grid max-w-360 grid-cols-1 gap-12 px-6 md:grid-cols-4">
           <div className="space-y-6">
             <div className="flex items-center gap-2">
               <div className="rounded-lg bg-white/10 p-2 backdrop-blur-sm">
@@ -438,7 +438,7 @@ export default function BuyerBrowsePage() {
           </div>
         </div>
 
-        <div className="mx-auto mt-16 flex max-w-[1440px] flex-col items-center justify-between gap-4 border-t border-white/5 px-6 pt-8 text-[11px] font-medium text-slate-400 md:flex-row">
+        <div className="mx-auto mt-16 flex max-w-360 flex-col items-center justify-between gap-4 border-t border-white/5 px-6 pt-8 text-[11px] font-medium text-slate-400 md:flex-row">
           <p>© 2024 GAMEMARKET Indonesia. All rights reserved.</p>
           <div className="flex gap-8">
             {["Privacy Policy", "Terms of Use", "Contact Us"].map((item) => (

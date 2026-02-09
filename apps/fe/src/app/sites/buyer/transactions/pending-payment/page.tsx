@@ -7,7 +7,7 @@ export default function BuyerTransactionPendingPage() {
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors duration-300 dark:bg-background-dark dark:text-slate-100">
       <BuyerHeader isLoggedIn searchPlaceholder="Search for game accounts..." />
 
-      <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-6">
+      <main className="mx-auto max-w-300 px-4 py-8 md:px-6">
         <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
           <Link className="transition-colors hover:text-primary" href="/">
             Home
@@ -49,8 +49,8 @@ export default function BuyerTransactionPendingPage() {
 
           <div className="bg-slate-50/50 px-8 py-10 dark:bg-slate-900/50">
             <div className="relative mx-auto flex max-w-2xl items-center justify-between">
-              <div className="absolute top-1/2 left-0 -z-0 h-1 w-full -translate-y-1/2 bg-slate-200 dark:bg-slate-700"></div>
-              <div className="absolute top-1/2 left-0 -z-0 h-1 w-[0%] -translate-y-1/2 bg-primary"></div>
+              <div className="absolute top-1/2 left-0 z-0 h-1 w-full -translate-y-1/2 bg-slate-200 dark:bg-slate-700"></div>
+              <div className="absolute top-1/2 left-0 z-0 h-1 w-[0%] -translate-y-1/2 bg-primary"></div>
 
               <div className="relative z-10 flex flex-col items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white ring-4 ring-white shadow-lg shadow-primary/30 dark:ring-slate-900">
@@ -235,7 +235,7 @@ export default function BuyerTransactionPendingPage() {
       </main>
 
       <footer className="mt-20 bg-primary py-16 text-slate-300">
-        <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-12 px-6 md:grid-cols-4">
+        <div className="mx-auto grid max-w-360 grid-cols-1 gap-12 px-6 md:grid-cols-4">
           <div className="space-y-6">
             <div className="flex items-center gap-2">
               <div className="rounded-lg bg-white/10 p-2 backdrop-blur-sm">
@@ -282,7 +282,7 @@ export default function BuyerTransactionPendingPage() {
           </div>
         </div>
 
-        <div className="mx-auto mt-16 flex max-w-[1440px] flex-col items-center justify-between gap-4 border-t border-white/5 px-6 pt-8 text-xs font-medium md:flex-row">
+        <div className="mx-auto mt-16 flex max-w-360 flex-col items-center justify-between gap-4 border-t border-white/5 px-6 pt-8 text-xs font-medium md:flex-row">
           <p>© 2024 GAMEMARKET Indonesia. All rights reserved.</p>
           <div className="flex gap-8">
             <Link className="hover:text-white" href="#">Privacy Policy</Link>

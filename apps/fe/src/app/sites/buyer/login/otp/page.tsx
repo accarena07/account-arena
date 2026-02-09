@@ -30,8 +30,8 @@ export default function BuyerOtpPage() {
           onClick={toggleDarkMode}
           type="button"
         >
-          <span className="material-symbols-outlined dark:!hidden">dark_mode</span>
-          <span className="material-symbols-outlined !hidden dark:!inline-block">light_mode</span>
+          <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
+          <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
         </button>
       </div>
 

@@ -7,7 +7,7 @@ export default function BuyerTransactionCompletedPage() {
     <div className="min-h-screen bg-background-light font-sans text-slate-900 transition-colors duration-300 dark:bg-background-dark dark:text-slate-100">
       <BuyerHeader isLoggedIn searchPlaceholder="Search for game accounts..." />
 
-      <main className="mx-auto max-w-[1200px] px-4 py-8 md:px-6">
+      <main className="mx-auto max-w-300 px-4 py-8 md:px-6">
         <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
           <Link className="transition-colors hover:text-primary" href="/">
             Home
@@ -39,7 +39,7 @@ export default function BuyerTransactionCompletedPage() {
 
           <div className="bg-slate-50/50 px-8 py-10 dark:bg-slate-900/50">
             <div className="relative mx-auto flex max-w-2xl items-center justify-between">
-              <div className="absolute top-1/2 left-0 -z-0 h-1 w-full -translate-y-1/2 bg-green-500"></div>
+              <div className="absolute top-1/2 left-0 z-0 h-1 w-full -translate-y-1/2 bg-green-500"></div>
 
               {[
                 "Pending",

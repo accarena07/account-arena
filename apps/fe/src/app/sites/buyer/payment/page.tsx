@@ -141,7 +141,7 @@ export default function BuyerPaymentPage() {
             </div>
           </div>
 
-          <div className="w-full space-y-6 lg:w-[400px]">
+          <div className="w-full space-y-6 lg:w-100">
             <div className="sticky top-24 rounded-2xl border-2 border-primary/10 bg-white p-6 shadow-lg dark:border-slate-800 dark:bg-slate-800">
               <div className="mb-6 flex items-center justify-between">
                 <h2 className="text-lg font-bold">Select Payment</h2>

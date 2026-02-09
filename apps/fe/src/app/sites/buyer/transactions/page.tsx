@@ -52,7 +52,7 @@ export default function BuyerTransactionsPage() {
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors duration-300 dark:bg-background-dark dark:text-slate-100">
       <BuyerHeader isLoggedIn searchPlaceholder="Cari transaksi..." />
 
-      <main className="relative z-0 mx-auto max-w-[1000px] px-4 py-8 md:px-6">
+      <main className="relative z-0 mx-auto max-w-250 px-4 py-8 md:px-6">
         <nav className="mb-8 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
           <Link className="transition-colors hover:text-primary" href="/">
             Home
@@ -95,7 +95,7 @@ export default function BuyerTransactionsPage() {
               key={trx.orderId}
             >
               <div className="flex flex-col gap-6 md:flex-row">
-                <div className="h-32 w-full flex-shrink-0 overflow-hidden rounded-xl md:w-48">
+                <div className="h-32 w-full shrink-0 overflow-hidden rounded-xl md:w-48">
                   <Image
                     alt={`${trx.game} Thumbnail`}
                     className="h-full w-full object-cover"

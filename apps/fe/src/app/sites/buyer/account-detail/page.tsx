@@ -81,8 +81,8 @@ export default function BuyerAccountDetailPage() {
               onClick={toggleDarkMode}
               type="button"
             >
-              <span className="material-symbols-outlined dark:!hidden">dark_mode</span>
-              <span className="material-symbols-outlined !hidden dark:!inline-block">light_mode</span>
+              <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
+              <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
             </button>
             <Link className="hidden text-sm font-medium hover:text-primary sm:block" href="/login">
               Login
@@ -129,7 +129,7 @@ export default function BuyerAccountDetailPage() {
               <div className="flex gap-4 overflow-x-auto p-4">
                 {gallery.map((src, idx) => (
                   <div
-                    className={`relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl border-2 ${
+                    className={`relative h-24 w-24 shrink-0 overflow-hidden rounded-xl border-2 ${
                       idx === 0 ? "border-primary ring-2 ring-primary/20" : "border-transparent hover:border-slate-200"
                     }`}
                     key={src}
@@ -137,7 +137,7 @@ export default function BuyerAccountDetailPage() {
                     <Image alt={`Thumbnail ${idx + 1}`} className="h-full w-full object-cover" fill sizes="96px" src={src} />
                   </div>
                 ))}
-                <div className="flex h-24 w-24 flex-shrink-0 cursor-pointer items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
+                <div className="flex h-24 w-24 shrink-0 cursor-pointer items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
                   <span className="text-sm font-bold text-slate-500">+12</span>
                 </div>
               </div>
@@ -299,7 +299,7 @@ export default function BuyerAccountDetailPage() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {recommendations.map((item) => (
               <article
-                className="group overflow-hidden rounded-[2rem] border border-slate-100 bg-white transition-all duration-300 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900"
+                className="group overflow-hidden rounded-4xl border border-slate-100 bg-white transition-all duration-300 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900"
                 key={item.title}
               >
                 <div className="relative aspect-square">

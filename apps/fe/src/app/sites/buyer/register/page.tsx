@@ -32,13 +32,13 @@ export default function BuyerRegisterPage() {
           onClick={toggleDarkMode}
           type="button"
         >
-          <span className="material-symbols-outlined dark:!hidden">dark_mode</span>
-          <span className="material-symbols-outlined !hidden dark:!inline-block">light_mode</span>
+          <span className="material-symbols-outlined dark:hidden!">dark_mode</span>
+          <span className="material-symbols-outlined hidden! dark:inline-block!">light_mode</span>
         </button>
       </div>
 
       {showTncModal ? (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
           <button
             aria-label="Tutup modal syarat dan ketentuan"
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
@@ -129,7 +129,7 @@ export default function BuyerRegisterPage() {
         </div>
       ) : null}
 
-      <main className="mx-auto flex min-h-[850px] w-full max-w-6xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900 lg:flex-row">
+      <main className="mx-auto flex min-h-212.5 w-full max-w-6xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900 lg:flex-row">
         <div className="relative flex flex-col items-center justify-center overflow-hidden bg-primary p-12 text-white lg:w-5/12">
           <div
             className="absolute inset-0 opacity-20"
