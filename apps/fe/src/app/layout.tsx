@@ -39,7 +39,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} min-h-dvh bg-[#f8fafc] text-slate-900`}>
+      <body className={`${inter.className} min-h-dvh bg-background-light text-slate-900`}>
         <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>

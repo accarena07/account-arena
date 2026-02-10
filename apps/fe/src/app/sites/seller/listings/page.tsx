@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { sellerListings, sellerListingTabs } from "../data/listings";
@@ -84,7 +83,7 @@ export default function MyListingsPage() {
           />
         </div>
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-4">
-          <div className="relative group min-w-[160px] flex-1 sm:flex-none">
+          <div className="relative group min-w-40 flex-1 sm:flex-none">
             <select className="appearance-none w-full pl-6 pr-12 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[11px] font-black uppercase tracking-widest italic outline-none dark:text-white cursor-pointer hover:border-[#254294] transition-all shadow-sm">
               <option>Filter by Game</option>
               <option>Mobile Legends</option>

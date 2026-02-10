@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
 import { sellerPayoutTransactions } from "../data/payouts";
 import SellerGlobalFooter from "../components/SellerGlobalFooter";
 import SellerPageHeader from "../components/SellerPageHeader";

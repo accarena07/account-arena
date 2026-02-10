@@ -4,12 +4,17 @@ import { ApiEnvelopeSchema } from "@acme/shared";
 const BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
 
 export class ApiClientError extends Error {
+  public readonly status?: number;
+  public readonly details?: unknown;
+
   constructor(
     message: string,
-    public readonly status?: number,
-    public readonly details?: unknown
+    status?: number,
+    details?: unknown
   ) {
     super(message);
+    this.status = status;
+    this.details = details;
   }
 }
 
