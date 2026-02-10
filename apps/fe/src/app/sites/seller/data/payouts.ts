@@ -1,0 +1,48 @@
+import type { SellerPayoutTransaction } from "../types";
+
+export const sellerPayoutTransactions: SellerPayoutTransaction[] = [
+  {
+    id: 1,
+    date: "24 Okt 2023",
+    time: "14:20 WIB",
+    amount: "Rp 5.000.000",
+    bank: "BCA",
+    accountNumber: "8831****22",
+    accountName: "Admin Store",
+    status: "Success",
+    statusKind: "success",
+  },
+  {
+    id: 2,
+    date: "22 Okt 2023",
+    time: "09:15 WIB",
+    amount: "Rp 2.500.000",
+    bank: "Mandiri",
+    accountNumber: "1220****11",
+    accountName: "Admin Store",
+    status: "Processing",
+    statusKind: "processing",
+  },
+  {
+    id: 3,
+    date: "18 Okt 2023",
+    time: "16:45 WIB",
+    amount: "Rp 1.200.000",
+    bank: "BCA",
+    accountNumber: "8831****22",
+    accountName: "Admin Store",
+    status: "Failed",
+    statusKind: "failed",
+  },
+  {
+    id: 4,
+    date: "15 Okt 2023",
+    time: "10:00 WIB",
+    amount: "Rp 750.000",
+    bank: "BCA",
+    accountNumber: "8831****22",
+    accountName: "Admin Store",
+    status: "Success",
+    statusKind: "success",
+  },
+];

@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import appReducer from "./slices/appSlice";
+import sellerCreateListingReducer from "./slices/sellerCreateListingSlice";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       app: appReducer,
+      sellerCreateListing: sellerCreateListingReducer,
     },
   });
 };

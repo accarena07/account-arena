@@ -1,74 +1,39 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import Image from "next/image";
+import SellerGlobalFooter from "../components/SellerGlobalFooter";
+import SellerPageHeader from "../components/SellerPageHeader";
+import SellerProfileInfo from "../components/SellerProfileInfo";
+import SellerUtilityButtons from "../components/SellerUtilityButtons";
 
 export default function StoreSettingsPage() {
   return (
     <div className="flex-1 max-w-6xl mx-auto w-full">
-      {/* Breadcrumb */}
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4 italic">
-        <Link
-          href="/"
-          className="hover:text-slate-600 transition-colors"
-        >
-          Dashboard
-        </Link>
-        <span className="material-symbols-outlined text-xs font-black">
-          chevron_right
-        </span>
-        <span className="text-[#254294] dark:text-blue-400">
-          Store Settings
-        </span>
-      </div>
-
-      <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10">
-        <div className="w-full md:w-auto">
-          <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight uppercase italic tracking-tight">
-            Store Settings
-          </h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 text-[11px] font-bold uppercase tracking-widest italic">
+      <SellerPageHeader
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "Store Settings" },
+        ]}
+        title="Store Settings"
+        subtitle={
+          <>
             Manage your{" "}
             <span className="text-[#254294] dark:text-blue-400">
               brand identity
             </span>{" "}
             & payout accounts
-          </p>
-        </div>
-        <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto pt-6 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-3">
-            <button className="w-11 h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center text-slate-400 relative hover:bg-slate-50 transition-all shadow-sm group">
-              <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform font-black italic">
-                notifications
-              </span>
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-            </button>
-            <button className="w-11 h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all shadow-sm group">
-              <span className="material-symbols-outlined text-[20px] font-black italic group-hover:rotate-12 transition-transform">
-                help
-              </span>
-            </button>
-          </div>
+          </>
+        }
+        rightContent={
+          <div className="flex w-full items-center justify-between gap-6 border-t border-slate-100 pt-6 md:w-auto md:justify-end md:border-t-0 md:pt-0 dark:border-slate-800">
+          <SellerUtilityButtons />
           <div className="hidden sm:flex items-center gap-4 pl-6 border-l border-slate-200 dark:border-slate-800">
-            <div className="text-right">
-              <p className="text-sm font-black text-slate-800 dark:text-white leading-none italic">
-                Admin Store
-              </p>
-              <p className="text-[10px] text-slate-400 font-black uppercase italic mt-1.5 tracking-widest">
-                Premium Seller
-              </p>
-            </div>
-            <Image
-              alt="Profile"
-              className="w-11 h-11 rounded-full border-2 border-[#254294]/20 shadow-sm object-cover"
-              height={44}
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
-              width={44}
-            />
+            <SellerProfileInfo />
           </div>
         </div>
-      </header>
+        }
+      />
 
       <div className="space-y-8 pb-32">
         {/* Profile Card */}
@@ -264,27 +229,16 @@ export default function StoreSettingsPage() {
         </div>
       </div>
 
-      {/* Footer Info */}
-      <footer className="mt-20 pt-10 border-t border-slate-100 dark:border-slate-800 flex flex-col items-center gap-8 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] italic mb-32">
-        <div className="flex flex-col md:flex-row items-center gap-8 text-center">
-          <a href="#" className="hover:text-[#254294] transition-colors">
-            Privacy Module
-          </a>
-          <a href="#" className="hover:text-[#254294] transition-colors">
-            Encryption standards
-          </a>
-          <a href="#" className="hover:text-[#254294] transition-colors">
-            GDPR Compliance
-          </a>
-          <div className="flex items-center gap-3 text-[#254294] dark:text-blue-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-            End-to-end encrypted
-          </div>
-        </div>
-        <div className="text-center">
-          © 2024 AccountArena • Trust Infrasctructure • All Rights Reserved
-        </div>
-      </footer>
+      <SellerGlobalFooter
+        className="mb-32"
+        copyright="© 2024 AccountArena • Trust Infrasctructure • All Rights Reserved"
+        links={[
+          { label: "Privacy Module" },
+          { label: "Encryption standards" },
+          { label: "GDPR Compliance" },
+        ]}
+        statusText="End-to-end encrypted"
+      />
     </div>
   );
 }

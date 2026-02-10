@@ -3,76 +3,29 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { sellerListings, sellerListingTabs } from "../data/listings";
+import SellerGlobalFooter from "../components/SellerGlobalFooter";
+import SellerPageHeader from "../components/SellerPageHeader";
+import SellerProfileInfo from "../components/SellerProfileInfo";
+import SellerStatusBadge from "../components/SellerStatusBadge";
 
 export default function MyListingsPage() {
-  const listings = [
-    {
-      id: 1,
-      title: "Mythic Glory | 250 Skins | All Heroes",
-      game: "Mobile Legends",
-      level: "Level 80",
-      price: "Rp 1.500.000",
-      status: "Active",
-      statusColor:
-        "bg-green-500/10 text-green-600 dark:text-green-400 border-green-200/50 dark:border-green-500/20",
-      image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuBRD4wuYwoRj7MqlKl4a5Afz6yv9QEKmFQFdy5qED5W21gUX1wlbedM6txU6wpuhKgKBZeUEE2CEpVZOVvinebCMQQf_4a4ibCBCOev0tLTla95lRVo4niUZ-i35VS7uxnDKv9KuoPwrVsTQEch-nl7Eh2iMvc9YlYEE-7ZmXXrCUJedrEXHpyAFJ-ajS_H3jJ5Vjh9g4xO7S9CgcQI55TFMQXl1LtvO5645ZPxYxcAXH82h6eGkqDhz_AX9LudYIvo3mjdgaVVoA",
-    },
-    {
-      id: 2,
-      title: "Immortal 3 | Prime Vandal | Reaver Knife",
-      game: "VALORANT",
-      level: "Level 142",
-      price: "Rp 2.100.000",
-      status: "Sold",
-      statusColor:
-        "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200/50 dark:border-blue-500/20",
-      image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuCf4Lolu7AaB5TUEdIMRZ4h_DQI6WzNEQrQxsZEBCk1JzY7DWzfzJKETqdXyhkebHh1pqdHT9Vpe6bodaSRk0euMGEbZMI6xp41f9vhHtszvWKIGf8kgKhpt07cBRewLawS07jV98_xjPbM3Rj0JIqV6fKXpwUdMG7JF1EztlnrChl_Fhs-ee2OZHRshfGHP8ukzZvY-L8VgPo2hIadBsrzw-ZZQlTqeHMUj4s3AMvgYcIY5kdpN6S9lQd7hMdqEvSTcaeoRtT8Tw",
-    },
-    {
-      id: 3,
-      title: "AR 60 | C6 Raiden | 15x 5-Star Weapons",
-      game: "Genshin Impact",
-      level: "Asia Server",
-      price: "Rp 3.800.000",
-      status: "Draft",
-      statusColor:
-        "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-200/50 dark:border-slate-800",
-      image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuDXSU_g8hdwk_O6PMbzrBwRxJ45D-AjTy4iY1Lve93ORqADtDVcW3zKi1uKXOvL0kO5pZY6PSazIsOP-1d0T-baxWb1aqg0BWhqk-gWnBaG5MX6jkHlrQATaAzvPilqj-g51WFQqowKaEG6mFAre1dVtgjtCT5g4_jVGnbdFuwMt_0lfDRYrll6jtPzNvNfKV_iynDxoNRApRWZyV4jL_xn9N7NYWBGDZwp7OHmxXXX6EaiW-xOjrz0kmjEqi1qn80C8hddqoQF_Q",
-    },
-  ];
-
   return (
     <div className="flex-1 max-w-6xl mx-auto w-full">
-      {/* Breadcrumb */}
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4 italic">
-        <Link
-          href="/"
-          className="hover:text-slate-600 transition-colors"
-        >
-          Dashboard
-        </Link>
-        <span className="material-symbols-outlined text-xs font-black">
-          chevron_right
-        </span>
-        <span className="text-[#254294] dark:text-blue-400">My Listings</span>
-      </div>
-
-      <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10">
-        <div className="w-full md:w-auto">
-          <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight uppercase italic tracking-tight">
-            My Listings
-          </h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 text-[11px] font-bold uppercase tracking-widest italic">
+      <SellerPageHeader
+        breadcrumbs={[
+          { label: "Dashboard", href: "/" },
+          { label: "My Listings" },
+        ]}
+        title="My Listings"
+        subtitle={
+          <>
             Manage & monitor your{" "}
-            <span className="text-[#254294] dark:text-blue-400">
-              game assets
-            </span>
-          </p>
-        </div>
-        <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto pt-6 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
+            <span className="text-[#254294] dark:text-blue-400">game assets</span>
+          </>
+        }
+        rightContent={
+          <div className="flex w-full items-center justify-between gap-6 border-t border-slate-100 pt-6 md:w-auto md:justify-end md:border-t-0 md:pt-0 dark:border-slate-800">
           <Link
             href="/listings/new"
             className="bg-[#254294] hover:bg-blue-900 text-white px-6 py-3.5 rounded-2xl font-black uppercase tracking-widest italic shadow-xl shadow-blue-900/10 flex items-center gap-3 transition-all text-[10px] hover:scale-105 active:scale-95"
@@ -82,35 +35,17 @@ export default function MyListingsPage() {
             </span>
             Create New Listing
           </Link>
-          <div className="hidden sm:flex items-center gap-4 pl-6 border-l border-slate-200 dark:border-slate-800">
-            <div className="text-right">
-              <p className="text-sm font-black text-slate-800 dark:text-white leading-none italic">
-                Admin Store
-              </p>
-              <p className="text-[10px] text-slate-400 font-black uppercase italic mt-1.5 tracking-widest">
-                Premium Seller
-              </p>
-            </div>
-            <Image
-              alt="Profile"
-              className="w-11 h-11 rounded-full border-2 border-[#254294]/20 shadow-sm object-cover"
-              height={44}
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
-              width={44}
-            />
+          <div className="hidden border-l border-slate-200 pl-6 dark:border-slate-800 sm:flex">
+            <SellerProfileInfo />
           </div>
         </div>
-      </header>
+        }
+      />
 
       {/* Tabs */}
       <div className="border-b border-slate-200 dark:border-slate-800 mb-10">
         <div className="flex items-center gap-8 overflow-x-auto scrollbar-hide pb-0.5">
-          {[
-            { label: "All Listings", count: 24, active: true },
-            { label: "Active", count: 12 },
-            { label: "Sold Out", count: 8 },
-            { label: "Drafts", count: 4 },
-          ].map((tab, idx) => (
+          {sellerListingTabs.map((tab, idx) => (
             <button
               key={idx}
               className={`flex items-center gap-2 pb-4 border-b-2 transition-all whitespace-nowrap min-w-fit group ${
@@ -191,7 +126,7 @@ export default function MyListingsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {listings.map((item) => (
+              {sellerListings.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-all group/row"
@@ -230,12 +165,11 @@ export default function MyListingsPage() {
                     </span>
                   </td>
                   <td className="px-8 py-6">
-                    <div
-                      className={`px-4 py-1.5 rounded-xl border ${item.statusColor} text-[10px] font-black uppercase tracking-widest italic inline-flex items-center gap-2 shadow-sm`}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>
-                      {item.status}
-                    </div>
+                    <SellerStatusBadge
+                      status={item.statusKind}
+                      label={item.status}
+                      className="animate-pulse"
+                    />
                   </td>
                   <td className="px-8 py-6 text-right">
                     <div className="flex items-center justify-end gap-2">
@@ -259,7 +193,7 @@ export default function MyListingsPage() {
 
         {/* Mobile View / Card View */}
         <div className="lg:hidden divide-y divide-slate-100 dark:divide-slate-800">
-          {listings.map((item) => (
+          {sellerListings.map((item) => (
             <div
               key={item.id}
               className="p-6 space-y-6 hover:bg-slate-50/30 dark:hover:bg-slate-800/20 transition-all"
@@ -273,12 +207,12 @@ export default function MyListingsPage() {
                   width={96}
                 />
                 <div className="flex-1 min-w-0">
-                  <div
-                    className={`px-3 py-1 rounded-lg border ${item.statusColor} text-[8px] font-black uppercase tracking-widest italic inline-flex items-center gap-1.5 mb-2`}
-                  >
-                    <span className="w-1 h-1 rounded-full bg-current animate-pulse"></span>
-                    {item.status}
-                  </div>
+                  <SellerStatusBadge
+                    status={item.statusKind}
+                    label={item.status}
+                    size="xs"
+                    className="mb-2"
+                  />
                   <h4 className="font-black text-slate-900 dark:text-white text-base mb-1 italic tracking-tight line-clamp-2">
                     {item.title}
                   </h4>
@@ -350,27 +284,15 @@ export default function MyListingsPage() {
         </div>
       </div>
 
-      {/* Global Footer Info */}
-      <footer className="mt-20 pt-10 border-t border-slate-100 dark:border-slate-800 flex flex-col items-center gap-8 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] italic mb-20 md:mb-10">
-        <div className="flex flex-col md:flex-row items-center gap-8 text-center">
-          <a href="#" className="hover:text-[#254294] transition-colors">
-            Safety Guide
-          </a>
-          <a href="#" className="hover:text-[#254294] transition-colors">
-            Seller Protection
-          </a>
-          <a href="#" className="hover:text-[#254294] transition-colors">
-            Terms of Service
-          </a>
-          <div className="flex items-center gap-3 text-[#254294] dark:text-blue-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-            Global Systems Active
-          </div>
-        </div>
-        <div className="text-center">
-          © 2024 AccountArena • Premium Gaming Marketplace • All Rights Reserved
-        </div>
-      </footer>
+      <SellerGlobalFooter
+        copyright="© 2024 AccountArena • Premium Gaming Marketplace • All Rights Reserved"
+        links={[
+          { label: "Safety Guide" },
+          { label: "Seller Protection" },
+          { label: "Terms of Service" },
+        ]}
+        statusText="Global Systems Active"
+      />
     </div>
   );
 }

@@ -1,91 +1,57 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import React from "react";
+import {
+  sellerDashboardStats,
+  sellerInventorySnapshot,
+} from "./data/dashboard";
+import SellerGlobalFooter from "./components/SellerGlobalFooter";
+import SellerPageHeader from "./components/SellerPageHeader";
+import SellerProfileInfo from "./components/SellerProfileInfo";
+import SellerSearchInput from "./components/SellerSearchInput";
+import SellerUtilityButtons from "./components/SellerUtilityButtons";
 
 export default function SellerDashboardPage() {
   return (
     <div className="flex-1 max-w-6xl mx-auto w-full">
-      {/* Breadcrumb */}
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4 italic">
-        <span className="text-[#254294] dark:text-blue-400">
-          Dashboard Overview
-        </span>
-      </div>
-
-      <header className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
-        <div className="relative w-full md:w-96 group">
-          <span className="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-[#254294] transition-colors italic">
-            manage_search
-          </span>
-          <input
-            className="w-full pl-14 pr-6 py-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-blue-500/5 focus:border-[#254294] outline-none transition-all dark:text-white text-sm shadow-sm italic font-bold"
-            placeholder="Search orders or listings..."
-            type="text"
-          />
-        </div>
+      <header className="mb-10 flex flex-col items-center justify-between gap-6 md:flex-row">
+        <SellerSearchInput
+          icon="manage_search"
+          placeholder="Search orders or listings..."
+        />
         <div className="flex items-center justify-between w-full md:w-auto gap-4">
-          <div className="flex items-center gap-4">
-            <button className="w-11 h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center text-slate-400 relative hover:bg-slate-50 transition-all shadow-sm group">
-              <span className="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform italic font-black">
-                notifications
-              </span>
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-            </button>
-            <button className="w-11 h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all shadow-sm group">
-              <span className="material-symbols-outlined text-[22px] italic font-black group-hover:rotate-12 transition-transform">
-                help
-              </span>
-            </button>
-          </div>
+          <SellerUtilityButtons />
           <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block"></div>
           <div className="flex items-center gap-3 pl-2 ml-auto sm:ml-0">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-black text-slate-800 dark:text-white leading-none italic">
-                Admin Store
-              </p>
-              <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest italic mt-1.5">
-                Premium Seller
-              </p>
-            </div>
-            <div className="relative">
-              <Image
-                alt="Profile"
-                className="w-11 h-11 rounded-full border-2 border-[#254294]/20 shadow-sm object-cover"
-                height={44}
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuALL4MNDR1C_NUyFVHybHloH6M8YfbkdIvKzI7T_k4HpLXMXCc8NM-4QBx0R3I9m_02Tz8RipzypJzBzPTLLZIDpfWIRqiFiekk4-Qrlim-jRmaF9YTlmkqDMvomJT6GyT0Pf3FpD50gUGghwfff6ZLVBR8ZEErIcD86V80P5vX_eFSepUp76QmZA7wy-aCof8wlJfY78J731Ztmd2SqzeCunW0UjITbg1LQPat79T21M94UJu5Pl98o01eoWNjUdNbUxKretMb-g"
-                width={44}
-              />
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
-            </div>
+            <SellerProfileInfo />
           </div>
         </div>
       </header>
 
-      <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
-        <div>
-          <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic leading-none">
-            Dashboard{" "}
-            <span className="text-[#254294] dark:text-blue-400">Overview</span>
-          </h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-3 text-[11px] font-bold uppercase tracking-widest italic leading-relaxed">
+      <SellerPageHeader
+        align="center"
+        breadcrumbs={[{ label: "Dashboard Overview" }]}
+        title="Dashboard Overview"
+        subtitle={
+          <>
             Monitor your performance & manage{" "}
             <span className="text-slate-900 dark:text-white">
               daily operations
             </span>
-          </p>
-        </div>
-        <Link
-          href="/listings/new"
-          className="w-full md:w-auto bg-[#254294] hover:bg-blue-900 text-white px-10 py-4.5 rounded-2xl font-black uppercase tracking-widest italic flex items-center justify-center gap-4 shadow-2xl shadow-blue-900/20 transition-all transform hover:scale-[1.02] active:scale-95 text-xs"
-        >
-          <span className="material-symbols-outlined text-[24px] font-black italic">
-            add_circle
-          </span>
-          Add New Product
-        </Link>
-      </div>
+          </>
+        }
+        rightContent={
+          <Link
+            href="/listings/new"
+            className="flex w-full items-center justify-center gap-4 rounded-2xl bg-[#254294] px-10 py-4.5 text-xs font-black uppercase tracking-widest italic text-white shadow-2xl shadow-blue-900/20 transition-all hover:scale-[1.02] hover:bg-blue-900 active:scale-95 md:w-auto"
+          >
+            <span className="material-symbols-outlined text-[24px] font-black italic">
+              add_circle
+            </span>
+            Add New Product
+          </Link>
+        }
+      />
 
       {/* Alert Banner */}
       <div className="mb-10 p-6 md:p-8 bg-orange-50/50 dark:bg-orange-950/10 border border-orange-100 dark:border-orange-900/30 rounded-4xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 shadow-sm relative overflow-hidden group">
@@ -114,37 +80,7 @@ export default function SellerDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        {[
-          {
-            label: "Daily Revenue",
-            value: "Rp 2.500.000",
-            icon: "payments",
-            trend: "+15.4%",
-            color: "blue",
-          },
-          {
-            label: "Pending Orders",
-            value: "12",
-            icon: "order_approve",
-            note: "New items to ship",
-            color: "blue",
-          },
-          {
-            label: "Active Listings",
-            value: "48",
-            icon: "layers",
-            note: "Currently live",
-            color: "blue",
-          },
-          {
-            label: "Store Feedback",
-            value: "4.8",
-            icon: "stars",
-            suffix: "/ 5.0",
-            note: "From 120 reviews",
-            color: "orange",
-          },
-        ].map((stat, idx) => (
+        {sellerDashboardStats.map((stat, idx) => (
           <div
             key={idx}
             className="bg-white dark:bg-slate-900 p-8 rounded-4xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 transition-all group"
@@ -261,26 +197,7 @@ export default function SellerDashboardPage() {
               <span className="w-12 h-1 bg-slate-100 dark:bg-slate-800 rounded-full"></span>
             </h3>
             <div className="space-y-8">
-              {[
-                {
-                  label: "Active Nodes",
-                  count: 42,
-                  color: "bg-emerald-500",
-                  trend: "+4",
-                },
-                {
-                  label: "Closed Trades",
-                  count: 156,
-                  color: "bg-orange-500",
-                  trend: "+12",
-                },
-                {
-                  label: "Drafted Assets",
-                  count: 6,
-                  color: "bg-slate-400",
-                  trend: "0",
-                },
-              ].map((item, idx) => (
+              {sellerInventorySnapshot.map((item, idx) => (
                 <div
                   key={idx}
                   className="flex items-center justify-between group/row"
@@ -333,27 +250,15 @@ export default function SellerDashboardPage() {
         </div>
       </div>
 
-      {/* Global Footer Info */}
-      <footer className="mt-20 pt-10 border-t border-slate-100 dark:border-slate-800 flex flex-col items-center gap-8 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] italic mb-20 md:mb-10">
-        <div className="flex flex-col md:flex-row items-center gap-8 text-center">
-          <a href="#" className="hover:text-[#254294] transition-colors">
-            Safety Guide
-          </a>
-          <a href="#" className="hover:text-[#254294] transition-colors">
-            Seller Protection
-          </a>
-          <a href="#" className="hover:text-[#254294] transition-colors">
-            Terms of Service
-          </a>
-          <div className="flex items-center gap-3 text-[#254294] dark:text-blue-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-            Global Systems Active
-          </div>
-        </div>
-        <div className="text-center">
-          © 2024 AccountArena • Premium Gaming Marketplace • All Rights Reserved
-        </div>
-      </footer>
+      <SellerGlobalFooter
+        copyright="© 2024 AccountArena • Premium Gaming Marketplace • All Rights Reserved"
+        links={[
+          { label: "Safety Guide" },
+          { label: "Seller Protection" },
+          { label: "Terms of Service" },
+        ]}
+        statusText="Global Systems Active"
+      />
     </div>
   );
 }
