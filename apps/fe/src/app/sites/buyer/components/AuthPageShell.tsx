@@ -16,7 +16,7 @@ type AuthPageShellProps = {
   activeTab: "login" | "register";
   leftTitle: string;
   leftDescription: string;
-  leftFeatures: FeatureItem[];
+  leftFeatures: readonly FeatureItem[];
   children: ReactNode;
 };
 
@@ -35,7 +35,7 @@ export default function AuthPageShell({
         <ThemeToggleButton className="bg-white p-3 text-gray-600 shadow-lg transition-all hover:scale-110 dark:bg-slate-800 dark:text-gray-300" />
       </div>
 
-      <main className="mx-auto flex min-h-[700px] w-full max-w-6xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900 lg:flex-row">
+      <main className="mx-auto flex min-h-175 w-full max-w-6xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900 lg:flex-row">
         <div className="relative flex flex-col items-center justify-center overflow-hidden bg-primary p-12 text-white lg:w-5/12">
           <div
             className="absolute inset-0 opacity-20"
