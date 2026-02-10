@@ -1,59 +1,41 @@
 import Image from "next/image";
+import AdminPageFooter from "../components/AdminPageFooter";
+import AdminStatusBadge from "../components/AdminStatusBadge";
+import AdminPageHeader from "../components/AdminPageHeader";
+import AdminTableCard from "../components/AdminTableCard";
+import { kycRows } from "../data/kyc";
 
 export default function KYCVerificationPage() {
+  function kycAvatar(name: string) {
+    if (name === "Sarah Wilson") {
+      return {
+        type: "image" as const,
+        src: "https://lh3.googleusercontent.com/aida-public/AB6AXuApRkm-JPqhEY6ycG4ylRHJqB3S2AECdlZsfMSE1BZ-vX_F6dvPwbRJH-D4tgWG2S5qFyOyWgazq7E9wbsO0S29QIs_hTPRBsQt_s1y6qgC-8rUgY-fdRkaYdUjkQuvHOExsLH-qY96gwDzgZkkNLnhgXgZ93B_kqpXPCgsRSKnL5iPk3iaICdgcnvLL6X0jgH5XxRCZSWZVrP75rsliTxkggwxRkZXFlhxuK9BbKV7lRdYspfVlmSvtSGrWqCvt8fIg43pOHeGGA",
+      };
+    }
+    if (name === "Alex Johnson") {
+      return {
+        type: "image" as const,
+        src: "https://lh3.googleusercontent.com/aida-public/AB6AXuAwjGf0hnm-0OAVxo9HQDlAYDmAsXTZh--9sklq3mXNOsmntV1T3etnjldZXfLnVd6xVgwk_j-mgALTo5nK4aDn_goL-4UsOLH1o9E1TMMY8e-88sXOMLC8ExddCjURmWvUEAD-2jnVmf66ZIonOqj9KBK_wUpw2MzxLQJ7u6L6EJX6dbkQd80W8a04aaQPqiU3GpQ44kInywcai-PoLsG8mUE-LQTigBlCVhjoEazkfOe6OsgD7ZGTcPF5jWdT2L8yU2_xnbrhYA",
+      };
+    }
+    return { type: "initial" as const, initials: name.split(" ").map((part) => part[0]).join("").slice(0, 2) };
+  }
+
+  function actionLabel(status: (typeof kycRows)[number]["status"]) {
+    if (status === "approved") {
+      return "View Details";
+    }
+    return "Review";
+  }
+
   return (
     <>
-      <header className="flex flex-col xl:flex-row justify-between items-start gap-6 mb-10">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-            Admin Control Panel
-          </h1>
-          <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-1">
-            Platform management and verification center
-          </p>
-        </div>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full xl:w-auto">
-          <div className="relative w-full md:w-auto">
-            <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-xl">
-              search
-            </span>
-            <input
-              className="pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none w-full md:w-72 text-sm transition-all"
-              placeholder="Search users or IDs..."
-              type="text"
-            />
-          </div>
-          <div className="flex items-center justify-between w-full md:w-auto gap-4">
-            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 relative hover:bg-slate-50 transition-colors shrink-0">
-              <span className="material-symbols-outlined text-2xl">
-                notifications
-              </span>
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-            </button>
-            <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden md:block"></div>
-            <div className="flex items-center gap-3 ml-auto md:ml-0">
-              <div className="text-right hidden md:block">
-                <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
-                  Admin Store
-                </p>
-                <p className="text-[11px] font-medium text-slate-500 uppercase tracking-tight">
-                  Super Admin
-                </p>
-              </div>
-              <div className="relative">
-                <Image
-                  alt="Admin"
-                  className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
-                  height={40}
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiIW9mGAm-LRo-keYX2PsC1g5aOR0BOHwtIILYkiprP0worCQhRZ2FM0Xydk-ZVfgWLSyvxaVCPUKeYxvG_VW3nA5lCdcsWl0QzDgRix_OPHfa5dDY592XYzFYB5ulkKLe6PiBfp2dZ0Jn2NqO3edYQdV2YA-ZyPlYzenzWlETxN_ulMGpmTZFUc91yk5K31_ecA1XHdOouW7WleeXJy-l4wRCXYqlTpOtxojX316nXiG5P0YXbF-883PfXIsjSJGrQY_5gswWJg"
-                  width={40}
-                />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AdminPageHeader
+        description="Platform management and verification center"
+        searchPlaceholder="Search users or IDs..."
+        title="Admin Control Panel"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
@@ -141,31 +123,24 @@ export default function KYCVerificationPage() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-8">
-        <div className="p-8 border-b border-slate-50 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-              Seller Verification List
-            </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Review pending identity submissions for platform sellers
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            <button className="flex items-center space-x-2 px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group shrink-0">
-              <span className="material-symbols-outlined text-lg text-slate-400 group-hover:text-slate-600 transition-colors">
+      <AdminTableCard
+        actions={
+          <div className="flex w-full flex-wrap items-center gap-3 md:w-auto">
+            <button className="group shrink-0 flex items-center space-x-2 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold transition-all hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
+              <span className="material-symbols-outlined text-lg text-slate-400 transition-colors group-hover:text-slate-600">
                 filter_list
               </span>
               <span>Filter</span>
             </button>
-            <button className="flex items-center space-x-2 px-5 py-2.5 bg-[#21337e] text-white rounded-xl text-sm font-bold hover:shadow-lg hover:shadow-blue-500/20 transition-all shrink-0">
-              <span className="material-symbols-outlined text-lg">
-                download
-              </span>
+            <button className="shrink-0 flex items-center space-x-2 rounded-xl bg-[#21337e] px-5 py-2.5 text-sm font-bold text-white transition-all hover:shadow-lg hover:shadow-blue-500/20">
+              <span className="material-symbols-outlined text-lg">download</span>
               <span>Export CSV</span>
             </button>
           </div>
-        </div>
+        }
+        description="Review pending identity submissions for platform sellers"
+        title="Seller Verification List"
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -188,166 +163,59 @@ export default function KYCVerificationPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-              <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group">
-                <td className="px-8 py-5">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-black text-slate-500 text-xs border border-slate-200 dark:border-slate-700">
-                      JD
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-[#21337e] dark:group-hover:text-blue-400 transition-colors">
-                        John Doe
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-500">
-                        john.doe@email.com
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-8 py-5">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                    Oct 24, 2023 • 14:20
-                  </p>
-                </td>
-                <td className="px-8 py-5">
-                  <span className="text-[11px] font-bold px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                    ID Card & Selfie
-                  </span>
-                </td>
-                <td className="px-8 py-5">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black uppercase dark:bg-orange-500/10 bg-orange-50 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-500/20 italic">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 mr-2 shadow-[0_0_8px_rgba(249,115,22,0.5)]"></span>
-                    Pending Review
-                  </span>
-                </td>
-                <td className="px-8 py-5 text-right">
-                  <button className="px-6 py-2 bg-[#21337e] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all">
-                    Review
-                  </button>
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group">
-                <td className="px-8 py-5">
-                  <div className="flex items-center space-x-4">
-                    <Image
-                      alt="Avatar"
-                      className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shadow-sm"
-                      height={40}
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuApRkm-JPqhEY6ycG4ylRHJqB3S2AECdlZsfMSE1BZ-vX_F6dvPwbRJH-D4tgWG2S5qFyOyWgazq7E9wbsO0S29QIs_hTPRBsQt_s1y6qgC-8rUgY-fdRkaYdUjkQuvHOExsLH-qY96gwDzgZkkNLnhgXgZ93B_kqpXPCgsRSKnL5iPk3iaICdgcnvLL6X0jgH5XxRCZSWZVrP75rsliTxkggwxRkZXFlhxuK9BbKV7lRdYspfVlmSvtSGrWqCvt8fIg43pOHeGGA"
-                      width={40}
-                    />
-                    <div>
-                      <p className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-[#21337e] dark:group-hover:text-blue-400 transition-colors">
-                        Sarah Wilson
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-500">
-                        sarah.w@gmail.com
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-8 py-5">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                    Oct 23, 2023 • 09:15
-                  </p>
-                </td>
-                <td className="px-8 py-5">
-                  <span className="text-[11px] font-bold px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                    Passport
-                  </span>
-                </td>
-                <td className="px-8 py-5">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black uppercase dark:bg-green-500/10 bg-green-50 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-500/20 italic">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
-                    Approved
-                  </span>
-                </td>
-                <td className="px-8 py-5 text-right">
-                  <button className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-all">
-                    View Details
-                  </button>
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group">
-                <td className="px-8 py-5">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-black text-slate-500 text-xs border border-slate-200 dark:border-slate-700">
-                      BK
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-[#21337e] dark:group-hover:text-blue-400 transition-colors">
-                        Budi Kusuma
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-500">
-                        budi.k@outlook.com
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-8 py-5">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                    Oct 22, 2023 • 17:45
-                  </p>
-                </td>
-                <td className="px-8 py-5">
-                  <span className="text-[11px] font-bold px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                    ID Card
-                  </span>
-                </td>
-                <td className="px-8 py-5">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black uppercase dark:bg-red-500/10 bg-red-50 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-500/20 italic">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-2 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span>
-                    Rejected
-                  </span>
-                </td>
-                <td className="px-8 py-5 text-right">
-                  <button className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-all">
-                    Review
-                  </button>
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group">
-                <td className="px-8 py-5">
-                  <div className="flex items-center space-x-4">
-                    <Image
-                      alt="Avatar"
-                      className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shadow-sm"
-                      height={40}
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwjGf0hnm-0OAVxo9HQDlAYDmAsXTZh--9sklq3mXNOsmntV1T3etnjldZXfLnVd6xVgwk_j-mgALTo5nK4aDn_goL-4UsOLH1o9E1TMMY8e-88sXOMLC8ExddCjURmWvUEAD-2jnVmf66ZIonOqj9KBK_wUpw2MzxLQJ7u6L6EJX6dbkQd80W8a04aaQPqiU3GpQ44kInywcai-PoLsG8mUE-LQTigBlCVhjoEazkfOe6OsgD7ZGTcPF5jWdT2L8yU2_xnbrhYA"
-                      width={40}
-                    />
-                    <div>
-                      <p className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-[#21337e] dark:group-hover:text-blue-400 transition-colors">
-                        Alex Johnson
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-500">
-                        ajohnson@gaming.net
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-8 py-5">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                    Oct 22, 2023 • 12:00
-                  </p>
-                </td>
-                <td className="px-8 py-5">
-                  <span className="text-[11px] font-bold px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                    ID Card & Selfie
-                  </span>
-                </td>
-                <td className="px-8 py-5">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black uppercase dark:bg-orange-500/10 bg-orange-50 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-500/20 italic">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 mr-2 shadow-[0_0_8px_rgba(249,115,22,0.5)]"></span>
-                    Pending Review
-                  </span>
-                </td>
-                <td className="px-8 py-5 text-right">
-                  <button className="px-6 py-2 bg-[#21337e] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all">
-                    Review
-                  </button>
-                </td>
-              </tr>
+              {kycRows.map((row) => {
+                const avatar = kycAvatar(row.name);
+
+                return (
+                  <tr className="group transition-all hover:bg-slate-50/50 dark:hover:bg-slate-800/30" key={`${row.email}-${row.submittedDate}`}>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center space-x-4">
+                        {avatar.type === "image" ? (
+                          <Image
+                            alt={row.name}
+                            className="h-10 w-10 rounded-full border border-slate-200 object-cover shadow-sm dark:border-slate-700"
+                            height={40}
+                            src={avatar.src}
+                            width={40}
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xs font-black text-slate-500 dark:border-slate-700 dark:bg-slate-800">
+                            {avatar.initials}
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-sm font-bold text-slate-900 transition-colors group-hover:text-[#21337e] dark:text-white dark:group-hover:text-blue-400">
+                            {row.name}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-500">{row.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{row.submittedDate}</p>
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className="rounded-lg border border-slate-200 bg-slate-100 px-3 py-1 text-[11px] font-bold text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+                        {row.verificationType}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5">
+                      <AdminStatusBadge pulse={row.status === "pending_review"} status={row.status} />
+                    </td>
+                    <td className="px-8 py-5 text-right">
+                      <button
+                        className={`rounded-xl text-[11px] font-black tracking-widest uppercase transition-all ${
+                          row.status === "approved"
+                            ? "border border-slate-200 px-4 py-2 text-slate-600 hover:bg-white dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                            : "bg-[#21337e] px-6 py-2 text-white hover:shadow-lg hover:shadow-blue-500/20"
+                        }`.trim()}
+                      >
+                        {actionLabel(row.status)}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -376,33 +244,9 @@ export default function KYCVerificationPage() {
             </button>
           </div>
         </div>
-      </div>
+      </AdminTableCard>
 
-      <footer className="mt-12 pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic">
-        <p className="text-center md:text-left">
-          © 2024 GAMEMARKET Indonesia. All rights reserved.
-        </p>
-        <div className="flex space-x-8 mt-4 md:mt-0">
-          <a
-            className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
-            href="#"
-          >
-            Privacy Policy
-          </a>
-          <a
-            className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
-            href="#"
-          >
-            Terms of Service
-          </a>
-          <a
-            className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
-            href="#"
-          >
-            System Status
-          </a>
-        </div>
-      </footer>
+      <AdminPageFooter />
     </>
   );
 }

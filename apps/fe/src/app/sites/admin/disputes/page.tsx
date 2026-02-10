@@ -1,60 +1,17 @@
-import Link from "next/link";
-import Image from "next/image";
+import AdminPageFooter from "../components/AdminPageFooter";
+import AdminPageHeader from "../components/AdminPageHeader";
+import AdminStatusBadge from "../components/AdminStatusBadge";
+import AdminTableCard from "../components/AdminTableCard";
+import { disputeRows } from "../data/disputes";
 
 export default function DisputesPage() {
   return (
     <>
-      <header className="flex flex-col xl:flex-row justify-between items-start gap-6 mb-10">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-            Admin Dispute Resolution
-          </h1>
-          <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-1">
-            Mediate and resolve conflicts between buyers and sellers
-          </p>
-        </div>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full xl:w-auto">
-          <div className="relative w-full md:w-auto">
-            <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-xl">
-              search
-            </span>
-            <input
-              className="pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none w-full md:w-72 text-sm transition-all"
-              placeholder="Search tickets, orders..."
-              type="text"
-            />
-          </div>
-          <div className="flex items-center justify-between w-full md:w-auto gap-4">
-            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 relative hover:bg-slate-50 transition-colors shrink-0">
-              <span className="material-symbols-outlined text-2xl">
-                notifications
-              </span>
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-            </button>
-            <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden md:block"></div>
-            <div className="flex items-center gap-3 ml-auto md:ml-0">
-              <div className="text-right hidden md:block">
-                <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
-                  Admin Store
-                </p>
-                <p className="text-[11px] font-medium text-slate-500 uppercase tracking-tight">
-                  Super Admin
-                </p>
-              </div>
-              <div className="relative">
-                <Image
-                  alt="Admin"
-                  className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
-                  height={40}
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiIW9mGAm-LRo-keYX2PsC1g5aOR0BOHwtIILYkiprP0worCQhRZ2FM0Xydk-ZVfgWLSyvxaVCPUKeYxvG_VW3nA5lCdcsWl0QzDgRix_OPHfa5dDY592XYzFYB5ulkKLe6PiBfp2dZ0Jn2NqO3edYQdV2YA-ZyPlYzenzWlETxN_ulMGpmTZFUc91yk5K31_ecA1XHdOouW7WleeXJy-l4wRCXYqlTpOtxojX316nXiG5P0YXbF-883PfXIsjSJGrQY_5gswWJg"
-                  width={40}
-                />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AdminPageHeader
+        description="Mediate and resolve conflicts between buyers and sellers"
+        searchPlaceholder="Search tickets, orders..."
+        title="Admin Dispute Resolution"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-8">
         <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
@@ -123,27 +80,20 @@ export default function DisputesPage() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-8">
-        <div className="p-6 md:p-8 border-b border-slate-50 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-slate-900">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-              Dispute Management
-            </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Monitoring all active and historical dispute cases
-            </p>
-          </div>
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <button className="flex items-center justify-center space-x-2 px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group w-full md:w-auto">
-              <span className="material-symbols-outlined text-lg text-slate-400 group-hover:text-slate-600 transition-colors">
-                filter_list
-              </span>
-              <span>Filter</span>
-            </button>
-          </div>
-        </div>
+      <AdminTableCard
+        actions={
+          <button className="group flex w-full items-center justify-center space-x-2 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold transition-all hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 md:w-auto">
+            <span className="material-symbols-outlined text-lg text-slate-400 transition-colors group-hover:text-slate-600">
+              filter_list
+            </span>
+            <span>Filter</span>
+          </button>
+        }
+        description="Monitoring all active and historical dispute cases"
+        title="Dispute Management"
+      >
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[1000px]">
+          <table className="w-full text-left border-collapse min-w-250">
             <thead>
               <tr className="border-b border-slate-50 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/20">
                 <th className="px-8 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest italic">
@@ -173,59 +123,7 @@ export default function DisputesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-              {[
-                {
-                  id: "#DIS-8821",
-                  order: "ORD-22941",
-                  desc: "Valorant Ascendant Account",
-                  initiator: "BK",
-                  initiatorType: "Buyer",
-                  reason: "Account Recovery Link Broken",
-                  date: "Oct 24, 14:20",
-                  priority: "HIGH",
-                  status: "Open",
-                  statusDot: "bg-orange-500",
-                },
-                {
-                  id: "#DIS-8819",
-                  order: "ORD-22850",
-                  desc: "Genshin Impact AR 55",
-                  initiator: "SW",
-                  initiatorType: "Seller",
-                  initiatorColor:
-                    "bg-purple-100 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400",
-                  reason: "Payment Not Received",
-                  date: "Oct 23, 09:15",
-                  priority: "MEDIUM",
-                  status: "Under Review",
-                  statusDot: "bg-blue-500",
-                },
-                {
-                  id: "#DIS-8815",
-                  order: "ORD-22792",
-                  desc: "MLBB Mythic Glory Acc",
-                  initiator: "AJ",
-                  initiatorType: "Buyer",
-                  reason: "In-game currency missing",
-                  date: "Oct 22, 17:45",
-                  priority: "LOW",
-                  status: "Resolved",
-                  statusDot: "bg-green-500",
-                  action: "View Log",
-                },
-                {
-                  id: "#DIS-8812",
-                  order: "ORD-22610",
-                  desc: "Steam Account CS2",
-                  initiator: "JD",
-                  initiatorType: "Buyer",
-                  reason: "Login credentials invalid",
-                  date: "Oct 22, 12:00",
-                  priority: "HIGH",
-                  status: "Open",
-                  statusDot: "bg-orange-500",
-                },
-              ].map((ticket) => (
+              {disputeRows.map((ticket) => (
                 <tr
                   key={ticket.id}
                   className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group"
@@ -256,7 +154,7 @@ export default function DisputesPage() {
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 leading-relaxed max-w-[200px]">
+                    <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 leading-relaxed max-w-50">
                       {ticket.reason}
                     </p>
                   </td>
@@ -280,20 +178,7 @@ export default function DisputesPage() {
                     </span>
                   </td>
                   <td className="px-8 py-5">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black uppercase italic border ${
-                        ticket.status === "Open"
-                          ? "bg-orange-50 text-orange-600 border-orange-100 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20"
-                          : ticket.status === "Under Review"
-                            ? "bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20"
-                            : "bg-green-50 text-green-600 border-green-100 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20"
-                      }`}
-                    >
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${ticket.statusDot} mr-2 shadow-[0_0_8px_currentColor] animate-pulse`}
-                      ></span>
-                      {ticket.status}
-                    </span>
+                    <AdminStatusBadge pulse status={ticket.status} />
                   </td>
                   <td className="px-8 py-5 text-right">
                     {ticket.action === "View Log" ? (
@@ -311,7 +196,7 @@ export default function DisputesPage() {
             </tbody>
           </table>
         </div>
-        <div className="px-8 py-6 border-t border-slate-50 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/30 dark:bg-slate-800/20">
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-50 bg-slate-50/30 px-8 py-6 dark:border-slate-800 dark:bg-slate-800/20 md:flex-row">
           <p className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest italic text-center md:text-left">
             Showing 1 to 4 of 24 open disputes
           </p>
@@ -333,33 +218,9 @@ export default function DisputesPage() {
             </button>
           </div>
         </div>
-      </div>
+      </AdminTableCard>
 
-      <footer className="mt-12 pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic">
-        <p className="text-center md:text-left">
-          © 2024 GAMEMARKET Indonesia. All rights reserved.
-        </p>
-        <div className="flex flex-wrap justify-center md:justify-end gap-x-8 gap-y-4">
-          <a
-            className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
-            href="#"
-          >
-            Privacy Policy
-          </a>
-          <a
-            className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
-            href="#"
-          >
-            Terms of Service
-          </a>
-          <a
-            className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
-            href="#"
-          >
-            Resolution Guidelines
-          </a>
-        </div>
-      </footer>
+      <AdminPageFooter thirdLinkLabel="Resolution Guidelines" />
     </>
   );
 }

@@ -1,64 +1,28 @@
-import Link from "next/link";
-import Image from "next/image";
+import AdminStatusBadge from "../components/AdminStatusBadge";
+import AdminPageFooter from "../components/AdminPageFooter";
+import AdminPageHeader from "../components/AdminPageHeader";
+import AdminTableCard from "../components/AdminTableCard";
+import { transactionRows } from "../data/transactions";
 
 export default function TransactionsPage() {
+  function paymentMethodIcon(method: string) {
+    if (method === "Credit Card") {
+      return "credit_card";
+    }
+    return "account_balance_wallet";
+  }
+
   return (
     <>
-      <header className="flex flex-col xl:flex-row justify-between items-start gap-6 mb-10">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-            Admin Transaction Monitoring
-          </h1>
-          <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-1">
-            Monitor and manage all platform payment activities
-          </p>
-        </div>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full xl:w-auto">
-          <div className="relative w-full md:w-auto">
-            <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-xl">
-              search
-            </span>
-            <input
-              className="pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none w-full md:w-72 text-sm transition-all"
-              placeholder="Search transactions..."
-              type="text"
-            />
-          </div>
-          <div className="flex items-center justify-between w-full md:w-auto gap-4">
-            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 relative hover:bg-slate-50 transition-colors shrink-0">
-              <span className="material-symbols-outlined text-2xl">
-                notifications
-              </span>
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-            </button>
-            <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden md:block"></div>
-            <div className="flex items-center gap-3 ml-auto md:ml-0">
-              <div className="text-right hidden md:block">
-                <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
-                  Admin Store
-                </p>
-                <p className="text-[11px] font-medium text-slate-500 uppercase tracking-tight">
-                  Super Admin
-                </p>
-              </div>
-              <div className="relative">
-                <Image
-                  alt="Admin"
-                  className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
-                  height={40}
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiIW9mGAm-LRo-keYX2PsC1g5aOR0BOHwtIILYkiprP0worCQhRZ2FM0Xydk-ZVfgWLSyvxaVCPUKeYxvG_VW3nA5lCdcsWl0QzDgRix_OPHfa5dDY592XYzFYB5ulkKLe6PiBfp2dZ0Jn2NqO3edYQdV2YA-ZyPlYzenzWlETxN_ulMGpmTZFUc91yk5K31_ecA1XHdOouW7WleeXJy-l4wRCXYqlTpOtxojX316nXiG5P0YXbF-883PfXIsjSJGrQY_5gswWJg"
-                  width={40}
-                />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AdminPageHeader
+        description="Monitor and manage all platform payment activities"
+        searchPlaceholder="Search transactions..."
+        title="Admin Transaction Monitoring"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-x-auto">
-          <div className="min-w-[600px]">
+          <div className="min-w-150">
             <div className="flex justify-between items-start mb-10">
               <div>
                 <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1 italic">
@@ -182,48 +146,37 @@ export default function TransactionsPage() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden mb-8">
-        <div className="p-8 border-b border-slate-50 dark:border-slate-800">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Transaction Logs
-              </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                Showing detailed history of all account sales
-              </p>
+      <AdminTableCard
+        actions={
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="group flex items-center rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 transition-all focus-within:ring-2 focus-within:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800">
+              <span className="material-symbols-outlined mr-3 text-lg text-slate-400">calendar_today</span>
+              <input
+                className="w-48 border-none bg-transparent p-0 text-sm font-bold text-slate-700 focus:ring-0 dark:text-slate-200"
+                defaultValue="Oct 20, 2023 - Oct 27, 2023"
+                type="text"
+              />
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 group focus-within:ring-2 focus-within:ring-blue-500/10 transition-all">
-                <span className="material-symbols-outlined text-lg text-slate-400 mr-3">
-                  calendar_today
-                </span>
-                <input
-                  className="bg-transparent border-none p-0 text-sm font-bold text-slate-700 dark:text-slate-200 focus:ring-0 w-48"
-                  type="text"
-                  defaultValue="Oct 20, 2023 - Oct 27, 2023"
-                />
-              </div>
-              <div className="relative">
-                <select className="appearance-none bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold px-4 py-2.5 pr-10 focus:ring-2 focus:ring-blue-500/10 outline-none dark:text-white transition-all">
-                  <option>All Status</option>
-                  <option>Success</option>
-                  <option>Pending</option>
-                  <option>Refunded</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xl">
-                  expand_more
-                </span>
-              </div>
-              <button className="flex items-center space-x-2 px-6 py-2.5 bg-[#21337e] text-white rounded-xl text-sm font-bold hover:shadow-lg hover:shadow-blue-500/20 transition-all">
-                <span className="material-symbols-outlined text-lg">
-                  filter_alt
-                </span>
-                <span>Apply Filters</span>
-              </button>
+            <div className="relative">
+              <select className="appearance-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-10 text-sm font-bold outline-none transition-all focus:ring-2 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+                <option>All Status</option>
+                <option>Success</option>
+                <option>Pending</option>
+                <option>Refunded</option>
+              </select>
+              <span className="material-symbols-outlined pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-xl text-slate-400">
+                expand_more
+              </span>
             </div>
+            <button className="flex items-center space-x-2 rounded-xl bg-[#21337e] px-6 py-2.5 text-sm font-bold text-white transition-all hover:shadow-lg hover:shadow-blue-500/20">
+              <span className="material-symbols-outlined text-lg">filter_alt</span>
+              <span>Apply Filters</span>
+            </button>
           </div>
-        </div>
+        }
+        description="Showing detailed history of all account sales"
+        title="Transaction Logs"
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -252,162 +205,41 @@ export default function TransactionsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-              <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group">
-                <td className="px-8 py-6 text-sm font-black text-slate-900 dark:text-white group-hover:text-[#21337e] transition-colors">
-                  #TXN-984021
-                </td>
-                <td className="px-8 py-6 text-sm font-medium text-slate-500 dark:text-slate-400">
-                  ORD-55209
-                </td>
-                <td className="px-8 py-6">
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded w-fit">
-                      <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 lowercase">
-                        b
-                      </span>
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                        alex_gamer
-                      </span>
+              {transactionRows.map((row) => (
+                <tr className="group transition-all hover:bg-slate-50/50 dark:hover:bg-slate-800/30" key={row.id}>
+                  <td className="px-8 py-6 text-sm font-black text-slate-900 transition-colors group-hover:text-[#21337e] dark:text-white">
+                    {row.id}
+                  </td>
+                  <td className="px-8 py-6 text-sm font-medium text-slate-500 dark:text-slate-400">{row.orderId}</td>
+                  <td className="px-8 py-6">
+                    <div className="space-y-2">
+                      <div className="flex w-fit items-center space-x-2 rounded bg-blue-50 px-2 py-1 dark:bg-blue-500/10">
+                        <span className="text-[10px] font-black text-blue-600 lowercase dark:text-blue-400">b</span>
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{row.buyer}</span>
+                      </div>
+                      <div className="flex w-fit items-center space-x-2 rounded bg-orange-50 px-2 py-1 dark:bg-orange-500/10">
+                        <span className="text-[10px] font-black text-orange-600 lowercase dark:text-orange-400">s</span>
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{row.seller}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2 bg-orange-50 dark:bg-orange-500/10 px-2 py-1 rounded w-fit">
-                      <span className="text-[10px] font-black text-orange-600 dark:text-orange-400 lowercase">
-                        s
-                      </span>
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                        elite_seller
-                      </span>
+                  </td>
+                  <td className="px-8 py-6 text-sm font-black text-slate-900 dark:text-white">{row.amount}</td>
+                  <td className="px-8 py-6">
+                    <div className="flex items-center space-x-3 text-slate-600 dark:text-slate-400">
+                      <span className="material-symbols-outlined text-lg">{paymentMethodIcon(row.paymentMethod)}</span>
+                      <span className="text-xs font-bold">{row.paymentMethod}</span>
                     </div>
-                  </div>
-                </td>
-                <td className="px-8 py-6 text-sm font-black text-slate-900 dark:text-white">
-                  Rp 2.450.000
-                </td>
-                <td className="px-8 py-6">
-                  <div className="flex items-center space-x-3 text-slate-600 dark:text-slate-400">
-                    <span className="material-symbols-outlined text-lg">
-                      account_balance_wallet
-                    </span>
-                    <span className="text-xs font-bold">Virtual Account</span>
-                  </div>
-                </td>
-                <td className="px-8 py-6">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black uppercase dark:bg-green-500/10 bg-green-50 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-500/20 italic">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
-                    Success
-                  </span>
-                </td>
-                <td className="px-8 py-6 text-right">
-                  <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
-                    <span className="material-symbols-outlined text-slate-400">
-                      more_horiz
-                    </span>
-                  </button>
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group">
-                <td className="px-8 py-6 text-sm font-black text-slate-900 dark:text-white group-hover:text-[#21337e] transition-colors">
-                  #TXN-984022
-                </td>
-                <td className="px-8 py-6 text-sm font-medium text-slate-500 dark:text-slate-400">
-                  ORD-55210
-                </td>
-                <td className="px-8 py-6">
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded w-fit">
-                      <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 lowercase">
-                        b
-                      </span>
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                        ryan_king
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2 bg-orange-50 dark:bg-orange-500/10 px-2 py-1 rounded w-fit">
-                      <span className="text-[10px] font-black text-orange-600 dark:text-orange-400 lowercase">
-                        s
-                      </span>
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                        pro_account
-                      </span>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-8 py-6 text-sm font-black text-slate-900 dark:text-white">
-                  Rp 850.000
-                </td>
-                <td className="px-8 py-6">
-                  <div className="flex items-center space-x-3 text-slate-600 dark:text-slate-400">
-                    <span className="material-symbols-outlined text-lg">
-                      account_balance_wallet
-                    </span>
-                    <span className="text-xs font-bold">E-Wallet</span>
-                  </div>
-                </td>
-                <td className="px-8 py-6">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black uppercase dark:bg-orange-500/10 bg-orange-50 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-500/20 italic">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 mr-2 shadow-[0_0_8px_rgba(249,115,22,0.5)]"></span>
-                    Pending
-                  </span>
-                </td>
-                <td className="px-8 py-6 text-right">
-                  <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
-                    <span className="material-symbols-outlined text-slate-400">
-                      more_horiz
-                    </span>
-                  </button>
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group">
-                <td className="px-8 py-6 text-sm font-black text-slate-900 dark:text-white group-hover:text-[#21337e] transition-colors">
-                  #TXN-984023
-                </td>
-                <td className="px-8 py-6 text-sm font-medium text-slate-500 dark:text-slate-400">
-                  ORD-55211
-                </td>
-                <td className="px-8 py-6">
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded w-fit">
-                      <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 lowercase">
-                        b
-                      </span>
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                        shadow_user
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2 bg-orange-50 dark:bg-orange-500/10 px-2 py-1 rounded w-fit">
-                      <span className="text-[10px] font-black text-orange-600 dark:text-orange-400 lowercase">
-                        s
-                      </span>
-                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                        mythic_store
-                      </span>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-8 py-6 text-sm font-black text-slate-900 dark:text-white">
-                  Rp 15.000.000
-                </td>
-                <td className="px-8 py-6">
-                  <div className="flex items-center space-x-3 text-slate-600 dark:text-slate-400">
-                    <span className="material-symbols-outlined text-lg">
-                      credit_card
-                    </span>
-                    <span className="text-xs font-bold">Credit Card</span>
-                  </div>
-                </td>
-                <td className="px-8 py-6">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black uppercase dark:bg-red-500/10 bg-red-50 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-500/20 italic">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-2 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span>
-                    Refunded
-                  </span>
-                </td>
-                <td className="px-8 py-6 text-right">
-                  <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
-                    <span className="material-symbols-outlined text-slate-400">
-                      more_horiz
-                    </span>
-                  </button>
-                </td>
-              </tr>
+                  </td>
+                  <td className="px-8 py-6">
+                    <AdminStatusBadge pulse={row.status === "pending"} status={row.status} />
+                  </td>
+                  <td className="px-8 py-6 text-right">
+                    <button className="rounded-xl p-2 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
+                      <span className="material-symbols-outlined text-slate-400">more_horiz</span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -436,31 +268,9 @@ export default function TransactionsPage() {
             </button>
           </div>
         </div>
-      </div>
+      </AdminTableCard>
 
-      <footer className="mt-12 pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest italic">
-        <p>© 2024 GAMEMARKET Indonesia. All rights reserved.</p>
-        <div className="flex space-x-8 mt-4 md:mt-0">
-          <a
-            className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
-            href="#"
-          >
-            Privacy Policy
-          </a>
-          <a
-            className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
-            href="#"
-          >
-            Terms of Service
-          </a>
-          <a
-            className="hover:text-[#21337e] dark:hover:text-blue-400 transition-colors"
-            href="#"
-          >
-            System Status
-          </a>
-        </div>
-      </footer>
+      <AdminPageFooter />
     </>
   );
 }

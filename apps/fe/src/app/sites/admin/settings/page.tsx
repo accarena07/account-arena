@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import AdminPageHeader from "../components/AdminPageHeader";
 
 export default function SettingsPage() {
   const categories = [
@@ -23,48 +24,10 @@ export default function SettingsPage() {
 
   return (
     <>
-      <header className="flex flex-col xl:flex-row justify-between items-start gap-6 mb-10">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-            Platform Settings
-          </h1>
-          <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-1">
-            Configure marketplace commission, game categories, and security
-            protocols
-          </p>
-        </div>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full xl:w-auto">
-          <div className="flex items-center justify-between w-full md:w-auto gap-4">
-            <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 relative hover:bg-slate-50 transition-colors shrink-0">
-              <span className="material-symbols-outlined text-2xl">
-                notifications
-              </span>
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-            </button>
-            <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden md:block"></div>
-            <div className="flex items-center gap-3 ml-auto md:ml-0">
-              <div className="text-right hidden md:block">
-                <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
-                  Admin Store
-                </p>
-                <p className="text-[11px] font-medium text-slate-500 uppercase tracking-tight">
-                  Super Admin
-                </p>
-              </div>
-              <div className="relative">
-                <Image
-                  alt="Admin"
-                  className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
-                  height={40}
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiIW9mGAm-LRo-keYX2PsC1g5aOR0BOHwtIILYkiprP0worCQhRZ2FM0Xydk-ZVfgWLSyvxaVCPUKeYxvG_VW3nA5lCdcsWl0QzDgRix_OPHfa5dDY592XYzFYB5ulkKLe6PiBfp2dZ0Jn2NqO3edYQdV2YA-ZyPlYzenzWlETxN_ulMGpmTZFUc91yk5K31_ecA1XHdOouW7WleeXJy-l4wRCXYqlTpOtxojX316nXiG5P0YXbF-883PfXIsjSJGrQY_5gswWJg"
-                  width={40}
-                />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AdminPageHeader
+        description="Configure marketplace commission, game categories, and security protocols"
+        title="Platform Settings"
+      />
 
       {/* Tabs */}
       <div className="overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
@@ -110,7 +73,7 @@ export default function SettingsPage() {
                 </h3>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left min-w-[400px]">
+                <table className="w-full text-left min-w-100">
                   <thead className="border-b border-slate-50 dark:border-slate-800">
                     <tr>
                       <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
@@ -161,7 +124,7 @@ export default function SettingsPage() {
                 </h3>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left min-w-[400px]">
+                <table className="w-full text-left min-w-100">
                   <thead className="border-b border-slate-50 dark:border-slate-800">
                     <tr>
                       <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
@@ -332,7 +295,7 @@ export default function SettingsPage() {
                   className="sr-only peer"
                   defaultChecked
                 />
-                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
               </label>
             </div>
           </div>
