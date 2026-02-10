@@ -17,7 +17,7 @@ export default function BuyerRegisterSuccessPage() {
         <ThemeToggleButton className="bg-white p-3 text-gray-600 shadow-lg transition-all hover:scale-110 dark:bg-slate-800 dark:text-gray-300" />
       </div>
 
-      <main className="mx-auto flex min-h-[750px] w-full max-w-6xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900 lg:flex-row">
+      <main className="mx-auto flex min-h-187.5 w-full max-w-6xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900 lg:flex-row">
         <div className="relative flex flex-col items-center justify-center overflow-hidden bg-primary p-12 text-white lg:w-5/12">
           <div
             className="absolute inset-0 opacity-20"
@@ -74,7 +74,7 @@ export default function BuyerRegisterSuccessPage() {
                   star
                 </span>
                 <span className="material-symbols-outlined absolute top-1/2 -left-8 text-xl text-blue-400">celebration</span>
-                <span className="material-symbols-outlined absolute right-[-1.5rem] bottom-0 text-xl text-orange-400">
+                <span className="material-symbols-outlined absolute -right-6 bottom-0 text-xl text-orange-400">
                   redeem
                 </span>
               </div>

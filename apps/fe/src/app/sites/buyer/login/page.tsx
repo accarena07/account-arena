@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ResultModal from "@/components/common/ResultModal";
 import AuthPageShell from "../components/AuthPageShell";
 
@@ -18,10 +17,27 @@ const loginFeatures = [
 
 export default function BuyerLoginPage() {
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const submitTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (submitTimerRef.current) {
+        window.clearTimeout(submitTimerRef.current);
+      }
+    };
+  }, []);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setShowErrorModal(true);
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    submitTimerRef.current = window.setTimeout(() => {
+      setIsSubmitting(false);
+      setShowErrorModal(true);
+    }, 1200);
   }
 
   return (
@@ -32,7 +48,7 @@ export default function BuyerLoginPage() {
         onClose={() => setShowErrorModal(false)}
         onPrimaryAction={() => setShowErrorModal(false)}
         primaryActionLabel="Coba Lagi"
-        secondaryActionHref="/login/otp"
+        secondaryActionHref="/login/forgot-password"
         secondaryActionLabel="Lupa Kata Sandi?"
         title="Login Gagal"
         variant="error"
@@ -44,7 +60,7 @@ export default function BuyerLoginPage() {
         leftFeatures={loginFeatures}
         leftTitle="Nikmati Transaksi Aman & Instan"
       >
-        <form className="space-y-5" onSubmit={onSubmit}>
+        <form aria-busy={isSubmitting} className="space-y-5" onSubmit={onSubmit}>
         <div className="space-y-2">
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email atau Username</label>
           <div className="relative">
@@ -53,6 +69,7 @@ export default function BuyerLoginPage() {
             </span>
             <input
               className="w-full rounded-xl border-none bg-gray-50 py-3 pr-4 pl-12 text-gray-900 placeholder-gray-400 transition-all focus:ring-2 focus:ring-primary dark:bg-slate-800 dark:text-white"
+              disabled={isSubmitting}
               placeholder="contoh@email.com"
               type="email"
             />
@@ -62,7 +79,7 @@ export default function BuyerLoginPage() {
         <div className="space-y-2">
           <div className="flex justify-between">
             <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Kata Sandi</label>
-            <a className="text-sm text-primary hover:underline dark:text-blue-400" href="/login/otp">
+            <a className="text-sm text-primary hover:underline dark:text-blue-400" href="/login/forgot-password">
               Lupa kata sandi?
             </a>
           </div>
@@ -71,57 +88,38 @@ export default function BuyerLoginPage() {
               lock_outline
             </span>
             <input
-              className="w-full rounded-xl border-none bg-gray-50 py-3 pr-4 pl-12 text-gray-900 placeholder-gray-400 transition-all focus:ring-2 focus:ring-primary dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-xl border-none bg-gray-50 py-3 pr-12 pl-12 text-gray-900 placeholder-gray-400 transition-all focus:ring-2 focus:ring-primary dark:bg-slate-800 dark:text-white"
+              disabled={isSubmitting}
               placeholder="••••••••"
-              type="password"
+              type={showPassword ? "text" : "password"}
             />
+            <button
+              aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+              className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
+              disabled={isSubmitting}
+              onClick={() => setShowPassword((prev) => !prev)}
+              type="button"
+            >
+              <span className="material-symbols-outlined">{showPassword ? "visibility_off" : "visibility"}</span>
+            </button>
           </div>
         </div>
 
         <button
-          className="w-full rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-blue-800"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/20 transition-all hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-80"
+          disabled={isSubmitting}
           type="submit"
         >
-          Masuk ke Akun
+          {isSubmitting ? (
+            <>
+              <span className="material-symbols-outlined animate-spin text-xl">progress_activity</span>
+              Memproses...
+            </>
+          ) : (
+            "Masuk ke Akun"
+          )}
         </button>
 
-        <div className="relative py-4">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-100 dark:border-slate-800" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-gray-400 dark:bg-slate-900">Atau masuk dengan</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-3 transition-all hover:bg-gray-50 dark:border-slate-700 dark:hover:bg-slate-800"
-            type="button"
-          >
-            <Image
-              alt="Google Logo"
-              className="h-5 w-5"
-              height={20}
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj5GOb9iaommhZx2_9E2OXmPJu9EnMQPBvjrIStT-VhO7laB1hqd6RgSlbMSVhMYw2gyfrz0uIvfV4MCwVhuFvxzSEBNKeaUjphE3bJ6aKoFpjlbJ1QSU1p7YqFpLdKsXPmwzVNb6HJEDydx7oUFEQ73c3vyJ3jqLUg8dHs5G-J826yMgmV7vSICS2a5Auev6Z6E4nc1bx0XZkqt8jBsGXmd012xBRydbdfX_KmL0HaXQgoRmVtHfgfbOaPQOzln_rVV_ZxwmiWg"
-              width={20}
-            />
-            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Google</span>
-          </button>
-          <button
-            className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-3 transition-all hover:bg-gray-50 dark:border-slate-700 dark:hover:bg-slate-800"
-            type="button"
-          >
-            <Image
-              alt="Facebook Logo"
-              className="h-5 w-5"
-              height={20}
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuABztumVWKCs8EBgfO8BtMFmjKAxmOiTqOV-vXa65c9l9nsf0aY-2FdKBMQ2Fd9lp8qBj-x9pbKVmEVqRjnFDFn-MwPm5mZ_M6k99LhMhudhnxkDnQNGdaohfMJ3innALLbw8cAZWwkET3WNdtVbQQ4fuPtOloqPayAihiMkG81HZzpzbCktmiay5KWUZcgrmldPJu_pdV0rnJEgL2QSI5BzoUuxPk3T2_VbA1lM2WOoqIVZrqYkbsMq7xVL-SRTmRg7g7L08K-rw"
-              width={20}
-            />
-            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Facebook</span>
-          </button>
-        </div>
         </form>
       </AuthPageShell>
     </>
