@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import AuthPageShell from "../components/AuthPageShell";
 
 const registerFeatures = [
@@ -17,14 +18,13 @@ const registerFeatures = [
 ] as const;
 
 export default function BuyerRegisterPage() {
+  const router = useRouter();
   const [otpMethod, setOtpMethod] = useState<"whatsapp" | "email">("whatsapp");
-  const [showToast, setShowToast] = useState(false);
   const [showTncModal, setShowTncModal] = useState(false);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setShowToast(true);
-    window.setTimeout(() => setShowToast(false), 3500);
+    router.push("/register/otp");
   }
 
   return (
@@ -259,20 +259,6 @@ export default function BuyerRegisterPage() {
         </form>
       </AuthPageShell>
 
-      <div
-        className={`pointer-events-none fixed right-10 bottom-10 z-70 flex items-center gap-4 rounded-lg border-l-4 border-green-500 bg-white p-4 shadow-2xl transition-all duration-500 dark:bg-slate-800 ${
-          showToast ? "translate-y-0 opacity-100" : "translate-y-32 opacity-0"
-        }`}
-        id="toast"
-      >
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-          <span className="material-symbols-outlined text-green-500">check_circle</span>
-        </div>
-        <div>
-          <p className="text-sm font-bold text-gray-900 dark:text-white">Pendaftaran Berhasil!</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Kode OTP telah dikirimkan ke pilihan Anda.</p>
-        </div>
-      </div>
     </>
   );
 }

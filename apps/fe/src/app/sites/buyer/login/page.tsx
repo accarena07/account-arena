@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
+import ResultModal from "@/components/common/ResultModal";
 import AuthPageShell from "../components/AuthPageShell";
 
 const loginFeatures = [
@@ -15,14 +17,34 @@ const loginFeatures = [
 ] as const;
 
 export default function BuyerLoginPage() {
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setShowErrorModal(true);
+  }
+
   return (
-    <AuthPageShell
-      activeTab="login"
-      leftDescription="Bergabunglah dengan ribuan gamer lainnya. Dapatkan akun premium game favoritmu dengan harga terbaik dan proses transaksi secepat kilat."
-      leftFeatures={loginFeatures}
-      leftTitle="Nikmati Transaksi Aman & Instan"
-    >
-      <form className="space-y-5">
+    <>
+      <ResultModal
+        isOpen={showErrorModal}
+        message="Kata sandi yang Anda masukkan salah. Silakan coba lagi."
+        onClose={() => setShowErrorModal(false)}
+        onPrimaryAction={() => setShowErrorModal(false)}
+        primaryActionLabel="Coba Lagi"
+        secondaryActionHref="/login/otp"
+        secondaryActionLabel="Lupa Kata Sandi?"
+        title="Login Gagal"
+        variant="error"
+      />
+
+      <AuthPageShell
+        activeTab="login"
+        leftDescription="Bergabunglah dengan ribuan gamer lainnya. Dapatkan akun premium game favoritmu dengan harga terbaik dan proses transaksi secepat kilat."
+        leftFeatures={loginFeatures}
+        leftTitle="Nikmati Transaksi Aman & Instan"
+      >
+        <form className="space-y-5" onSubmit={onSubmit}>
         <div className="space-y-2">
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email atau Username</label>
           <div className="relative">
@@ -100,7 +122,8 @@ export default function BuyerLoginPage() {
             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Facebook</span>
           </button>
         </div>
-      </form>
-    </AuthPageShell>
+        </form>
+      </AuthPageShell>
+    </>
   );
 }
