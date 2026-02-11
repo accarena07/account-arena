@@ -1,10 +1,59 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import AdminActionModal from "../components/AdminActionModal";
 import AdminPageFooter from "../components/AdminPageFooter";
 import AdminPageHeader from "../components/AdminPageHeader";
 import AdminStatusBadge from "../components/AdminStatusBadge";
 import AdminTableCard from "../components/AdminTableCard";
 import { disputeRows } from "../data/disputes";
+import type { DisputeRow, DisputeStatus } from "../types";
 
 export default function DisputesPage() {
+  const [rows, setRows] = useState<DisputeRow[]>(disputeRows);
+  const [modalType, setModalType] = useState<"log" | "action" | null>(null);
+  const [selectedDisputeId, setSelectedDisputeId] = useState<string | null>(null);
+  const [nextStatus, setNextStatus] = useState<DisputeStatus>("under_review");
+  const [actionNote, setActionNote] = useState("");
+
+  const selectedDispute = useMemo(() => rows.find((item) => item.id === selectedDisputeId) ?? null, [rows, selectedDisputeId]);
+  const openDisputes = rows.filter((item) => item.status === "open" || item.status === "under_review").length;
+  const resolvedDisputes = rows.filter((item) => item.status === "resolved").length;
+
+  function openLogModal(ticket: DisputeRow) {
+    setSelectedDisputeId(ticket.id);
+    setModalType("log");
+  }
+
+  function openActionModal(ticket: DisputeRow) {
+    setSelectedDisputeId(ticket.id);
+    setModalType("action");
+    setNextStatus(ticket.status === "open" ? "under_review" : "resolved");
+    setActionNote("");
+  }
+
+  function closeModal() {
+    setModalType(null);
+    setSelectedDisputeId(null);
+    setActionNote("");
+  }
+
+  function applyDisputeAction() {
+    if (!selectedDispute) return;
+    setRows((prev) =>
+      prev.map((item) =>
+        item.id === selectedDispute.id
+          ? {
+              ...item,
+              status: nextStatus,
+              action: nextStatus === "resolved" ? "View Log" : item.action,
+            }
+          : item,
+      ),
+    );
+    closeModal();
+  }
+
   return (
     <>
       <AdminPageHeader
@@ -30,7 +79,7 @@ export default function DisputesPage() {
               Open Disputes
             </p>
             <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-              24 Tickets
+              {openDisputes} Tickets
             </h3>
           </div>
         </div>
@@ -56,7 +105,7 @@ export default function DisputesPage() {
               Resolved (This Month)
             </p>
             <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-              142 Cases
+              {resolvedDisputes} Cases
             </h3>
           </div>
         </div>
@@ -82,7 +131,7 @@ export default function DisputesPage() {
 
       <AdminTableCard
         actions={
-          <button className="group flex w-full items-center justify-center space-x-2 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold transition-all hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 md:w-auto">
+          <button className="group flex w-full items-center justify-center space-x-2 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-bold transition-all hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 md:w-auto" type="button">
             <span className="material-symbols-outlined text-lg text-slate-400 transition-colors group-hover:text-slate-600">
               filter_list
             </span>
@@ -123,7 +172,7 @@ export default function DisputesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-              {disputeRows.map((ticket) => (
+              {rows.map((ticket) => (
                 <tr
                   key={ticket.id}
                   className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all group"
@@ -182,11 +231,19 @@ export default function DisputesPage() {
                   </td>
                   <td className="px-8 py-5 text-right">
                     {ticket.action === "View Log" ? (
-                      <button className="px-5 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                      <button
+                        className="px-5 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                        onClick={() => openLogModal(ticket)}
+                        type="button"
+                      >
                         View Log
                       </button>
                     ) : (
-                      <button className="px-5 py-2 bg-[#21337e] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all">
+                      <button
+                        className="px-5 py-2 bg-[#21337e] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all"
+                        onClick={() => openActionModal(ticket)}
+                        type="button"
+                      >
                         Take Action
                       </button>
                     )}
@@ -204,21 +261,91 @@ export default function DisputesPage() {
             <button
               className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase tracking-tighter disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white dark:hover:bg-slate-800 transition-all"
               disabled
+              type="button"
             >
               Previous
             </button>
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#21337e] text-white text-xs font-black uppercase shadow-lg shadow-blue-500/20">
+            <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#21337e] text-white text-xs font-black uppercase shadow-lg shadow-blue-500/20" type="button">
               1
             </button>
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase hover:bg-white dark:hover:bg-slate-800 transition-all">
+            <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase hover:bg-white dark:hover:bg-slate-800 transition-all" type="button">
               2
             </button>
-            <button className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase tracking-tighter hover:bg-white dark:hover:bg-slate-800 transition-all">
+            <button className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase tracking-tighter hover:bg-white dark:hover:bg-slate-800 transition-all" type="button">
               Next
             </button>
           </div>
         </div>
       </AdminTableCard>
+
+      <AdminActionModal
+        cancelLabel="Tutup"
+        description="Riwayat aktivitas dispute untuk audit trail."
+        onClose={closeModal}
+        open={modalType === "log" && Boolean(selectedDispute)}
+        title={`Dispute Log ${selectedDispute?.id ?? ""}`}
+      >
+        {selectedDispute ? (
+          <div className="space-y-4 text-sm">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+              <p className="font-semibold text-slate-900 dark:text-white">Order: {selectedDispute.order}</p>
+              <p className="mt-1 text-slate-600 dark:text-slate-300">{selectedDispute.reason}</p>
+            </div>
+            <div className="space-y-3">
+              <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+                <p className="text-xs text-slate-400">Created</p>
+                <p className="font-medium">Ticket dibuat oleh {selectedDispute.initiatorType} ({selectedDispute.initiator})</p>
+              </div>
+              <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+                <p className="text-xs text-slate-400">Latest Update</p>
+                <p className="font-medium">
+                  Status saat ini: <span className="capitalize">{selectedDispute.status.replace("_", " ")}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </AdminActionModal>
+
+      <AdminActionModal
+        confirmLabel="Submit Action"
+        description={`Atur langkah tindak lanjut untuk ${selectedDispute?.id ?? "dispute"}.`}
+        onClose={closeModal}
+        onConfirm={applyDisputeAction}
+        open={modalType === "action" && Boolean(selectedDispute)}
+        title="Take Action"
+        tone={nextStatus === "resolved" ? "default" : "danger"}
+      >
+        {selectedDispute ? (
+          <div className="space-y-4 text-sm">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+              <p className="font-semibold text-slate-900 dark:text-white">{selectedDispute.id} • {selectedDispute.order}</p>
+              <p className="mt-1 text-slate-600 dark:text-slate-300">{selectedDispute.reason}</p>
+            </div>
+            <label className="block font-semibold text-slate-600 dark:text-slate-300">
+              Next Status
+              <select
+                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+                onChange={(event) => setNextStatus(event.target.value as DisputeStatus)}
+                value={nextStatus}
+              >
+                <option value="under_review">Under Review</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </label>
+            <label className="block font-semibold text-slate-600 dark:text-slate-300">
+              Action Note
+              <textarea
+                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+                onChange={(event) => setActionNote(event.target.value)}
+                placeholder="Catatan mediasi / keputusan admin..."
+                rows={3}
+                value={actionNote}
+              />
+            </label>
+          </div>
+        ) : null}
+      </AdminActionModal>
 
       <AdminPageFooter thirdLinkLabel="Resolution Guidelines" />
     </>

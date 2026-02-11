@@ -1,11 +1,53 @@
+"use client";
+
 import Image from "next/image";
+import { useMemo, useState } from "react";
+import AdminActionModal from "../components/AdminActionModal";
 import AdminPageFooter from "../components/AdminPageFooter";
 import AdminStatusBadge from "../components/AdminStatusBadge";
 import AdminPageHeader from "../components/AdminPageHeader";
 import AdminTableCard from "../components/AdminTableCard";
 import { kycRows } from "../data/kyc";
+import type { KycRow } from "../types";
+
+type KycModalType = "view" | "review" | null;
+type KycDecision = "approved" | "rejected";
 
 export default function KYCVerificationPage() {
+  const [rows, setRows] = useState<KycRow[]>(kycRows);
+  const [modalType, setModalType] = useState<KycModalType>(null);
+  const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
+  const [reviewDecision, setReviewDecision] = useState<KycDecision>("approved");
+  const [reviewNotes, setReviewNotes] = useState("");
+
+  const selectedRow = useMemo(() => rows.find((row) => row.email === selectedEmail) ?? null, [rows, selectedEmail]);
+
+  function openActionModal(row: KycRow) {
+    if (row.status === "approved") {
+      setModalType("view");
+      setSelectedEmail(row.email);
+      return;
+    }
+
+    setModalType("review");
+    setSelectedEmail(row.email);
+    setReviewDecision("approved");
+    setReviewNotes("");
+  }
+
+  function closeModal() {
+    setModalType(null);
+    setSelectedEmail(null);
+    setReviewNotes("");
+  }
+
+  function applyReviewAction() {
+    if (!selectedRow) return;
+
+    setRows((prev) => prev.map((row) => (row.email === selectedRow.email ? { ...row, status: reviewDecision } : row)));
+    closeModal();
+  }
+
   function kycAvatar(name: string) {
     if (name === "Sarah Wilson") {
       return {
@@ -22,7 +64,7 @@ export default function KYCVerificationPage() {
     return { type: "initial" as const, initials: name.split(" ").map((part) => part[0]).join("").slice(0, 2) };
   }
 
-  function actionLabel(status: (typeof kycRows)[number]["status"]) {
+  function actionLabel(status: KycRow["status"]) {
     if (status === "approved") {
       return "View Details";
     }
@@ -163,7 +205,7 @@ export default function KYCVerificationPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-              {kycRows.map((row) => {
+              {rows.map((row) => {
                 const avatar = kycAvatar(row.name);
 
                 return (
@@ -209,6 +251,8 @@ export default function KYCVerificationPage() {
                             ? "border border-slate-200 px-4 py-2 text-slate-600 hover:bg-white dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                             : "bg-[#21337e] px-6 py-2 text-white hover:shadow-lg hover:shadow-blue-500/20"
                         }`.trim()}
+                        onClick={() => openActionModal(row)}
+                        type="button"
                       >
                         {actionLabel(row.status)}
                       </button>
@@ -227,24 +271,100 @@ export default function KYCVerificationPage() {
             <button
               className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase tracking-tighter disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white dark:hover:bg-slate-800 transition-all"
               disabled
+              type="button"
             >
               Previous
             </button>
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#21337e] text-white text-xs font-black uppercase shadow-lg shadow-blue-500/20">
+            <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#21337e] text-white text-xs font-black uppercase shadow-lg shadow-blue-500/20" type="button">
               1
             </button>
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase hover:bg-white dark:hover:bg-slate-800 transition-all">
+            <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase hover:bg-white dark:hover:bg-slate-800 transition-all" type="button">
               2
             </button>
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase hover:bg-white dark:hover:bg-slate-800 transition-all">
+            <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase hover:bg-white dark:hover:bg-slate-800 transition-all" type="button">
               3
             </button>
-            <button className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase tracking-tighter hover:bg-white dark:hover:bg-slate-800 transition-all">
+            <button className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase tracking-tighter hover:bg-white dark:hover:bg-slate-800 transition-all" type="button">
               Next
             </button>
           </div>
         </div>
       </AdminTableCard>
+
+      <AdminActionModal
+        cancelLabel="Tutup"
+        description="Rincian dokumen dan metadata verifikasi seller."
+        onClose={closeModal}
+        open={modalType === "view" && Boolean(selectedRow)}
+        title="KYC Detail"
+      >
+        {selectedRow ? (
+          <div className="space-y-4 text-sm">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+              <p className="font-bold text-slate-900 dark:text-white">{selectedRow.name}</p>
+              <p className="text-slate-500 dark:text-slate-400">{selectedRow.email}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800/50">
+                <p className="text-xs text-slate-400">Submitted Date</p>
+                <p className="font-semibold">{selectedRow.submittedDate}</p>
+              </div>
+              <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800/50">
+                <p className="text-xs text-slate-400">Verification Type</p>
+                <p className="font-semibold">{selectedRow.verificationType}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex h-28 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 text-xs font-semibold text-slate-400 dark:border-slate-700 dark:bg-slate-800/40">
+                ID Document Preview
+              </div>
+              <div className="flex h-28 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 text-xs font-semibold text-slate-400 dark:border-slate-700 dark:bg-slate-800/40">
+                Selfie Preview
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </AdminActionModal>
+
+      <AdminActionModal
+        confirmLabel={reviewDecision === "approved" ? "Approve KYC" : "Reject KYC"}
+        description="Pastikan dokumen valid sebelum melanjutkan proses verifikasi."
+        onClose={closeModal}
+        onConfirm={applyReviewAction}
+        open={modalType === "review" && Boolean(selectedRow)}
+        title="Review KYC Submission"
+        tone={reviewDecision === "approved" ? "default" : "danger"}
+      >
+        {selectedRow ? (
+          <div className="space-y-4 text-sm">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+              <p className="font-bold text-slate-900 dark:text-white">{selectedRow.name}</p>
+              <p className="text-slate-500 dark:text-slate-400">{selectedRow.email}</p>
+            </div>
+            <label className="block font-semibold text-slate-600 dark:text-slate-300">
+              Decision
+              <select
+                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+                onChange={(event) => setReviewDecision(event.target.value as KycDecision)}
+                value={reviewDecision}
+              >
+                <option value="approved">Approve</option>
+                <option value="rejected">Reject</option>
+              </select>
+            </label>
+            <label className="block font-semibold text-slate-600 dark:text-slate-300">
+              Admin Note
+              <textarea
+                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+                onChange={(event) => setReviewNotes(event.target.value)}
+                placeholder="Tambahkan catatan verifikasi (opsional)."
+                rows={3}
+                value={reviewNotes}
+              />
+            </label>
+          </div>
+        ) : null}
+      </AdminActionModal>
 
       <AdminPageFooter />
     </>

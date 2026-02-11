@@ -5,6 +5,10 @@ import AdminTableCard from "../components/AdminTableCard";
 import { transactionRows } from "../data/transactions";
 
 export default function TransactionsPage() {
+  const successCount = transactionRows.filter((row) => row.status === "success").length;
+  const pendingCount = transactionRows.filter((row) => row.status === "pending").length;
+  const refundedCount = transactionRows.filter((row) => row.status === "refunded").length;
+
   function paymentMethodIcon(method: string) {
     if (method === "Credit Card") {
       return "credit_card";
@@ -20,55 +24,22 @@ export default function TransactionsPage() {
         title="Admin Transaction Monitoring"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-x-auto">
-          <div className="min-w-150">
-            <div className="flex justify-between items-start mb-10">
-              <div>
-                <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1 italic">
-                  Total Transaction Volume
-                </p>
-                <h3 className="text-3xl font-bold text-slate-900 dark:text-white leading-tight">
-                  Rp 1.458.290.000
-                </h3>
-              </div>
-              <div className="flex items-center space-x-1.5 bg-green-50 dark:bg-green-500/10 px-3 py-1.5 rounded-full border border-green-100 dark:border-green-500/20">
-                <span className="material-symbols-outlined text-green-600 dark:text-green-400 text-xs font-bold">
-                  trending_up
-                </span>
-                <span className="text-green-600 dark:text-green-400 text-[11px] font-black uppercase">
-                  +18.4%
-                </span>
-              </div>
-            </div>
-            <div className="h-44 w-full flex items-end justify-between space-x-4 px-2">
-              {[
-                { day: "Mon", h: "35%" },
-                { day: "Tue", h: "65%" },
-                { day: "Wed", h: "45%" },
-                { day: "Thu", h: "10%" },
-                { day: "Fri", h: "8%" },
-                { day: "Sat", h: "55%" },
-                { day: "Sun", h: "40%" },
-              ].map((bar) => (
-                <div
-                  key={bar.day}
-                  className="flex-1 flex flex-col items-center group"
-                >
-                  <div className="w-full bg-slate-50 dark:bg-slate-800/50 rounded-t-lg h-32 relative overflow-hidden">
-                    <div
-                      style={{ height: bar.h }}
-                      className="absolute bottom-0 w-full bg-[#21337e] rounded-t-lg transition-all duration-500 group-hover:bg-blue-600"
-                    ></div>
-                  </div>
-                  <span className="mt-3 text-[10px] font-black text-slate-400 uppercase tracking-widest italic group-hover:text-slate-600 transition-colors">
-                    {bar.day}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <p className="text-[10px] font-black tracking-widest text-slate-500 uppercase italic dark:text-slate-400">Successful Transactions</p>
+          <p className="mt-2 text-3xl leading-tight font-bold text-slate-900 dark:text-white">{successCount}</p>
         </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <p className="text-[10px] font-black tracking-widest text-slate-500 uppercase italic dark:text-slate-400">Pending Transactions</p>
+          <p className="mt-2 text-3xl leading-tight font-bold text-slate-900 dark:text-white">{pendingCount}</p>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <p className="text-[10px] font-black tracking-widest text-slate-500 uppercase italic dark:text-slate-400">Refunded Transactions</p>
+          <p className="mt-2 text-3xl leading-tight font-bold text-slate-900 dark:text-white">{refundedCount}</p>
+        </div>
+      </div>
+
+      <div className="mb-8">
         <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
           <h4 className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 italic">
             Success Rate
