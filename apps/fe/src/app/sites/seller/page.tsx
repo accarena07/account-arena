@@ -1,10 +1,12 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   sellerDashboardStats,
   sellerInventorySnapshot,
 } from "./data/dashboard";
+import SellerActionModal from "./components/SellerActionModal";
 import SellerGlobalFooter from "./components/SellerGlobalFooter";
 import SellerPageHeader from "./components/SellerPageHeader";
 import SellerProfileInfo from "./components/SellerProfileInfo";
@@ -12,6 +14,80 @@ import SellerSearchInput from "./components/SellerSearchInput";
 import SellerUtilityButtons from "./components/SellerUtilityButtons";
 
 export default function SellerDashboardPage() {
+  const [openModal, setOpenModal] = useState<"pending" | "active" | null>(null);
+
+  const pendingOrders = useMemo(
+    () => [
+      {
+        id: "ORD-9921",
+        title: "Valorant Radiant - 150+ skins",
+        buyer: "Dimas P.",
+        amount: "Rp 1.262.500",
+      },
+      {
+        id: "ORD-9922",
+        title: "Mobile Legends Mythic Glory",
+        buyer: "Kevin S.",
+        amount: "Rp 2.424.000",
+      },
+      {
+        id: "ORD-9923",
+        title: "Dota 2 Immortal Account",
+        buyer: "Rafi A.",
+        amount: "Rp 858.500",
+      },
+      {
+        id: "ORD-9924",
+        title: "Genshin AR60 Whale",
+        buyer: "Nadia K.",
+        amount: "Rp 5.555.000",
+      },
+      {
+        id: "ORD-9925",
+        title: "PUBG Conqueror S19",
+        buyer: "Hendra T.",
+        amount: "Rp 3.200.000",
+      },
+    ],
+    [],
+  );
+
+  const activeListings = useMemo(
+    () => [
+      {
+        id: "LST-120",
+        title: "Valorant Radiant Full Access",
+        game: "Valorant",
+        price: "Rp 1.250.000",
+      },
+      {
+        id: "LST-121",
+        title: "ML Full Collector Skin",
+        game: "Mobile Legends",
+        price: "Rp 2.400.000",
+      },
+      {
+        id: "LST-122",
+        title: "Dota 2 Immortal 6.5k",
+        game: "Dota 2",
+        price: "Rp 850.000",
+      },
+      {
+        id: "LST-123",
+        title: "Genshin C6 Package",
+        game: "Genshin Impact",
+        price: "Rp 5.500.000",
+      },
+      {
+        id: "LST-124",
+        title: "PUBG Old Rare Account",
+        game: "PUBG Mobile",
+        price: "Rp 3.200.000",
+      },
+    ],
+    [],
+  );
+
   return (
     <div className="flex-1 max-w-6xl mx-auto w-full">
       <header className="mb-10 flex flex-col items-center justify-between gap-6 md:flex-row">
@@ -53,7 +129,6 @@ export default function SellerDashboardPage() {
         }
       />
 
-      {/* Alert Banner */}
       <div className="mb-10 p-6 md:p-8 bg-orange-50/50 dark:bg-orange-950/10 border border-orange-100 dark:border-orange-900/30 rounded-4xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 shadow-sm relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
         <div className="flex items-center gap-6 relative z-10">
@@ -79,7 +154,7 @@ export default function SellerDashboardPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div className="grid grid-cols-1 gap-6 mb-12 sm:grid-cols-2">
         {sellerDashboardStats.map((stat, idx) => (
           <div
             key={idx}
@@ -89,108 +164,46 @@ export default function SellerDashboardPage() {
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] italic">
                 {stat.label}
               </p>
-              <div
-                className={`w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center border border-slate-50 dark:border-slate-800 group-hover:scale-110 transition-transform`}
-              >
-                <span
-                  className={`material-symbols-outlined text-2xl italic font-black ${stat.icon === "stars" ? "text-orange-400" : "text-[#254294] dark:text-blue-400"}`}
-                >
+              <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center border border-slate-50 dark:border-slate-800 group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-2xl italic font-black text-[#254294] dark:text-blue-400">
                   {stat.icon}
                 </span>
               </div>
             </div>
+
             <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white italic tracking-tighter">
-              {stat.value}{" "}
-              {stat.suffix && (
-                <span className="text-slate-300 text-xs font-black italic tracking-tighter ml-1">
-                  {stat.suffix}
-                </span>
-              )}
+              {stat.value}
             </h3>
-            {stat.trend ? (
-              <div className="flex items-center gap-1.5 text-emerald-500 mt-3 text-[10px] font-black uppercase italic tracking-widest">
-                <span className="material-symbols-outlined text-base font-black italic animate-bounce-slow">
-                  trending_up
-                </span>
-                <span>{stat.trend} increase</span>
-              </div>
-            ) : (
-              <p className="text-slate-400 mt-3 text-[10px] font-black uppercase tracking-widest italic group-hover:text-slate-500 transition-colors">
-                {stat.note}
-              </p>
-            )}
+
+            <p className="text-slate-400 mt-3 text-[10px] font-black uppercase tracking-widest italic group-hover:text-slate-500 transition-colors">
+              {stat.note}
+            </p>
+
+            {stat.label === "Pending Orders" ? (
+              <button
+                className="mt-5 rounded-xl border border-orange-200 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-orange-600 transition-colors hover:bg-orange-50 dark:border-orange-900/50 dark:text-orange-400 dark:hover:bg-orange-900/20"
+                onClick={() => setOpenModal("pending")}
+                type="button"
+              >
+                View Pending Orders
+              </button>
+            ) : null}
+
+            {stat.label === "Active Listings" ? (
+              <button
+                className="mt-5 rounded-xl border border-blue-200 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#254294] transition-colors hover:bg-blue-50 dark:border-blue-900/50 dark:text-blue-400 dark:hover:bg-blue-900/20"
+                onClick={() => setOpenModal("active")}
+                type="button"
+              >
+                View Active Listings
+              </button>
+            ) : null}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-8 md:p-12 rounded-4xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full -mr-48 -mt-48 blur-3xl group-hover:bg-[#254294]/10 transition-colors duration-700"></div>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8 mb-12 relative z-10">
-            <div>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white italic tracking-tight uppercase">
-                Sales Momentum
-              </h3>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 italic">
-                Real-time tracking for the last 7 cycles
-              </p>
-            </div>
-            <div className="flex bg-slate-100/50 dark:bg-slate-800/50 p-1.5 rounded-2xl border border-slate-100 dark:border-slate-800 w-full sm:w-auto shadow-inner">
-              <button className="flex-1 sm:flex-none px-6 py-2.5 text-[10px] font-black uppercase tracking-widest italic text-slate-400 hover:text-slate-600 transition-colors">
-                Weekly
-              </button>
-              <button className="flex-1 sm:flex-none px-6 py-2.5 text-[10px] font-black uppercase tracking-widest italic text-white bg-[#254294] rounded-xl shadow-xl shadow-blue-900/20">
-                Monthly View
-              </button>
-            </div>
-          </div>
-          <div className="relative h-64 md:h-80 w-full overflow-hidden z-10">
-            <svg
-              className="w-full h-full"
-              viewBox="0 0 1000 300"
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
-                  <stop
-                    offset="0%"
-                    stopColor="#254294"
-                    stopOpacity="0.2"
-                  ></stop>
-                  <stop
-                    offset="100%"
-                    stopColor="#254294"
-                    stopOpacity="0"
-                  ></stop>
-                </linearGradient>
-              </defs>
-              <path
-                d="M0,230 Q100,100 200,180 T400,150 T600,170 T800,80 T1000,190 L1000,300 L0,300 Z"
-                fill="url(#chartGradient)"
-              ></path>
-              <path
-                d="M0,230 Q100,100 200,180 T400,150 T600,170 T800,80 T1000,190"
-                fill="none"
-                stroke="#254294"
-                strokeLinecap="round"
-                strokeWidth="6"
-                className="drop-shadow-lg"
-              ></path>
-            </svg>
-            <div className="flex justify-between mt-10 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">
-              <span>Mon</span>
-              <span>Tue</span>
-              <span>Wed</span>
-              <span>Thu</span>
-              <span>Fri</span>
-              <span>Sat</span>
-              <span>Sun</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-10">
-          {/* Listing Summary Card */}
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+        <div className="space-y-10 lg:col-span-2">
           <div className="bg-white dark:bg-slate-900 p-10 rounded-4xl border border-slate-200 dark:border-slate-800 shadow-sm group">
             <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase italic tracking-tight mb-10 flex items-center justify-between">
               Inventory Snapshot
@@ -228,27 +241,87 @@ export default function SellerDashboardPage() {
               </span>
             </Link>
           </div>
+        </div>
 
-          {/* Saldo / Revenue Card */}
-          <div className="bg-[#254294] dark:bg-slate-900 p-10 rounded-4xl border border-[#254294] dark:border-slate-800 shadow-2xl shadow-blue-900/20 relative overflow-hidden group">
-            <div className="absolute -bottom-8 -right-8 w-40 h-40 bg-white/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-1000"></div>
-            <h3 className="text-xl font-black text-white uppercase italic tracking-tight mb-8 relative z-10">
-              Wallet <span className="text-blue-200">Liquidity</span>
-            </h3>
-            <div className="bg-white/10 dark:bg-blue-400/5 p-8 rounded-3xl mb-10 border border-white/10 backdrop-blur-sm relative z-10 shadow-inner group-hover:bg-white/15 transition-colors">
-              <p className="text-[10px] text-blue-200 font-black uppercase tracking-widest italic mb-3">
-                Current Net Balance
-              </p>
-              <h4 className="text-3xl font-black text-white italic tracking-tighter">
-                Rp 14.250.000
-              </h4>
+        <div className="bg-white dark:bg-slate-900 p-10 rounded-4xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase italic tracking-tight mb-8">
+            Recent Activity
+          </h3>
+          <div className="space-y-5">
+            <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-800/40">
+              <p className="text-sm font-bold text-slate-900 dark:text-white">Order ORD-9921 is awaiting shipment data.</p>
+              <p className="mt-1 text-xs font-medium text-slate-500 dark:text-slate-400">2 minutes ago</p>
             </div>
-            <button className="w-full bg-white text-[#254294] py-5 rounded-2xl font-black uppercase tracking-widest italic shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-95 transition-all text-xs relative z-10">
-              Execute Payout
-            </button>
+            <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-800/40">
+              <p className="text-sm font-bold text-slate-900 dark:text-white">Listing LST-124 has been viewed 42 times today.</p>
+              <p className="mt-1 text-xs font-medium text-slate-500 dark:text-slate-400">1 hour ago</p>
+            </div>
+            <div className="rounded-2xl border border-slate-100 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-800/40">
+              <p className="text-sm font-bold text-slate-900 dark:text-white">Payout request submitted successfully.</p>
+              <p className="mt-1 text-xs font-medium text-slate-500 dark:text-slate-400">3 hours ago</p>
+            </div>
           </div>
+          <Link
+            className="mt-8 inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-[#254294] hover:underline dark:text-blue-400"
+            href="/transactions"
+          >
+            Open Management Summary
+            <span className="material-symbols-outlined text-base">arrow_forward</span>
+          </Link>
         </div>
       </div>
+
+      <SellerActionModal
+        cancelLabel="Close"
+        description="Review orders that still require payment confirmation or account handover."
+        open={openModal === "pending"}
+        title="Pending Orders"
+        onClose={() => setOpenModal(null)}
+      >
+        <div className="space-y-3">
+          {pendingOrders.map((order) => (
+            <div
+              key={order.id}
+              className="rounded-2xl border border-slate-100 p-4 dark:border-slate-800"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-black text-slate-900 dark:text-white">{order.title}</p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-400">{order.id}</p>
+                </div>
+                <p className="text-xs font-black text-orange-500">{order.amount}</p>
+              </div>
+              <p className="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400">Buyer: {order.buyer}</p>
+            </div>
+          ))}
+        </div>
+      </SellerActionModal>
+
+      <SellerActionModal
+        cancelLabel="Close"
+        description="Current listings that are visible and purchasable by buyers."
+        open={openModal === "active"}
+        title="Active Listings"
+        onClose={() => setOpenModal(null)}
+      >
+        <div className="space-y-3">
+          {activeListings.map((listing) => (
+            <div
+              key={listing.id}
+              className="rounded-2xl border border-slate-100 p-4 dark:border-slate-800"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-black text-slate-900 dark:text-white">{listing.title}</p>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-400">{listing.id}</p>
+                </div>
+                <p className="text-xs font-black text-[#254294] dark:text-blue-400">{listing.price}</p>
+              </div>
+              <p className="mt-2 text-xs font-medium text-slate-500 dark:text-slate-400">Game: {listing.game}</p>
+            </div>
+          ))}
+        </div>
+      </SellerActionModal>
 
       <SellerGlobalFooter
         copyright="© 2024 AccountArena • Premium Gaming Marketplace • All Rights Reserved"

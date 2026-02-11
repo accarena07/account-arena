@@ -2,12 +2,6 @@ import type { SellerDashboardStat, SellerInventorySnapshotItem } from "../types"
 
 export const sellerDashboardStats: SellerDashboardStat[] = [
   {
-    label: "Daily Revenue",
-    value: "Rp 2.500.000",
-    icon: "payments",
-    trend: "+15.4%",
-  },
-  {
     label: "Pending Orders",
     value: "12",
     icon: "order_approve",
@@ -18,13 +12,6 @@ export const sellerDashboardStats: SellerDashboardStat[] = [
     value: "48",
     icon: "layers",
     note: "Currently live",
-  },
-  {
-    label: "Store Feedback",
-    value: "4.8",
-    icon: "stars",
-    suffix: "/ 5.0",
-    note: "From 120 reviews",
   },
 ];
 
