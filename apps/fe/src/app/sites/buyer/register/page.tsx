@@ -3,6 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthPageShell from "../components/AuthPageShell";
+import {
+  clearRegisterFieldError,
+  shouldProceedToOtp,
+  validateRegisterForm,
+  type RegisterFormErrors,
+} from "./handler";
+import { buyerRegisterTermsDocs } from "./terms";
 
 const registerFeatures = [
   {
@@ -21,9 +28,20 @@ export default function BuyerRegisterPage() {
   const router = useRouter();
   const [otpMethod, setOtpMethod] = useState<"whatsapp" | "email">("whatsapp");
   const [showTncModal, setShowTncModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [whatsApp, setWhatsApp] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<RegisterFormErrors>({});
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const nextErrors = validateRegisterForm({ email, whatsApp, password });
+    setErrors(nextErrors);
+    if (!shouldProceedToOtp(nextErrors)) {
+      return;
+    }
+
     router.push("/register/otp");
   }
 
@@ -52,52 +70,40 @@ export default function BuyerRegisterPage() {
               </button>
             </div>
 
-            <div className="space-y-6 overflow-y-auto p-6 lg:p-8">
-              <section>
-                <h3 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">Ketentuan Umum</h3>
-                <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-                  Selamat datang di GameMarket. Dengan mendaftar dan menggunakan platform kami, Anda menyetujui untuk
-                  terikat oleh syarat dan ketentuan berikut. Platform ini berfungsi sebagai perantara dalam transaksi
-                  jual beli aset digital dalam ekosistem game.
-                </p>
-                <ul className="mt-2 ml-5 list-disc space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                  <li>Pengguna wajib berusia minimal 17 tahun atau memiliki izin orang tua.</li>
-                  <li>Satu pengguna hanya diperbolehkan memiliki satu akun terverifikasi.</li>
-                  <li>Dilarang menggunakan platform untuk kegiatan ilegal atau pencucian uang.</li>
-                </ul>
-              </section>
+            <div className="space-y-8 overflow-y-auto p-6 lg:p-8">
+              {buyerRegisterTermsDocs.map((document) => (
+                <section className="space-y-6" key={document.id}>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">{document.title}</h3>
+                    {document.subtitle ? (
+                      <p className="mt-1 text-sm font-semibold text-gray-600 dark:text-gray-300">{document.subtitle}</p>
+                    ) : null}
+                    <p className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+                      Tanggal Efektif: {document.effectiveDate}
+                    </p>
+                  </div>
 
-              <section>
-                <h3 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">Hak dan Kewajiban Buyer</h3>
-                <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-                  Pembeli berhak menerima data akun yang sesuai dengan deskripsi yang dicantumkan oleh Seller.
-                </p>
-                <ul className="mt-2 ml-5 list-disc space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                  <li>Wajib melakukan pembayaran sesuai nominal yang tertera melalui sistem pembayaran resmi.</li>
-                  <li>Wajib melakukan pengecekan akun dalam kurun waktu 1x24 jam setelah data diterima.</li>
-                  <li>Dilarang mengubah data akun sebelum transaksi dinyatakan selesai secara otomatis oleh sistem.</li>
-                </ul>
-              </section>
-
-              <section>
-                <h3 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">Hak dan Kewajiban Seller</h3>
-                <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-                  Penjual bertanggung jawab penuh atas keabsahan dan keamanan data akun yang dijual.
-                </p>
-                <ul className="mt-2 ml-5 list-disc space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                  <li>Wajib memberikan informasi yang jujur dan akurat mengenai kondisi akun.</li>
-                  <li>Menjamin bahwa akun tidak dalam sengketa atau dalam status banned.</li>
-                  <li>Dilarang melakukan &quot;pullback&quot; atau mengambil kembali akun yang telah dijual secara ilegal.</li>
-                </ul>
-              </section>
-
-              <section>
-                <h3 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">Keamanan & Sanksi</h3>
-                <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-                  Kami berhak membekukan akun atau melaporkan pengguna ke pihak berwajib jika ditemukan indikasi
-                  penipuan atau pelanggaran berat terhadap syarat dan ketentuan ini.
-                </p>
-              </section>
+                  <div className="space-y-5">
+                    {document.sections.map((section) => (
+                      <div key={section.title}>
+                        <h4 className="mb-2 text-sm font-bold text-gray-900 dark:text-white">{section.title}</h4>
+                        {section.paragraphs?.map((paragraph) => (
+                          <p className="mt-1 text-sm leading-relaxed text-gray-600 dark:text-gray-400" key={paragraph}>
+                            {paragraph}
+                          </p>
+                        ))}
+                        {section.bullets?.length ? (
+                          <ul className="mt-2 ml-5 list-disc space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                            {section.bullets.map((bullet) => (
+                              <li key={bullet}>{bullet}</li>
+                            ))}
+                          </ul>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
             </div>
 
             <div className="border-t border-gray-100 bg-gray-50 p-6 dark:border-slate-800 dark:bg-slate-800/50">
@@ -131,8 +137,14 @@ export default function BuyerRegisterPage() {
                 placeholder="alamat@email.com"
                 required
                 type="email"
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  setErrors((prev) => clearRegisterFieldError(prev, "email"));
+                }}
               />
             </div>
+            {errors.email ? <p className="text-xs font-medium text-red-500">{errors.email}</p> : null}
           </div>
 
           <div className="space-y-2">
@@ -146,8 +158,14 @@ export default function BuyerRegisterPage() {
                 placeholder="0812xxxxxx"
                 required
                 type="tel"
+                value={whatsApp}
+                onChange={(event) => {
+                  setWhatsApp(event.target.value);
+                  setErrors((prev) => clearRegisterFieldError(prev, "whatsapp"));
+                }}
               />
             </div>
+            {errors.whatsapp ? <p className="text-xs font-medium text-red-500">{errors.whatsapp}</p> : null}
           </div>
 
           <div className="space-y-2">
@@ -157,12 +175,26 @@ export default function BuyerRegisterPage() {
                 lock
               </span>
               <input
-                className="w-full rounded-xl border-none bg-gray-50 py-3 pr-4 pl-12 text-gray-900 placeholder-gray-400 transition-all focus:ring-2 focus:ring-primary dark:bg-slate-800 dark:text-white dark:focus:ring-secondary"
+                className="w-full rounded-xl border-none bg-gray-50 py-3 pr-12 pl-12 text-gray-900 placeholder-gray-400 transition-all focus:ring-2 focus:ring-primary dark:bg-slate-800 dark:text-white dark:focus:ring-secondary"
                 placeholder="Minimal 8 karakter"
                 required
-                type="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                  setErrors((prev) => clearRegisterFieldError(prev, "password"));
+                }}
               />
+              <button
+                aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+                className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
+                onClick={() => setShowPassword((prev) => !prev)}
+                type="button"
+              >
+                <span className="material-symbols-outlined">{showPassword ? "visibility_off" : "visibility"}</span>
+              </button>
             </div>
+            {errors.password ? <p className="text-xs font-medium text-red-500">{errors.password}</p> : null}
           </div>
 
           <div className="pt-4">
@@ -233,10 +265,6 @@ export default function BuyerRegisterPage() {
               >
                 Syarat & Ketentuan
               </button>{" "}
-              serta{" "}
-              <a className="font-semibold text-primary hover:underline dark:text-secondary" href="#">
-                Kebijakan Privasi
-              </a>{" "}
               yang berlaku.
             </label>
           </div>
