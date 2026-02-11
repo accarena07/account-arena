@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import BuyerFooter from "./components/BuyerFooter";
 import BuyerHeader from "./components/BuyerHeader";
+import RecommendedAccountsCarousel from "./components/RecommendedAccountsCarousel";
 
 export const revalidate = 300;
 
@@ -143,6 +144,66 @@ const listings = [
     image:
       "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80",
   },
+  {
+    badge: "AR 60",
+    game: "Genshin Impact",
+    region: "Asia Server",
+    title: "AR 60 Whales Account - C6 Raiden, C6 Nahida + BiS",
+    price: "Rp5.500.000",
+    total: "Rp5.555.000",
+    image:
+      "https://images.unsplash.com/photo-1580327344181-c1163234e5a0?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    badge: "Immortal",
+    game: "Dota 2",
+    region: "6.5k MMR",
+    title: "Immortal Rank Account - Exclusive Battlepass Items",
+    price: "Rp850.000",
+    total: "Rp858.500",
+    image:
+      "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    badge: "Conqueror",
+    game: "PUBG Mobile",
+    region: "Indonesia",
+    title: "Old Account S2 - Glacier M4 Max Level",
+    price: "Rp3.200.000",
+    total: "Rp3.232.000",
+    image:
+      "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    badge: "Global Elite",
+    game: "CS2",
+    region: "SEA",
+    title: "Prime Account + Knife Inventory, Ready Trade",
+    price: "Rp1.750.000",
+    total: "Rp1.767.500",
+    image:
+      "https://images.unsplash.com/photo-1548686304-89d188a80029?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    badge: "Master",
+    game: "Apex Legends",
+    region: "Asia Pacific",
+    title: "Master Rank Account, Rare Heirloom Collection",
+    price: "Rp2.100.000",
+    total: "Rp2.121.000",
+    image:
+      "https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    badge: "Diamond",
+    game: "EA FC Mobile",
+    region: "Global",
+    title: "High OVR Squad, Event Icons Complete",
+    price: "Rp980.000",
+    total: "Rp989.800",
+    image:
+      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80",
+  },
 ];
 
 export default function BuyerLandingPage() {
@@ -245,57 +306,7 @@ export default function BuyerLandingPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8">
-            {listings.map((listing) => (
-              <article
-                className="group overflow-hidden rounded-4xl border border-slate-100 bg-white shadow-lg transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900"
-                key={listing.title}
-              >
-                <div className="relative h-52 overflow-hidden md:h-56">
-                  <Image
-                    alt="Listing Image"
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    fill
-                    sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw"
-                    src={listing.image}
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="rounded-full bg-primary/90 px-3 py-1 text-[10px] font-bold text-white uppercase backdrop-blur-md">
-                      {listing.badge}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="mb-2 flex items-center gap-1.5">
-                    <span className="text-[10px] font-bold tracking-wider text-primary uppercase dark:text-blue-400">
-                      {listing.game}
-                    </span>
-                    <span className="text-[10px] text-slate-400">•</span>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400">{listing.region}</span>
-                  </div>
-                  <h3 className="mb-6 h-10 line-clamp-2 leading-tight font-bold text-slate-900 dark:text-white">
-                    {listing.title}
-                  </h3>
-                  <div className="mb-6 space-y-2 border-t border-slate-100 pt-4 dark:border-slate-800">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500 dark:text-slate-400">Harga Akun</span>
-                      <span className="font-bold dark:text-white">{listing.price}</span>
-                    </div>
-                    <div className="flex items-center justify-between pt-2">
-                      <span className="text-xs font-bold text-slate-900 dark:text-white">TOTAL</span>
-                      <span className="text-lg font-extrabold text-secondary">{listing.total}</span>
-                    </div>
-                  </div>
-                  <Link
-                    className="block w-full rounded-2xl bg-primary py-3.5 text-center font-bold text-white transition-colors hover:bg-blue-900"
-                    href="/account-detail"
-                  >
-                    Beli Sekarang
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
+          <RecommendedAccountsCarousel listings={listings} />
         </section>
       </main>
 
