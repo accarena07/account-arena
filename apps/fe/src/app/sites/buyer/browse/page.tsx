@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import Breadcrumb from "../components/Breadcrumb";
 import BuyerFooter from "../components/BuyerFooter";
 import BuyerTopNav from "../components/BuyerTopNav";
@@ -10,6 +11,7 @@ const listingCards = [
   {
     badge: "Tier Radiant",
     badgeClass: "bg-primary",
+    tier: "Radiant",
     game: "Valorant",
     region: "Asia Pacific",
     title: "Radiant Rank Account - 150+ Skins, Full Access Email",
@@ -23,6 +25,7 @@ const listingCards = [
   {
     badge: "Mythical Glory",
     badgeClass: "bg-secondary",
+    tier: "Gold",
     game: "Mobile Legends",
     region: "Indonesia",
     title: "Full Skins Collector & Legend, Winrate 70%+, No Minus",
@@ -36,6 +39,7 @@ const listingCards = [
   {
     badge: "AR 60",
     badgeClass: "bg-blue-500",
+    tier: "Diamond",
     game: "Genshin Impact",
     region: "Asia Server",
     title: "AR 60 Whales Account - C6 Raiden, C6 Nahida + BiS Weapons",
@@ -49,6 +53,7 @@ const listingCards = [
   {
     badge: "Immortal",
     badgeClass: "bg-red-600",
+    tier: "Iron",
     game: "Dota 2",
     region: "6.5k MMR",
     title: "Immortal Rank Account - Exclusive Battlepass Items",
@@ -75,7 +80,83 @@ const rankOptions: Array<[string, boolean]> = [
   ["Radiant", true],
 ];
 
+type Filters = {
+  game: string;
+  rank: string;
+  minPrice: string;
+  maxPrice: string;
+  region: string;
+};
+
+const defaultGame = gameOptions.find(([, checked]) => checked)?.[0] ?? "All Games";
+const defaultRank = rankOptions.find(([, checked]) => checked)?.[0] ?? "";
+
+const defaultFilters: Filters = {
+  game: defaultGame,
+  rank: defaultRank,
+  minPrice: "",
+  maxPrice: "",
+  region: "All Regions",
+};
+
+function parseRupiah(value: string) {
+  const digitsOnly = value.replace(/\D/g, "");
+  return digitsOnly ? Number(digitsOnly) : null;
+}
+
 export default function BuyerBrowsePage() {
+  const [draftFilters, setDraftFilters] = useState<Filters>(defaultFilters);
+  const [appliedFilters, setAppliedFilters] = useState<Filters>(defaultFilters);
+  const [sortBy, setSortBy] = useState("Latest Listings");
+
+  const isFilterDirty = JSON.stringify(draftFilters) !== JSON.stringify(appliedFilters);
+
+  const filteredListings = useMemo(() => {
+    let result = [...listingCards];
+
+    if (appliedFilters.game !== "All Games") {
+      result = result.filter((item) => item.game === appliedFilters.game);
+    }
+
+    if (appliedFilters.rank) {
+      result = result.filter((item) => item.tier === appliedFilters.rank);
+    }
+
+    if (appliedFilters.region !== "All Regions") {
+      result = result.filter((item) => item.region === appliedFilters.region);
+    }
+
+    const min = parseRupiah(appliedFilters.minPrice);
+    const max = parseRupiah(appliedFilters.maxPrice);
+
+    if (min !== null) {
+      result = result.filter((item) => (parseRupiah(item.price) ?? 0) >= min);
+    }
+
+    if (max !== null) {
+      result = result.filter((item) => (parseRupiah(item.price) ?? 0) <= max);
+    }
+
+    if (sortBy === "Price: Low to High") {
+      result.sort((a, b) => (parseRupiah(a.price) ?? 0) - (parseRupiah(b.price) ?? 0));
+    } else if (sortBy === "Price: High to Low") {
+      result.sort((a, b) => (parseRupiah(b.price) ?? 0) - (parseRupiah(a.price) ?? 0));
+    }
+
+    return result;
+  }, [appliedFilters, sortBy]);
+
+  const pageTitle = appliedFilters.game === "All Games" ? "Browse Accounts" : `${appliedFilters.game} Accounts`;
+
+  function handleResetFilters() {
+    setDraftFilters(defaultFilters);
+    setAppliedFilters(defaultFilters);
+  }
+
+  function handleApplyFilters() {
+    setAppliedFilters(draftFilters);
+  }
+
   return (
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors duration-300 dark:bg-background-dark dark:text-slate-100">
       <BuyerTopNav searchPlaceholder="Search for game accounts, skins, or items..." />
@@ -98,7 +179,7 @@ export default function BuyerBrowsePage() {
                   <span className="material-symbols-outlined text-primary">filter_list</span>
                   Filters
                 </h2>
-                <button className="text-xs font-semibold text-primary hover:underline" type="button">
+                <button className="text-xs font-semibold text-primary hover:underline" onClick={handleResetFilters} type="button">
                   Reset
                 </button>
               </div>
@@ -108,12 +189,20 @@ export default function BuyerBrowsePage() {
                   Select Game
                 </h3>
                 <div className="space-y-2">
-                  {gameOptions.map(([game, checked]) => (
+                  {gameOptions.map(([game]) => (
                     <label
                       className="group flex cursor-pointer items-center gap-3 rounded-lg p-2 hover:bg-slate-50 dark:hover:bg-slate-700"
                       key={game}
                     >
-                      <input className="h-4 w-4 text-primary focus:ring-primary" defaultChecked={checked} name="game" type="radio" />
+                      <input
+                        checked={draftFilters.game === game}
+                        className="h-4 w-4 text-primary focus:ring-primary"
+                        name="game"
+                        onChange={() => {
+                          setDraftFilters((prev) => ({ ...prev, game }));
+                        }}
+                        type="radio"
+                      />
                       <span className="text-sm font-medium group-hover:text-primary">{game}</span>
                     </label>
                   ))}
@@ -125,14 +214,17 @@ export default function BuyerBrowsePage() {
                   Rank Tier
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
-                  {rankOptions.map(([tier, active]) => (
+                  {rankOptions.map(([tier]) => (
                     <button
                       className={`rounded-lg border px-3 py-2 text-xs font-bold transition-all ${
-                        active
+                        draftFilters.rank === tier
                           ? "border-primary bg-primary/5 text-primary"
                           : "border-slate-200 hover:border-primary hover:text-primary dark:border-slate-700"
                       }`}
                       key={tier}
+                      onClick={() => {
+                        setDraftFilters((prev) => ({ ...prev, rank: tier }));
+                      }}
                       type="button"
                     >
                       {tier}
@@ -149,12 +241,20 @@ export default function BuyerBrowsePage() {
                   <input
                     className="w-full rounded-lg border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
                     placeholder="Rp Min"
+                    value={draftFilters.minPrice}
+                    onChange={(event) => {
+                      setDraftFilters((prev) => ({ ...prev, minPrice: event.target.value }));
+                    }}
                     type="text"
                   />
                   <div className="h-px w-2 bg-slate-300 dark:bg-slate-600"></div>
                   <input
                     className="w-full rounded-lg border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
                     placeholder="Rp Max"
+                    value={draftFilters.maxPrice}
+                    onChange={(event) => {
+                      setDraftFilters((prev) => ({ ...prev, maxPrice: event.target.value }));
+                    }}
                     type="text"
                   />
                 </div>
@@ -164,13 +264,28 @@ export default function BuyerBrowsePage() {
                 <h3 className="mb-4 text-[11px] font-semibold tracking-widest text-slate-400 uppercase dark:text-slate-500">
                   Region
                 </h3>
-                <select className="w-full rounded-lg border-slate-200 bg-slate-50 p-2.5 text-sm focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-800">
+                <select
+                  className="w-full rounded-lg border-slate-200 bg-slate-50 p-2.5 text-sm focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
+                  onChange={(event) => {
+                    setDraftFilters((prev) => ({ ...prev, region: event.target.value }));
+                  }}
+                  value={draftFilters.region}
+                >
                   <option>All Regions</option>
                   <option>Asia Pacific</option>
                   <option>North America</option>
                   <option>Europe</option>
                 </select>
               </div>
+
+              <button
+                className="mt-6 w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-white transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={!isFilterDirty}
+                onClick={handleApplyFilters}
+                type="button"
+              >
+                Apply Filters
+              </button>
             </div>
 
             <div className="group relative overflow-hidden rounded-2xl bg-linear-to-br from-primary to-blue-900 p-6 text-white shadow-lg">
@@ -193,12 +308,20 @@ export default function BuyerBrowsePage() {
           <div className="flex-1">
             <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
               <div>
-                <h1 className="mb-1 text-3xl font-extrabold">Valorant Accounts</h1>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Showing 124 premium accounts available today</p>
+                <h1 className="mb-1 text-3xl font-extrabold">{pageTitle}</h1>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Showing {filteredListings.length} premium accounts available today
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-slate-400">Sort by:</span>
-                <select className="rounded-lg border-slate-200 bg-white px-4 py-2 text-sm outline-none focus:ring-primary dark:border-slate-700 dark:bg-slate-800">
+                <select
+                  className="rounded-lg border-slate-200 bg-white px-4 py-2 text-sm outline-none focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
+                  onChange={(event) => {
+                    setSortBy(event.target.value);
+                  }}
+                  value={sortBy}
+                >
                   <option>Latest Listings</option>
                   <option>Price: Low to High</option>
                   <option>Price: High to Low</option>
@@ -208,7 +331,7 @@ export default function BuyerBrowsePage() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {listingCards.map((listing) => (
+              {filteredListings.map((listing) => (
                 <article
                   className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:shadow-2xl dark:border-slate-800 dark:bg-slate-800"
                   key={listing.title}
@@ -266,6 +389,11 @@ export default function BuyerBrowsePage() {
                 </article>
               ))}
             </div>
+            {filteredListings.length === 0 && (
+              <div className="mt-6 rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                Tidak ada akun yang cocok dengan filter saat ini. Coba ubah filter lalu klik Apply.
+              </div>
+            )}
 
             <div className="mt-16 flex items-center justify-center gap-2">
               <button
