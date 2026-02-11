@@ -1,7 +1,53 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import BuyerFooter from "./components/BuyerFooter";
 import BuyerHeader from "./components/BuyerHeader";
+
+export const revalidate = 300;
+
+export const metadata: Metadata = {
+  title: "GameMarket - Marketplace Akun Game Terpercaya",
+  description:
+    "Beli akun game premium dengan transaksi aman, cepat, dan terverifikasi di GameMarket. Temukan akun Valorant, Mobile Legends, PUBG, dan game populer lainnya.",
+  keywords: [
+    "marketplace akun game",
+    "jual beli akun game",
+    "akun valorant",
+    "akun mobile legends",
+    "akun pubg mobile",
+    "GameMarket",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    title: "GameMarket - Marketplace Akun Game Terpercaya",
+    description:
+      "Temukan ribuan akun game populer dengan proses transaksi aman dan instan.",
+    siteName: "GameMarket",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1800&q=80",
+        width: 1200,
+        height: 630,
+        alt: "Marketplace akun game GameMarket",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GameMarket - Marketplace Akun Game Terpercaya",
+    description:
+      "Beli akun game premium dengan transaksi aman, cepat, dan terverifikasi.",
+    images: ["https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1800&q=80"],
+  },
+};
 
 const games = [
   {
@@ -34,6 +80,46 @@ const games = [
     image:
       "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1200&q=80",
   },
+  {
+    name: "Honkai: Star Rail",
+    image:
+      "https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Apex Legends",
+    image:
+      "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "League of Legends",
+    image:
+      "https://images.unsplash.com/photo-1542751371-6533d2d3f4f8?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Call of Duty Mobile",
+    image:
+      "https://images.unsplash.com/photo-1511882150382-421056c89033?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Roblox",
+    image:
+      "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "EA FC Mobile",
+    image:
+      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Ragnarok M",
+    image:
+      "https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Point Blank",
+    image:
+      "https://images.unsplash.com/photo-1472457974886-0ebcd59440cc?auto=format&fit=crop&w=1200&q=80",
+  },
 ];
 
 const listings = [
@@ -60,12 +146,28 @@ const listings = [
 ];
 
 export default function BuyerLandingPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "GameMarket",
+    url: "https://accarena.store/",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://accarena.store/browse?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <div className="bg-background-light text-slate-900 transition-colors duration-300 dark:bg-background-dark dark:text-slate-100">
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        type="application/ld+json"
+      />
       <BuyerHeader />
 
       <main className="container mx-auto px-4 py-6 md:py-8">
-        <section className="relative mb-10 min-h-112.5 overflow-hidden rounded-2xl bg-linear-to-br from-[#1e293b] to-background-dark md:mb-16 md:h-125 md:rounded-3xl">
+        <section className="relative mb-10 min-h-112.5 overflow-hidden rounded-2xl bg-linear-to-br from-[#1e293b] to-background-dark md:mb-16 md:h-125 md:rounded-3xl" id="hero">
           <Image
             alt="Futuristic gaming background"
             className="absolute inset-0 h-full w-full object-cover opacity-50 mix-blend-overlay"
@@ -97,7 +199,7 @@ export default function BuyerLandingPage() {
           </div>
         </section>
 
-        <section className="mb-12 md:mb-16">
+        <section className="mb-12 md:mb-16" id="games">
           <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div>
               <h2 className="text-xl font-extrabold dark:text-white md:text-2xl">Pilih Game</h2>
@@ -113,7 +215,7 @@ export default function BuyerLandingPage() {
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 md:gap-6">
             {games.map((game) => (
-              <div className="group cursor-pointer" key={game.name}>
+              <Link aria-label={`Lihat akun ${game.name}`} className="group block" href="/browse" key={game.name}>
                 <div className="relative aspect-square rounded-2xl border border-slate-100 bg-white p-3 shadow-sm transition-all group-hover:-translate-y-2 group-hover:shadow-xl dark:border-slate-800 dark:bg-slate-800 md:rounded-3xl md:p-4">
                   <Image
                     alt={game.name}
@@ -124,12 +226,12 @@ export default function BuyerLandingPage() {
                   />
                 </div>
                 <p className="mt-3 text-center text-sm font-bold text-slate-700 dark:text-slate-300 md:text-base">{game.name}</p>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
 
-        <section className="mb-12 md:mb-16">
+        <section className="mb-12 md:mb-16" id="recommended-accounts">
           <div className="mb-8 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-extrabold dark:text-white md:text-2xl">Rekomendasi Akun</h2>
@@ -145,7 +247,7 @@ export default function BuyerLandingPage() {
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8">
             {listings.map((listing) => (
-              <div
+              <article
                 className="group overflow-hidden rounded-4xl border border-slate-100 bg-white shadow-lg transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900"
                 key={listing.title}
               >
@@ -191,7 +293,7 @@ export default function BuyerLandingPage() {
                     Beli Sekarang
                   </Link>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </section>
