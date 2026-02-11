@@ -121,6 +121,41 @@ create table if not exists public.user_roles (
   unique (user_id, role)
 );
 
+-- OTP sessions (persisted to DB to survive server restart/redeploy)
+create table if not exists public.register_otp_sessions (
+  email text primary key,
+  password text not null,
+  full_name text not null,
+  phone text not null,
+  otp_code text not null,
+  otp_expires_at timestamptz not null,
+  last_sent_at timestamptz not null default now(),
+  attempts int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.password_reset_otp_sessions (
+  identifier text primary key,
+  method text not null check (method in ('email', 'whatsapp')),
+  user_id uuid references public.profiles(id) on delete set null,
+  otp_code text not null,
+  otp_expires_at timestamptz not null,
+  last_sent_at timestamptz not null default now(),
+  attempts int not null default 0,
+  verified boolean not null default false,
+  reset_token text,
+  reset_token_expires_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.register_otp_sessions
+  add column if not exists last_sent_at timestamptz not null default now();
+
+alter table public.password_reset_otp_sessions
+  add column if not exists last_sent_at timestamptz not null default now();
+
 -- =========================================================
 -- Catalog / listing domain
 -- =========================================================
@@ -365,6 +400,9 @@ create table if not exists public.admin_audit_logs (
 
 create index if not exists idx_profiles_status on public.profiles(status);
 create index if not exists idx_user_roles_user_id on public.user_roles(user_id);
+create index if not exists idx_register_otp_sessions_expires_at on public.register_otp_sessions(otp_expires_at);
+create index if not exists idx_password_reset_otp_sessions_expires_at on public.password_reset_otp_sessions(otp_expires_at);
+create index if not exists idx_password_reset_otp_sessions_user_id on public.password_reset_otp_sessions(user_id);
 
 create index if not exists idx_games_category_id on public.games(category_id);
 create index if not exists idx_listings_seller_id on public.listings(seller_id);
@@ -416,6 +454,16 @@ for each row execute function public.set_updated_at();
 drop trigger if exists trg_game_categories_updated_at on public.game_categories;
 create trigger trg_game_categories_updated_at
 before update on public.game_categories
+for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_register_otp_sessions_updated_at on public.register_otp_sessions;
+create trigger trg_register_otp_sessions_updated_at
+before update on public.register_otp_sessions
+for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_password_reset_otp_sessions_updated_at on public.password_reset_otp_sessions;
+create trigger trg_password_reset_otp_sessions_updated_at
+before update on public.password_reset_otp_sessions
 for each row execute function public.set_updated_at();
 
 drop trigger if exists trg_games_updated_at on public.games;

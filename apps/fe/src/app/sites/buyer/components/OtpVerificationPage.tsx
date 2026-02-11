@@ -2,9 +2,26 @@
 
 import { Inter, Poppins } from "next/font/google";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  RegisterOtpRequestResponseSchema,
+  RegisterOtpVerifyResponseSchema,
+  PasswordResetOtpRequestResponseSchema,
+  PasswordResetOtpVerifyResponseSchema,
+} from "@acme/shared";
 import ThemeToggleButton from "./ThemeToggleButton";
 import ResultModal from "@/components/common/ResultModal";
+import { apiFetch, ApiClientError } from "@/lib/apiClient";
+import {
+  getPasswordResetContext,
+  updatePasswordResetContext,
+} from "../login/password-reset-context";
+import {
+  clearRegisterOtpContext,
+  getRegisterOtpContext,
+  updateRegisterOtpContext,
+} from "../register/register-otp-context";
+import { setAuthSession } from "@/lib/auth-session";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
@@ -17,21 +34,121 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
   const router = useRouter();
   const [otpDigits, setOtpDigits] = useState<string[]>(Array(6).fill(""));
   const [showOtpErrorModal, setShowOtpErrorModal] = useState(false);
+  const [showResendSuccessModal, setShowResendSuccessModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Kode OTP yang Anda masukkan salah. Silakan cek kembali dan coba lagi.");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendCooldownSec, setResendCooldownSec] = useState(60);
+  const [debugOtp, setDebugOtp] = useState<string | null>(null);
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    if (resendCooldownSec <= 0) return;
+    const timer = window.setInterval(() => {
+      setResendCooldownSec((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [resendCooldownSec]);
+
+  useEffect(() => {
+    if (flow === "reset-password") {
+      const context = getPasswordResetContext();
+      if (!context) {
+        router.replace("/login/forgot-password");
+        return;
+      }
+      setDebugOtp(context.debugOtp ?? null);
+      setResendCooldownSec(context.resendCooldownSec ?? 60);
+      return;
+    }
+
+    const registerContext = getRegisterOtpContext();
+    if (!registerContext) {
+      router.replace("/register");
+      return;
+    }
+    setDebugOtp(registerContext.debugOtp ?? null);
+    setResendCooldownSec(registerContext.resendCooldownSec ?? 60);
+  }, [flow, router]);
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const otpCode = otpDigits.join("");
-
-    if (flow === "reset-password" && otpCode !== "123456") {
+    if (otpCode.length !== 6) {
+      setErrorMessage("Kode OTP harus 6 digit.");
       setShowOtpErrorModal(true);
       return;
     }
 
-    if (flow === "register") {
-      router.push("/register/success");
+    if (flow === "reset-password") {
+      const context = getPasswordResetContext();
+      if (!context) {
+        router.replace("/login/forgot-password");
+        return;
+      }
+
+      try {
+        setIsSubmitting(true);
+        const result = await apiFetch(
+          "/api/v1/auth/password/otp/verify",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              identifier: context.identifier,
+              otp: otpCode,
+            }),
+          },
+          PasswordResetOtpVerifyResponseSchema,
+        );
+
+        updatePasswordResetContext({ resetToken: result.resetToken });
+        router.push("/login/reset-password");
+        return;
+      } catch (error) {
+        const message =
+          error instanceof ApiClientError ? error.message : "Verifikasi OTP gagal. Silakan coba lagi.";
+        setErrorMessage(message);
+        setShowOtpErrorModal(true);
+      } finally {
+        setIsSubmitting(false);
+      }
       return;
     }
-    router.push("/login/reset-password");
+
+    if (flow === "register") {
+      const context = getRegisterOtpContext();
+      if (!context) {
+        router.replace("/register");
+        return;
+      }
+      try {
+        setIsSubmitting(true);
+        const result = await apiFetch(
+          "/api/v1/auth/register/otp/verify",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: context.email,
+              otp: otpCode,
+            }),
+          },
+          RegisterOtpVerifyResponseSchema,
+        );
+
+        if (result.session) {
+          setAuthSession(result.session, result.user, result.roles);
+        }
+        clearRegisterOtpContext();
+        router.push("/register/success");
+      } catch (error) {
+        const message =
+          error instanceof ApiClientError ? error.message : "Verifikasi OTP gagal. Silakan coba lagi.";
+        setErrorMessage(message);
+        setShowOtpErrorModal(true);
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
   }
 
   function onChangeDigit(index: number, value: string) {
@@ -47,19 +164,131 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
   const backLabel = flow === "register" ? "Kembali ke Daftar" : "Kembali ke Login";
   const description =
     flow === "register"
-      ? "Masukkan 6 digit kode yang dikirim ke email/WhatsApp untuk menyelesaikan pendaftaran"
+      ? "Masukkan 6 digit kode yang dikirim ke email untuk menyelesaikan pendaftaran"
       : "Masukkan 6 digit kode yang dikirim ke email/WhatsApp Anda";
+
+  async function onResendOtp() {
+    if (isResending || resendCooldownSec > 0) return;
+    if (flow === "reset-password") {
+      const context = getPasswordResetContext();
+      if (!context) {
+        router.replace("/login/forgot-password");
+        return;
+      }
+
+      try {
+        setIsResending(true);
+        const result = await apiFetch(
+          "/api/v1/auth/password/otp/request",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              identifier: context.identifier,
+              method: context.method,
+            }),
+          },
+          PasswordResetOtpRequestResponseSchema,
+        );
+        updatePasswordResetContext({
+          debugOtp: result.debugOtp,
+          resendCooldownSec: result.resendCooldownSec,
+        });
+        setDebugOtp(result.debugOtp ?? null);
+        setResendCooldownSec(result.resendCooldownSec);
+        setShowResendSuccessModal(true);
+      } catch (error) {
+        const retryAfterSec = extractRetryAfterSec(error);
+        if (retryAfterSec) {
+          setResendCooldownSec(retryAfterSec);
+          return;
+        }
+        const message =
+          error instanceof ApiClientError ? error.message : "Gagal kirim ulang OTP.";
+        setErrorMessage(message);
+        setShowOtpErrorModal(true);
+      } finally {
+        setIsResending(false);
+      }
+      return;
+    }
+
+    const registerContext = getRegisterOtpContext();
+    if (!registerContext) {
+      router.replace("/register");
+      return;
+    }
+
+    try {
+      setIsResending(true);
+      const result = await apiFetch(
+        "/api/v1/auth/register/otp/resend",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: registerContext.email,
+          }),
+        },
+        RegisterOtpRequestResponseSchema,
+      );
+      updateRegisterOtpContext({
+        debugOtp: result.debugOtp,
+        resendCooldownSec: result.resendCooldownSec,
+      });
+      setDebugOtp(result.debugOtp ?? null);
+      setResendCooldownSec(result.resendCooldownSec);
+      setShowResendSuccessModal(true);
+    } catch (error) {
+      const retryAfterSec = extractRetryAfterSec(error);
+      if (retryAfterSec) {
+        setResendCooldownSec(retryAfterSec);
+        return;
+      }
+      const message =
+        error instanceof ApiClientError ? error.message : "Gagal kirim ulang OTP.";
+      setErrorMessage(message);
+      setShowOtpErrorModal(true);
+    } finally {
+      setIsResending(false);
+    }
+  }
+
+  function formatCooldown(sec: number) {
+    const minute = Math.floor(sec / 60);
+    const second = sec % 60;
+    return `${String(minute).padStart(2, "0")}:${String(second).padStart(2, "0")}`;
+  }
+
+  function extractRetryAfterSec(error: unknown): number | null {
+    if (!(error instanceof ApiClientError)) return null;
+    const errorDetails = error.details as
+      | { details?: { retryAfterSec?: unknown } }
+      | undefined;
+    const retryAfterSec = errorDetails?.details?.retryAfterSec;
+    if (typeof retryAfterSec !== "number" || !Number.isFinite(retryAfterSec) || retryAfterSec <= 0) {
+      return null;
+    }
+    return Math.floor(retryAfterSec);
+  }
 
   return (
     <>
       <ResultModal
         isOpen={showOtpErrorModal}
-        message="Kode OTP yang Anda masukkan salah. Silakan cek kembali dan coba lagi."
+        message={errorMessage}
         onClose={() => setShowOtpErrorModal(false)}
         onPrimaryAction={() => setShowOtpErrorModal(false)}
         primaryActionLabel="Coba Lagi"
         title="Verifikasi Gagal"
         variant="error"
+      />
+      <ResultModal
+        isOpen={showResendSuccessModal}
+        message="Kode OTP baru sudah dikirim. Silakan cek email Anda."
+        onClose={() => setShowResendSuccessModal(false)}
+        onPrimaryAction={() => setShowResendSuccessModal(false)}
+        primaryActionLabel="OK"
+        title="OTP Terkirim"
+        variant="success"
       />
 
       <div
@@ -99,6 +328,7 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
                   inputMode="numeric"
                   key={idx}
                   maxLength={1}
+                  disabled={isSubmitting}
                   onChange={(event) => onChangeDigit(idx, event.target.value)}
                   pattern="[0-9]*"
                   placeholder="0"
@@ -112,17 +342,36 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
             <div className="text-center">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Tidak menerima kode?
-                <span className="mt-1 block font-semibold text-primary dark:text-blue-400">Kirim Ulang (01:59)</span>
+                <button
+                  className="mt-1 block w-full font-semibold text-primary disabled:cursor-not-allowed disabled:text-gray-400 dark:text-blue-400 dark:disabled:text-slate-500"
+                  disabled={isResending || resendCooldownSec > 0}
+                  onClick={onResendOtp}
+                  type="button"
+                >
+                  {isResending
+                    ? "Mengirim..."
+                    : resendCooldownSec > 0
+                      ? `Kirim Ulang OTP (${formatCooldown(resendCooldownSec)})`
+                      : "Kirim Ulang OTP"}
+                </button>
               </p>
+              {flow === "reset-password" && debugOtp ? (
+                <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
+                  Dev OTP: <span className="font-bold tracking-wider">{debugOtp}</span>
+                </p>
+              ) : null}
             </div>
 
             <div className="space-y-4">
               <button
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-blue-800"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-80"
+                disabled={isSubmitting}
                 type="submit"
               >
-                <span className="material-symbols-outlined text-xl">verified</span>
-                Verifikasi
+                <span className={`material-symbols-outlined text-xl ${isSubmitting ? "animate-spin" : ""}`}>
+                  {isSubmitting ? "progress_activity" : "verified"}
+                </span>
+                {isSubmitting ? "Memproses..." : "Verifikasi"}
               </button>
               <a
                 className="block w-full rounded-xl bg-transparent py-3 text-center font-medium text-gray-500 transition-all hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-slate-800"

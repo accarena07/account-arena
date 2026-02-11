@@ -94,3 +94,72 @@ export const AuthMeResponseSchema = z.object({
   sellerAccess: SellerAccessSchema,
 });
 export type AuthMeResponse = z.infer<typeof AuthMeResponseSchema>;
+
+export const PasswordResetOtpRequestSchema = z.object({
+  identifier: z.string().min(3).max(120),
+  method: z.enum(["email", "whatsapp"]).optional(),
+});
+export type PasswordResetOtpRequest = z.infer<typeof PasswordResetOtpRequestSchema>;
+
+export const PasswordResetOtpRequestResponseSchema = z.object({
+  sent: z.boolean(),
+  method: z.enum(["email", "whatsapp"]),
+  expiresInSec: z.number().int().positive(),
+  resendCooldownSec: z.number().int().positive(),
+  debugOtp: z.string().optional(),
+});
+export type PasswordResetOtpRequestResponse = z.infer<typeof PasswordResetOtpRequestResponseSchema>;
+
+export const PasswordResetOtpVerifySchema = z.object({
+  identifier: z.string().min(3).max(120),
+  otp: z.string().regex(/^\d{6}$/),
+});
+export type PasswordResetOtpVerify = z.infer<typeof PasswordResetOtpVerifySchema>;
+
+export const PasswordResetOtpVerifyResponseSchema = z.object({
+  verified: z.boolean(),
+  resetToken: z.string(),
+  expiresInSec: z.number().int().positive(),
+});
+export type PasswordResetOtpVerifyResponse = z.infer<typeof PasswordResetOtpVerifyResponseSchema>;
+
+export const PasswordResetSubmitSchema = z.object({
+  identifier: z.string().min(3).max(120),
+  resetToken: z.string().min(10),
+  newPassword: z.string().min(8),
+});
+export type PasswordResetSubmit = z.infer<typeof PasswordResetSubmitSchema>;
+
+export const PasswordResetSubmitResponseSchema = z.object({
+  passwordUpdated: z.boolean(),
+});
+export type PasswordResetSubmitResponse = z.infer<typeof PasswordResetSubmitResponseSchema>;
+
+export const RegisterOtpRequestSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  fullName: z.string().min(2).max(80),
+  phone: z.string().min(8).max(20),
+});
+export type RegisterOtpRequest = z.infer<typeof RegisterOtpRequestSchema>;
+
+export const RegisterOtpRequestResponseSchema = z.object({
+  sent: z.boolean(),
+  expiresInSec: z.number().int().positive(),
+  resendCooldownSec: z.number().int().positive(),
+  debugOtp: z.string().optional(),
+});
+export type RegisterOtpRequestResponse = z.infer<typeof RegisterOtpRequestResponseSchema>;
+
+export const RegisterOtpVerifySchema = z.object({
+  email: z.string().email(),
+  otp: z.string().regex(/^\d{6}$/),
+});
+export type RegisterOtpVerify = z.infer<typeof RegisterOtpVerifySchema>;
+
+export const RegisterOtpVerifyResponseSchema = z.object({
+  user: AuthUserSchema,
+  roles: z.array(z.string()),
+  session: AuthSessionSchema.nullable(),
+});
+export type RegisterOtpVerifyResponse = z.infer<typeof RegisterOtpVerifyResponseSchema>;

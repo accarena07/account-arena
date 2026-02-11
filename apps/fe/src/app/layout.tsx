@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import ReduxProvider from "@/lib/redux/provider";
+import AuthSessionBootstrap from "@/components/auth/AuthSessionBootstrap";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,7 +41,10 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} min-h-dvh bg-background-light text-slate-900`}>
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          <AuthSessionBootstrap />
+          {children}
+        </ReduxProvider>
       </body>
     </html>
   );

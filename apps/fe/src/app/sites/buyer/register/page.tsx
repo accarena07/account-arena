@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AuthSignupResponseSchema } from "@acme/shared";
+import { RegisterOtpRequestResponseSchema } from "@acme/shared";
 import AuthPageShell from "../components/AuthPageShell";
 import ResultModal from "@/components/common/ResultModal";
 import { apiFetch, ApiClientError } from "@/lib/apiClient";
-import { setAuthSession } from "@/lib/auth-session";
 import {
   clearRegisterFieldError,
   shouldProceedToOtp,
@@ -14,6 +13,7 @@ import {
   type RegisterFormErrors,
 } from "./handler";
 import { buyerRegisterTermsDocs } from "./terms";
+import { setRegisterOtpContext } from "./register-otp-context";
 
 const registerFeatures = [
   {
@@ -30,7 +30,6 @@ const registerFeatures = [
 
 export default function BuyerRegisterPage() {
   const router = useRouter();
-  const [otpMethod, setOtpMethod] = useState<"whatsapp" | "email">("whatsapp");
   const [showTncModal, setShowTncModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -39,7 +38,10 @@ export default function BuyerRegisterPage() {
   const [errors, setErrors] = useState<RegisterFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorTitle, setErrorTitle] = useState("Registrasi Gagal");
   const [errorMessage, setErrorMessage] = useState("Pendaftaran gagal. Silakan coba lagi.");
+  const [errorSecondaryActionLabel, setErrorSecondaryActionLabel] = useState<string | undefined>(undefined);
+  const [errorSecondaryActionHref, setErrorSecondaryActionHref] = useState<string | undefined>(undefined);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -54,7 +56,7 @@ export default function BuyerRegisterPage() {
     try {
       setIsSubmitting(true);
       const result = await apiFetch(
-        "/api/v1/auth/signup",
+        "/api/v1/auth/register/otp/request",
         {
           method: "POST",
           body: JSON.stringify({
@@ -64,23 +66,36 @@ export default function BuyerRegisterPage() {
             phone: whatsApp.trim(),
           }),
         },
-        AuthSignupResponseSchema,
+        RegisterOtpRequestResponseSchema,
       );
 
-      if (result.session && result.user) {
-        setAuthSession(result.session, result.user, result.roles);
-      }
-
-      if (result.emailConfirmationRequired) {
-        router.push("/register/otp");
-        return;
-      }
-
-      router.push("/register/success");
+      setRegisterOtpContext({
+        email: email.trim().toLowerCase(),
+        debugOtp: result.debugOtp,
+        resendCooldownSec: result.resendCooldownSec,
+      });
+      router.push("/register/otp");
     } catch (error) {
-      const message =
+      let message =
         error instanceof ApiClientError ? error.message : "Pendaftaran gagal. Silakan coba lagi.";
+      let title = "Registrasi Gagal";
+      let secondaryLabel: string | undefined;
+      let secondaryHref: string | undefined;
+
+      if (error instanceof ApiClientError) {
+        const errorCode = (error.details as { code?: string } | undefined)?.code;
+        if (errorCode === "EMAIL_ALREADY_REGISTERED" || errorCode === "PHONE_ALREADY_REGISTERED") {
+          title = "Akun Sudah Terdaftar";
+          message = "Email atau nomor WhatsApp ini sudah terpakai. Silakan login.";
+          secondaryLabel = "Masuk ke Akun";
+          secondaryHref = "/login";
+        }
+      }
+
+      setErrorTitle(title);
       setErrorMessage(message);
+      setErrorSecondaryActionLabel(secondaryLabel);
+      setErrorSecondaryActionHref(secondaryHref);
       setShowErrorModal(true);
     } finally {
       setIsSubmitting(false);
@@ -95,7 +110,9 @@ export default function BuyerRegisterPage() {
         onClose={() => setShowErrorModal(false)}
         onPrimaryAction={() => setShowErrorModal(false)}
         primaryActionLabel="Coba Lagi"
-        title="Registrasi Gagal"
+        secondaryActionHref={errorSecondaryActionHref}
+        secondaryActionLabel={errorSecondaryActionLabel}
+        title={errorTitle}
         variant="error"
       />
 
@@ -253,55 +270,10 @@ export default function BuyerRegisterPage() {
             {errors.password ? <p className="text-xs font-medium text-red-500">{errors.password}</p> : null}
           </div>
 
-          <div className="pt-4">
-            <h3 className="mb-4 text-sm font-bold text-gray-900 dark:text-white">Pilih Metode Verifikasi OTP</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <label
-                className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
-                  otpMethod === "whatsapp"
-                    ? "border-primary bg-primary/5 shadow-[0_0_0_2px_#254194] dark:border-secondary dark:bg-secondary/10 dark:shadow-[0_0_0_2px_#FF761B]"
-                    : "border-gray-100 hover:bg-gray-50 dark:border-slate-800 dark:hover:bg-slate-800"
-                }`}
-              >
-                <input
-                  checked={otpMethod === "whatsapp"}
-                  className="hidden"
-                  disabled={isSubmitting}
-                  name="otp_method"
-                  onChange={() => setOtpMethod("whatsapp")}
-                  type="radio"
-                />
-                <span className="flex flex-col items-center justify-center">
-                  <span className="material-symbols-outlined mb-2 text-3xl text-green-500">chat</span>
-                  <span className="text-sm font-bold text-gray-700 dark:text-gray-200">WhatsApp</span>
-                  <span className="mt-1 text-[10px] tracking-wider text-gray-400 uppercase dark:text-gray-500">Paling Cepat</span>
-                </span>
-              </label>
-
-              <label
-                className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${
-                  otpMethod === "email"
-                    ? "border-primary bg-primary/5 shadow-[0_0_0_2px_#254194] dark:border-secondary dark:bg-secondary/10 dark:shadow-[0_0_0_2px_#FF761B]"
-                    : "border-gray-100 hover:bg-gray-50 dark:border-slate-800 dark:hover:bg-slate-800"
-                }`}
-              >
-                <input
-                  checked={otpMethod === "email"}
-                  className="hidden"
-                  disabled={isSubmitting}
-                  name="otp_method"
-                  onChange={() => setOtpMethod("email")}
-                  type="radio"
-                />
-                <span className="flex flex-col items-center justify-center">
-                  <span className="material-symbols-outlined mb-2 text-3xl text-primary dark:text-blue-400">
-                    alternate_email
-                  </span>
-                  <span className="text-sm font-bold text-gray-700 dark:text-gray-200">Email</span>
-                  <span className="mt-1 text-[10px] tracking-wider text-gray-400 uppercase dark:text-gray-500">Alternatif</span>
-                </span>
-              </label>
-            </div>
+          <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-900/40 dark:bg-blue-900/20">
+            <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">
+              Kode OTP verifikasi akan dikirim ke email yang Anda daftarkan.
+            </p>
           </div>
 
           <div className="mt-6 flex items-start gap-3">

@@ -3,7 +3,14 @@
 import { useState } from "react";
 import { Inter, Poppins } from "next/font/google";
 import { useRouter } from "next/navigation";
+import { PasswordResetSubmitResponseSchema } from "@acme/shared";
+import ResultModal from "@/components/common/ResultModal";
+import { apiFetch, ApiClientError } from "@/lib/apiClient";
 import ThemeToggleButton from "../../components/ThemeToggleButton";
+import {
+  clearPasswordResetContext,
+  getPasswordResetContext,
+} from "../password-reset-context";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
@@ -12,16 +19,92 @@ export default function BuyerResetPasswordPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Gagal menyimpan kata sandi.");
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    router.push("/login");
+    if (isSubmitting) return;
+
+    const context = getPasswordResetContext();
+    if (!context?.resetToken) {
+      setErrorMessage("Sesi reset tidak ditemukan. Silakan ulangi dari lupa kata sandi.");
+      setShowErrorModal(true);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setPasswordError("Konfirmasi kata sandi tidak sama.");
+      return;
+    }
+
+    const strongPasswordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]).{8,}$/;
+    if (!strongPasswordRegex.test(password)) {
+      setPasswordError(
+        "Kata sandi minimal 8 karakter dan wajib ada huruf besar, huruf kecil, angka, serta karakter spesial.",
+      );
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setPasswordError("");
+      await apiFetch(
+        "/api/v1/auth/password/reset",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            identifier: context.identifier,
+            resetToken: context.resetToken,
+            newPassword: password,
+          }),
+        },
+        PasswordResetSubmitResponseSchema,
+      );
+
+      clearPasswordResetContext();
+      setShowSuccessModal(true);
+    } catch (error) {
+      const message =
+        error instanceof ApiClientError ? error.message : "Gagal menyimpan kata sandi.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <div
-      className={`${inter.className} bg-background-light relative flex min-h-screen items-center justify-center p-4 transition-colors duration-300 dark:bg-background-dark`}
-    >
+    <>
+      <ResultModal
+        isOpen={showSuccessModal}
+        variant="success"
+        title="Kata Sandi Berhasil Diubah"
+        message="Silakan login menggunakan kata sandi baru Anda."
+        primaryActionLabel="Ke Halaman Login"
+        onPrimaryAction={() => router.push("/login")}
+        onClose={() => setShowSuccessModal(false)}
+      />
+
+      <ResultModal
+        isOpen={showErrorModal}
+        variant="error"
+        title="Gagal Reset Kata Sandi"
+        message={errorMessage}
+        primaryActionLabel="Coba Lagi"
+        onPrimaryAction={() => setShowErrorModal(false)}
+        onClose={() => setShowErrorModal(false)}
+      />
+
+      <div
+        className={`${inter.className} bg-background-light relative flex min-h-screen items-center justify-center p-4 transition-colors duration-300 dark:bg-background-dark`}
+      >
       <div className="fixed top-6 right-6 z-50">
         <ThemeToggleButton className="border border-gray-100 bg-white p-3 text-gray-600 shadow-lg transition-all hover:scale-110 dark:border-slate-700 dark:bg-slate-800 dark:text-gray-300" />
       </div>
@@ -61,6 +144,9 @@ export default function BuyerResetPasswordPage() {
                     id="password"
                     placeholder="Masukkan kata sandi baru"
                     type={showPassword ? "text" : "password"}
+                    value={password}
+                    disabled={isSubmitting}
+                    onChange={(event) => setPassword(event.target.value)}
                   />
                   <button
                     className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none dark:hover:text-gray-200"
@@ -85,6 +171,9 @@ export default function BuyerResetPasswordPage() {
                     id="confirm-password"
                     placeholder="Ulangi kata sandi baru"
                     type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    disabled={isSubmitting}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
                   />
                   <button
                     className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none dark:hover:text-gray-200"
@@ -117,13 +206,15 @@ export default function BuyerResetPasswordPage() {
                   </li>
                 </ul>
               </div>
+              {passwordError ? <p className="text-xs font-medium text-red-500">{passwordError}</p> : null}
 
               <button
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/25 transition-all active:scale-[0.98] hover:bg-blue-800"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/25 transition-all active:scale-[0.98] hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-80"
+                disabled={isSubmitting}
                 type="submit"
               >
                 <span className="material-symbols-outlined">save</span>
-                Simpan Kata Sandi
+                {isSubmitting ? "Menyimpan..." : "Simpan Kata Sandi"}
               </button>
             </form>
 
@@ -150,6 +241,7 @@ export default function BuyerResetPasswordPage() {
           © 2024 GAMEMARKET Indonesia. Keamanan Anda prioritas kami.
         </div>
       </main>
-    </div>
+      </div>
+    </>
   );
 }

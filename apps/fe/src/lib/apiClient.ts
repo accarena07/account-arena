@@ -2,6 +2,9 @@ import { z } from "zod";
 import { ApiEnvelopeSchema } from "@acme/shared";
 
 const BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
+const API_TIMEOUT_MS = process.env.NEXT_PUBLIC_API_TIMEOUT_MS
+  ? Number(process.env.NEXT_PUBLIC_API_TIMEOUT_MS)
+  : 15000;
 
 export class ApiClientError extends Error {
   public readonly status?: number;
@@ -23,14 +26,27 @@ export async function apiFetch<T>(
   init?: RequestInit,
   dataSchema?: z.ZodType<T>
 ): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    ...init,
-    headers: {
-      "content-type": "application/json",
-      ...(init?.headers ?? {})
-    },
-    cache: "no-store"
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}${path}`, {
+      ...init,
+      headers: {
+        "content-type": "application/json",
+        ...(init?.headers ?? {})
+      },
+      cache: "no-store",
+      signal: controller.signal,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new ApiClientError("Request timeout. Coba lagi.");
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   const json = await res.json().catch(() => null);
   const env = ApiEnvelopeSchema.safeParse(json);
