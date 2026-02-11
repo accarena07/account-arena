@@ -77,48 +77,41 @@ export default function BuyerTransactionCompletedPage() {
 
             <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-800">
               <div className="flex items-center gap-2 border-b border-slate-100 p-6 dark:border-slate-700">
-                <span className="material-symbols-outlined text-primary">rate_review</span>
-                <h2 className="text-lg font-bold">Review & Rating</h2>
+                <span className="material-symbols-outlined text-primary">verified_user</span>
+                <h2 className="text-lg font-bold">Akses Akun & Keamanan</h2>
               </div>
-              <div className="p-6">
-                <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
-                  Bagaimana pengalaman transaksi Anda dengan penjual ini? Berikan ulasan Anda.
-                </p>
+              <div className="space-y-6 p-6">
+                <div className="rounded-xl border border-green-100 bg-green-50 p-4 dark:border-green-900/40 dark:bg-green-900/20">
+                  <p className="text-sm leading-relaxed text-green-800 dark:text-green-300">
+                    Transaksi selesai. Data akun telah diserahkan dan pembayaran sudah diteruskan ke penjual.
+                  </p>
+                </div>
 
-                <div className="space-y-6">
-                  <div>
-                    <p className="mb-3 text-sm font-bold">Rating Penjual</p>
-                    <div className="flex items-center gap-2">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button className="group" key={star} type="button">
-                          <span
-                            className={`material-symbols-outlined text-3xl transition-transform group-hover:scale-110 ${
-                              star <= 4 ? "text-yellow-400" : "text-slate-200 dark:text-slate-700"
-                            }`}
-                            style={{ fontVariationSettings: star <= 4 ? "'FILL' 1" : undefined }}
-                          >
-                            star
-                          </span>
-                        </button>
-                      ))}
-                      <span className="ml-2 text-sm font-medium text-slate-400">Pilih rating</span>
+                <div className="space-y-3">
+                  {[
+                    "Password akun sudah diganti oleh buyer",
+                    "Email recovery berhasil dipindahkan",
+                    "Perangkat/sesi lama sudah di-revoke",
+                  ].map((item) => (
+                    <div className="flex items-start gap-3" key={item}>
+                      <span className="material-symbols-outlined text-base text-green-500">check_circle</span>
+                      <p className="text-sm text-slate-600 dark:text-slate-300">{item}</p>
                     </div>
-                  </div>
+                  ))}
+                </div>
 
-                  <div>
-                    <label className="mb-3 block text-sm font-bold" htmlFor="review-comment">
-                      Ulasan Anda
-                    </label>
-                    <textarea
-                      className="w-full rounded-xl border-slate-200 bg-slate-50 text-sm transition-all placeholder:text-slate-400 focus:border-transparent focus:ring-2 focus:ring-primary dark:border-slate-700 dark:bg-slate-800/50"
-                      id="review-comment"
-                      placeholder="Tuliskan pengalaman Anda berbelanja di sini..."
-                      rows={4}
-                    ></textarea>
-                  </div>
-
-                  <button className="w-full rounded-xl bg-primary px-8 py-3 font-bold text-white transition-all hover:bg-blue-800 md:w-auto" type="button">
-                    Kirim Ulasan
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <button
+                    className="rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-800"
+                    type="button"
+                  >
+                    Lihat Detail Akun
+                  </button>
+                  <button
+                    className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700"
+                    type="button"
+                  >
+                    Hubungi Support
                   </button>
                 </div>
               </div>
