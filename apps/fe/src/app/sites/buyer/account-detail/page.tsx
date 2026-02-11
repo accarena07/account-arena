@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRef } from "react";
 import Breadcrumb from "../components/Breadcrumb";
 import BuyerFooter from "../components/BuyerFooter";
 import BuyerTopNav from "../components/BuyerTopNav";
@@ -45,9 +46,58 @@ const recommendations = [
     price: "Rp 3.200.000",
     image: "https://images.unsplash.com/photo-1603481546238-487240415921?auto=format&fit=crop&w=1200&q=80",
   },
+  {
+    badge: "Radiant",
+    game: "Valorant",
+    region: "Asia Pacific",
+    title: "High MMR Account + Rare Bundle Collection",
+    price: "Rp 1.980.000",
+    image: "https://images.unsplash.com/photo-1548686304-89d188a80029?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    badge: "Master",
+    game: "Apex Legends",
+    region: "SEA",
+    title: "Master Rank + Heirloom Ready Account",
+    price: "Rp 1.650.000",
+    image: "https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    badge: "Global Elite",
+    game: "CS2",
+    region: "EU",
+    title: "Prime Account + Inventory Skin Limited",
+    price: "Rp 1.320.000",
+    image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    badge: "Diamond",
+    game: "EA FC Mobile",
+    region: "Global",
+    title: "High OVR Squad + Event Icons Completed",
+    price: "Rp 1.090.000",
+    image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80",
+  },
 ];
 
 export default function BuyerAccountDetailPage() {
+  const recommendationsTrackRef = useRef<HTMLDivElement>(null);
+
+  function scrollRecommendations(direction: "left" | "right") {
+    const track = recommendationsTrackRef.current;
+    if (!track) return;
+
+    const card = track.querySelector<HTMLElement>("[data-card='account-recommendation']");
+    const cardWidth = card?.offsetWidth ?? 280;
+    const gap = 24;
+    const delta = cardWidth + gap;
+
+    track.scrollBy({
+      left: direction === "left" ? -delta : delta,
+      behavior: "smooth",
+    });
+  }
+
   return (
     <div className="bg-background-light text-slate-900 transition-colors duration-200 dark:bg-background-dark dark:text-slate-100">
       <BuyerTopNav searchPlaceholder="Cari akun, item, atau game..." />
@@ -216,10 +266,6 @@ export default function BuyerAccountDetailPage() {
                   <span className="text-xs font-bold">± 5 Menit</span>
                 </div>
               </div>
-
-              <button className="w-full rounded-xl border border-primary/20 py-2 text-sm font-bold text-primary transition-all hover:bg-blue-50 dark:hover:bg-blue-900/20" type="button">
-                Kunjungi Toko
-              </button>
             </div>
           </div>
         </div>
@@ -236,37 +282,70 @@ export default function BuyerAccountDetailPage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {recommendations.map((item) => (
-              <article
-                className="group overflow-hidden rounded-4xl border border-slate-100 bg-white transition-all duration-300 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900"
-                key={item.title}
-              >
-                <div className="relative aspect-square">
-                  <Image alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" fill sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" src={item.image} />
-                  <div className="absolute top-4 left-4">
-                    <span className="rounded-full bg-primary px-3 py-1 text-[10px] font-bold text-white uppercase">{item.badge}</span>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <div className="mb-2 flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase">
-                    <span>{item.game}</span>
-                    <span className="h-1 w-1 rounded-full bg-slate-300"></span>
-                    <span>{item.region}</span>
-                  </div>
-                  <h4 className="mb-4 line-clamp-2 text-sm font-bold">{item.title}</h4>
-                  <div className="flex items-end justify-between">
-                    <div>
-                      <span className="block text-[10px] text-slate-400">Harga</span>
-                      <span className="text-lg font-extrabold text-secondary">{item.price}</span>
+          <div className="relative">
+            <button
+              aria-label="Rekomendasi sebelumnya"
+              className="absolute top-1/2 left-0 z-10 hidden -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 md:block"
+              onClick={() => {
+                scrollRecommendations("left");
+              }}
+              type="button"
+            >
+              <span className="material-symbols-outlined text-xl">chevron_left</span>
+            </button>
+            <button
+              aria-label="Rekomendasi berikutnya"
+              className="absolute top-1/2 right-0 z-10 hidden translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 md:block"
+              onClick={() => {
+                scrollRecommendations("right");
+              }}
+              type="button"
+            >
+              <span className="material-symbols-outlined text-xl">chevron_right</span>
+            </button>
+
+            <div
+              className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              ref={recommendationsTrackRef}
+            >
+              {recommendations.map((item) => (
+                <article
+                  className="group min-w-[260px] flex-[0_0_260px] snap-start overflow-hidden rounded-4xl border border-slate-100 bg-white transition-all duration-300 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900 sm:min-w-[280px] sm:flex-[0_0_280px]"
+                  data-card="account-recommendation"
+                  key={item.title}
+                >
+                  <div className="relative aspect-square">
+                    <Image
+                      alt={item.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      fill
+                      sizes="(min-width:640px) 280px, 260px"
+                      src={item.image}
+                    />
+                    <div className="absolute top-4 left-4">
+                      <span className="rounded-full bg-primary px-3 py-1 text-[10px] font-bold text-white uppercase">{item.badge}</span>
                     </div>
-                    <Link className="rounded-lg bg-primary/10 p-2 text-primary transition-all hover:bg-primary hover:text-white" href="/account-detail">
-                      <span className="material-symbols-outlined text-sm">shopping_bag</span>
-                    </Link>
                   </div>
-                </div>
-              </article>
-            ))}
+                  <div className="p-5">
+                    <div className="mb-2 flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase">
+                      <span>{item.game}</span>
+                      <span className="h-1 w-1 rounded-full bg-slate-300"></span>
+                      <span>{item.region}</span>
+                    </div>
+                    <h4 className="mb-4 line-clamp-2 text-sm font-bold">{item.title}</h4>
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <span className="block text-[10px] text-slate-400">Harga</span>
+                        <span className="text-lg font-extrabold text-secondary">{item.price}</span>
+                      </div>
+                      <Link className="rounded-lg bg-primary/10 p-2 text-primary transition-all hover:bg-primary hover:text-white" href="/account-detail">
+                        <span className="material-symbols-outlined text-sm">shopping_bag</span>
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
       </main>
