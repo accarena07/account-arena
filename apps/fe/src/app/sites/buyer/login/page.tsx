@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { AuthLoginResponseSchema } from "@acme/shared";
 import ResultModal from "@/components/common/ResultModal";
 import AuthPageShell from "../components/AuthPageShell";
+import { apiFetch, ApiClientError } from "@/lib/apiClient";
+import { setAuthSession } from "@/lib/auth-session";
 
 const loginFeatures = [
   {
@@ -16,35 +20,55 @@ const loginFeatures = [
 ] as const;
 
 export default function BuyerLoginPage() {
+  const router = useRouter();
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Kata sandi yang Anda masukkan salah. Silakan coba lagi.");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const submitTimerRef = useRef<number | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    return () => {
-      if (submitTimerRef.current) {
-        window.clearTimeout(submitTimerRef.current);
-      }
-    };
-  }, []);
-
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (isSubmitting) return;
+    if (!email.trim() || !password) {
+      setErrorMessage("Email dan kata sandi wajib diisi.");
+      setShowErrorModal(true);
+      return;
+    }
 
-    setIsSubmitting(true);
-    submitTimerRef.current = window.setTimeout(() => {
+    try {
+      setIsSubmitting(true);
+      const result = await apiFetch(
+        "/api/v1/auth/login",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: email.trim(),
+            password,
+          }),
+        },
+        AuthLoginResponseSchema,
+      );
+
+      setAuthSession(result.session, result.user, result.roles);
+      router.push("/");
+    } catch (error) {
+      const message =
+        error instanceof ApiClientError ? error.message : "Terjadi kendala saat login. Silakan coba lagi.";
+      setErrorMessage(message);
       setIsSubmitting(false);
       setShowErrorModal(true);
-    }, 1200);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <>
       <ResultModal
         isOpen={showErrorModal}
-        message="Kata sandi yang Anda masukkan salah. Silakan coba lagi."
+        message={errorMessage}
         onClose={() => setShowErrorModal(false)}
         onPrimaryAction={() => setShowErrorModal(false)}
         primaryActionLabel="Coba Lagi"
@@ -72,6 +96,8 @@ export default function BuyerLoginPage() {
               disabled={isSubmitting}
               placeholder="contoh@email.com"
               type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
             />
           </div>
         </div>
@@ -92,6 +118,8 @@ export default function BuyerLoginPage() {
               disabled={isSubmitting}
               placeholder="••••••••"
               type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
             />
             <button
               aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}

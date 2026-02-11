@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AuthSignupResponseSchema } from "@acme/shared";
 import AuthPageShell from "../components/AuthPageShell";
+import ResultModal from "@/components/common/ResultModal";
+import { apiFetch, ApiClientError } from "@/lib/apiClient";
+import { setAuthSession } from "@/lib/auth-session";
 import {
   clearRegisterFieldError,
   shouldProceedToOtp,
@@ -33,20 +37,68 @@ export default function BuyerRegisterPage() {
   const [whatsApp, setWhatsApp] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<RegisterFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Pendaftaran gagal. Silakan coba lagi.");
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSubmitting) return;
+
     const nextErrors = validateRegisterForm({ email, whatsApp, password });
     setErrors(nextErrors);
     if (!shouldProceedToOtp(nextErrors)) {
       return;
     }
 
-    router.push("/register/otp");
+    try {
+      setIsSubmitting(true);
+      const result = await apiFetch(
+        "/api/v1/auth/signup",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: email.trim(),
+            password,
+            fullName: email.split("@")[0],
+            phone: whatsApp.trim(),
+          }),
+        },
+        AuthSignupResponseSchema,
+      );
+
+      if (result.session && result.user) {
+        setAuthSession(result.session, result.user, result.roles);
+      }
+
+      if (result.emailConfirmationRequired) {
+        router.push("/register/otp");
+        return;
+      }
+
+      router.push("/register/success");
+    } catch (error) {
+      const message =
+        error instanceof ApiClientError ? error.message : "Pendaftaran gagal. Silakan coba lagi.";
+      setErrorMessage(message);
+      setShowErrorModal(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <>
+      <ResultModal
+        isOpen={showErrorModal}
+        message={errorMessage}
+        onClose={() => setShowErrorModal(false)}
+        onPrimaryAction={() => setShowErrorModal(false)}
+        primaryActionLabel="Coba Lagi"
+        title="Registrasi Gagal"
+        variant="error"
+      />
+
       {showTncModal ? (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
           <button
@@ -138,6 +190,7 @@ export default function BuyerRegisterPage() {
                 required
                 type="email"
                 value={email}
+                disabled={isSubmitting}
                 onChange={(event) => {
                   setEmail(event.target.value);
                   setErrors((prev) => clearRegisterFieldError(prev, "email"));
@@ -159,6 +212,7 @@ export default function BuyerRegisterPage() {
                 required
                 type="tel"
                 value={whatsApp}
+                disabled={isSubmitting}
                 onChange={(event) => {
                   setWhatsApp(event.target.value);
                   setErrors((prev) => clearRegisterFieldError(prev, "whatsapp"));
@@ -180,6 +234,7 @@ export default function BuyerRegisterPage() {
                 required
                 type={showPassword ? "text" : "password"}
                 value={password}
+                disabled={isSubmitting}
                 onChange={(event) => {
                   setPassword(event.target.value);
                   setErrors((prev) => clearRegisterFieldError(prev, "password"));
@@ -188,6 +243,7 @@ export default function BuyerRegisterPage() {
               <button
                 aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
                 className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
+                disabled={isSubmitting}
                 onClick={() => setShowPassword((prev) => !prev)}
                 type="button"
               >
@@ -210,6 +266,7 @@ export default function BuyerRegisterPage() {
                 <input
                   checked={otpMethod === "whatsapp"}
                   className="hidden"
+                  disabled={isSubmitting}
                   name="otp_method"
                   onChange={() => setOtpMethod("whatsapp")}
                   type="radio"
@@ -231,6 +288,7 @@ export default function BuyerRegisterPage() {
                 <input
                   checked={otpMethod === "email"}
                   className="hidden"
+                  disabled={isSubmitting}
                   name="otp_method"
                   onChange={() => setOtpMethod("email")}
                   type="radio"
@@ -251,6 +309,7 @@ export default function BuyerRegisterPage() {
               className="mt-1 h-5 w-5 rounded-md border-gray-200 bg-gray-50 text-primary focus:ring-primary"
               id="terms"
               required
+              disabled={isSubmitting}
               type="checkbox"
             />
             <label className="text-xs leading-normal text-gray-500 dark:text-gray-400" htmlFor="terms">
@@ -270,10 +329,11 @@ export default function BuyerRegisterPage() {
           </div>
 
           <button
-            className="w-full rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/20 transition-all active:scale-95 hover:opacity-90 dark:bg-secondary dark:shadow-secondary/20"
+            className="w-full rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/20 transition-all active:scale-95 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-80 dark:bg-secondary dark:shadow-secondary/20"
+            disabled={isSubmitting}
             type="submit"
           >
-            Daftar Sekarang
+            {isSubmitting ? "Memproses..." : "Daftar Sekarang"}
           </button>
 
           <div className="pt-4 text-center">
