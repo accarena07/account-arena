@@ -310,7 +310,7 @@ export default function BuyerAccountDetailPage() {
             >
               {recommendations.map((item) => (
                 <article
-                  className="group min-w-[260px] flex-[0_0_260px] snap-start overflow-hidden rounded-4xl border border-slate-100 bg-white transition-all duration-300 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900 sm:min-w-[280px] sm:flex-[0_0_280px]"
+                  className="group min-w-65 flex-[0_0_260px] snap-start overflow-hidden rounded-4xl border border-slate-100 bg-white transition-all duration-300 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900 sm:min-w-70 sm:flex-[0_0_280px]"
                   data-card="account-recommendation"
                   key={item.title}
                 >

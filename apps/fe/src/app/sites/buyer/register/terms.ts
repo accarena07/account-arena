@@ -1,16 +1,4 @@
-export type TermsSection = {
-  title: string;
-  paragraphs?: string[];
-  bullets?: string[];
-};
-
-export type TermsDocument = {
-  id: "master" | "buyer";
-  title: string;
-  subtitle?: string;
-  effectiveDate: string;
-  sections: TermsSection[];
-};
+import type { TermsDocument } from "./register.type";
 
 export const buyerRegisterTermsDocs: TermsDocument[] = [
   {
@@ -266,4 +254,3 @@ export const buyerRegisterTermsDocs: TermsDocument[] = [
     ],
   },
 ];
-

@@ -8,7 +8,7 @@ import ThemeToggleButton from "../../components/ThemeToggleButton";
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
-export default function BuyerRegisterSuccessPage() {
+const BuyerRegisterSuccessPage = () => {
   return (
     <div
       className={`${inter.className} bg-background-light flex min-h-screen items-center justify-center p-4 transition-colors duration-300 dark:bg-background-dark`}
@@ -95,7 +95,7 @@ export default function BuyerRegisterSuccessPage() {
               </Link>
               <p className="pt-4 text-sm text-gray-500 dark:text-gray-500">
                 Butuh bantuan?{" "}
-                <a className="font-semibold text-primary hover:underline dark:text-secondary" href="#">
+                <a className="font-semibold text-primary hover:underline dark:text-secondary" href="mailto:accarena07@gmail.com">
                   Hubungi Support
                 </a>
               </p>
@@ -129,5 +129,6 @@ export default function BuyerRegisterSuccessPage() {
       </main>
     </div>
   );
-}
+};
 
+export default BuyerRegisterSuccessPage;

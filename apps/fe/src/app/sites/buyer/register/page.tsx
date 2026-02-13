@@ -1,19 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { RegisterOtpRequestResponseSchema } from "@acme/shared";
 import AuthPageShell from "../components/AuthPageShell";
 import ResultModal from "@/components/common/ResultModal";
-import { apiFetch, ApiClientError } from "@/lib/apiClient";
-import {
-  clearRegisterFieldError,
-  shouldProceedToOtp,
-  validateRegisterForm,
-  type RegisterFormErrors,
-} from "./handler";
 import { buyerRegisterTermsDocs } from "./terms";
-import { setRegisterOtpContext } from "./register-otp-context";
+import { useBuyerRegisterPage } from "./useBuyerRegisterPage";
 
 const registerFeatures = [
   {
@@ -28,87 +18,37 @@ const registerFeatures = [
   },
 ] as const;
 
-export default function BuyerRegisterPage() {
-  const router = useRouter();
-  const [showTncModal, setShowTncModal] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [whatsApp, setWhatsApp] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<RegisterFormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorTitle, setErrorTitle] = useState("Registrasi Gagal");
-  const [errorMessage, setErrorMessage] = useState("Pendaftaran gagal. Silakan coba lagi.");
-  const [errorSecondaryActionLabel, setErrorSecondaryActionLabel] = useState<string | undefined>(undefined);
-  const [errorSecondaryActionHref, setErrorSecondaryActionHref] = useState<string | undefined>(undefined);
-
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (isSubmitting) return;
-
-    const nextErrors = validateRegisterForm({ email, whatsApp, password });
-    setErrors(nextErrors);
-    if (!shouldProceedToOtp(nextErrors)) {
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      const result = await apiFetch(
-        "/api/v1/auth/register/otp/request",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: email.trim(),
-            password,
-            fullName: email.split("@")[0],
-            phone: whatsApp.trim(),
-          }),
-        },
-        RegisterOtpRequestResponseSchema,
-      );
-
-      setRegisterOtpContext({
-        email: email.trim().toLowerCase(),
-        debugOtp: result.debugOtp,
-        resendCooldownSec: result.resendCooldownSec,
-      });
-      router.push("/register/otp");
-    } catch (error) {
-      let message =
-        error instanceof ApiClientError ? error.message : "Pendaftaran gagal. Silakan coba lagi.";
-      let title = "Registrasi Gagal";
-      let secondaryLabel: string | undefined;
-      let secondaryHref: string | undefined;
-
-      if (error instanceof ApiClientError) {
-        const errorCode = (error.details as { code?: string } | undefined)?.code;
-        if (errorCode === "EMAIL_ALREADY_REGISTERED" || errorCode === "PHONE_ALREADY_REGISTERED") {
-          title = "Akun Sudah Terdaftar";
-          message = "Email atau nomor WhatsApp ini sudah terpakai. Silakan login.";
-          secondaryLabel = "Masuk ke Akun";
-          secondaryHref = "/login";
-        }
-      }
-
-      setErrorTitle(title);
-      setErrorMessage(message);
-      setErrorSecondaryActionLabel(secondaryLabel);
-      setErrorSecondaryActionHref(secondaryHref);
-      setShowErrorModal(true);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
+const BuyerRegisterPage = () => {
+  const {
+    showTncModal,
+    showPassword,
+    email,
+    whatsApp,
+    password,
+    errors,
+    isSubmitting,
+    showErrorModal,
+    errorTitle,
+    errorMessage,
+    errorSecondaryActionLabel,
+    errorSecondaryActionHref,
+    onEmailChange,
+    onWhatsAppChange,
+    onPasswordChange,
+    onOpenTncModal,
+    onCloseTncModal,
+    onTogglePassword,
+    onCloseErrorModal,
+    onSubmit,
+  } = useBuyerRegisterPage();
 
   return (
     <>
       <ResultModal
         isOpen={showErrorModal}
         message={errorMessage}
-        onClose={() => setShowErrorModal(false)}
-        onPrimaryAction={() => setShowErrorModal(false)}
+        onClose={onCloseErrorModal}
+        onPrimaryAction={onCloseErrorModal}
         primaryActionLabel="Coba Lagi"
         secondaryActionHref={errorSecondaryActionHref}
         secondaryActionLabel={errorSecondaryActionLabel}
@@ -121,7 +61,7 @@ export default function BuyerRegisterPage() {
           <button
             aria-label="Tutup modal syarat dan ketentuan"
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-            onClick={() => setShowTncModal(false)}
+            onClick={onCloseTncModal}
             type="button"
           />
           <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-900">
@@ -132,7 +72,7 @@ export default function BuyerRegisterPage() {
               </h2>
               <button
                 className="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-white"
-                onClick={() => setShowTncModal(false)}
+                onClick={onCloseTncModal}
                 type="button"
               >
                 <span className="material-symbols-outlined">close</span>
@@ -178,7 +118,7 @@ export default function BuyerRegisterPage() {
             <div className="border-t border-gray-100 bg-gray-50 p-6 dark:border-slate-800 dark:bg-slate-800/50">
               <button
                 className="w-full rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-primary/90"
-                onClick={() => setShowTncModal(false)}
+                onClick={onCloseTncModal}
                 type="button"
               >
                 Saya Mengerti
@@ -208,10 +148,7 @@ export default function BuyerRegisterPage() {
                 type="email"
                 value={email}
                 disabled={isSubmitting}
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                  setErrors((prev) => clearRegisterFieldError(prev, "email"));
-                }}
+                onChange={(event) => onEmailChange(event.target.value)}
               />
             </div>
             {errors.email ? <p className="text-xs font-medium text-red-500">{errors.email}</p> : null}
@@ -230,10 +167,7 @@ export default function BuyerRegisterPage() {
                 type="tel"
                 value={whatsApp}
                 disabled={isSubmitting}
-                onChange={(event) => {
-                  setWhatsApp(event.target.value);
-                  setErrors((prev) => clearRegisterFieldError(prev, "whatsapp"));
-                }}
+                onChange={(event) => onWhatsAppChange(event.target.value)}
               />
             </div>
             {errors.whatsapp ? <p className="text-xs font-medium text-red-500">{errors.whatsapp}</p> : null}
@@ -252,16 +186,13 @@ export default function BuyerRegisterPage() {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 disabled={isSubmitting}
-                onChange={(event) => {
-                  setPassword(event.target.value);
-                  setErrors((prev) => clearRegisterFieldError(prev, "password"));
-                }}
+                onChange={(event) => onPasswordChange(event.target.value)}
               />
               <button
                 aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
                 className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
                 disabled={isSubmitting}
-                onClick={() => setShowPassword((prev) => !prev)}
+                onClick={onTogglePassword}
                 type="button"
               >
                 <span className="material-symbols-outlined">{showPassword ? "visibility_off" : "visibility"}</span>
@@ -290,7 +221,7 @@ export default function BuyerRegisterPage() {
                 className="font-semibold text-primary hover:underline dark:text-secondary"
                 onClick={(event) => {
                   event.preventDefault();
-                  setShowTncModal(true);
+                  onOpenTncModal();
                 }}
                 type="button"
               >
@@ -321,4 +252,6 @@ export default function BuyerRegisterPage() {
 
     </>
   );
-}
+};
+
+export default BuyerRegisterPage;

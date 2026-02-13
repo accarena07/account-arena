@@ -4,7 +4,8 @@ export const metadata: Metadata = {
   title: "Verifikasi OTP Registrasi | GameMarket",
 };
 
-export default function BuyerRegisterOtpLayout({ children }: { children: React.ReactNode }) {
+const BuyerRegisterOtpLayout = ({ children }: { children: React.ReactNode }) => {
   return children;
-}
+};
 
+export default BuyerRegisterOtpLayout;

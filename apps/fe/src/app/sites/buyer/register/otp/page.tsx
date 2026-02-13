@@ -1,6 +1,7 @@
 import OtpVerificationPage from "../../components/OtpVerificationPage";
 
-export default function BuyerRegisterOtpPage() {
+const BuyerRegisterOtpPage = () => {
   return <OtpVerificationPage flow="register" />;
-}
+};
 
+export default BuyerRegisterOtpPage;

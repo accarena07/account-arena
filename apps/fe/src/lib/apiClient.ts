@@ -49,16 +49,22 @@ export async function apiFetch<T>(
   }
 
   const json = await res.json().catch(() => null);
-  const env = ApiEnvelopeSchema.safeParse(json);
+  const parsedEnvelope = ApiEnvelopeSchema.safeParse(json);
 
-  if (!env.success) {
+  if (!parsedEnvelope.success) {
     throw new ApiClientError("Response format tidak sesuai", res.status, { json });
   }
-  if (!env.data.ok) {
-    throw new ApiClientError(env.data.error?.message ?? "API error", res.status, env.data.error);
+  const envelope = parsedEnvelope.data;
+
+  if (!envelope.ok) {
+    throw new ApiClientError(
+      envelope.error?.message ?? "API error",
+      res.status,
+      envelope.error
+    );
   }
 
-  const payload = env.data.data as unknown;
+  const payload = envelope.data as unknown;
 
   if (dataSchema) {
     const parsed = dataSchema.safeParse(payload);

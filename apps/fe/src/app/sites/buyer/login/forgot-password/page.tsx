@@ -174,7 +174,7 @@ export default function BuyerForgotPasswordPage() {
           </form>
         </div>
 
-        <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-500 to-secondary opacity-80"></div>
+        <div className="h-2 w-full bg-linear-to-r from-primary via-blue-500 to-secondary opacity-80"></div>
       </main>
 
       <div className="fixed bottom-8 text-xs font-medium text-gray-400">© 2024 GAMEMARKET Indonesia. All rights reserved.</div>

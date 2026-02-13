@@ -3,42 +3,48 @@
 import { Inter, Poppins } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  RegisterOtpRequestResponseSchema,
-  RegisterOtpVerifyResponseSchema,
-  PasswordResetOtpRequestResponseSchema,
-  PasswordResetOtpVerifyResponseSchema,
-} from "@acme/shared";
-import ThemeToggleButton from "./ThemeToggleButton";
 import ResultModal from "@/components/common/ResultModal";
-import { apiFetch, ApiClientError } from "@/lib/apiClient";
+import { setAuthSession } from "@/lib/auth-session";
 import {
   getPasswordResetContext,
   updatePasswordResetContext,
-} from "../login/password-reset-context";
+} from "../../login/password-reset-context";
 import {
   clearRegisterOtpContext,
   getRegisterOtpContext,
   updateRegisterOtpContext,
-} from "../register/register-otp-context";
-import { setAuthSession } from "@/lib/auth-session";
+} from "../../register/register-otp-context";
+import ThemeToggleButton from "../ThemeToggleButton";
+import {
+  DEFAULT_RESEND_COOLDOWN_SEC,
+  OTP_LENGTH,
+  buildOtpCode,
+  extractRetryAfterSec,
+  formatCooldown,
+  getOtpFlowUiMeta,
+  mapResendOtpError,
+  mapVerifyOtpError,
+  resendPasswordResetOtp,
+  resendRegisterOtp,
+  sanitizeOtpDigit,
+  verifyPasswordResetOtp,
+  verifyRegisterOtp,
+} from "./handler";
+import type { OtpVerificationPageProps } from "./otp-verification.type";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
-type OtpVerificationPageProps = {
-  flow: "register" | "reset-password";
-};
-
-export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) {
+const OtpVerificationPage = ({ flow }: OtpVerificationPageProps) => {
   const router = useRouter();
-  const [otpDigits, setOtpDigits] = useState<string[]>(Array(6).fill(""));
+  const [otpDigits, setOtpDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [showOtpErrorModal, setShowOtpErrorModal] = useState(false);
   const [showResendSuccessModal, setShowResendSuccessModal] = useState(false);
+  const [errorTitle, setErrorTitle] = useState("Verifikasi Gagal");
   const [errorMessage, setErrorMessage] = useState("Kode OTP yang Anda masukkan salah. Silakan cek kembali dan coba lagi.");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
-  const [resendCooldownSec, setResendCooldownSec] = useState(60);
+  const [resendCooldownSec, setResendCooldownSec] = useState(DEFAULT_RESEND_COOLDOWN_SEC);
   const [debugOtp, setDebugOtp] = useState<string | null>(null);
 
   useEffect(() => {
@@ -57,7 +63,7 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
         return;
       }
       setDebugOtp(context.debugOtp ?? null);
-      setResendCooldownSec(context.resendCooldownSec ?? 60);
+      setResendCooldownSec(context.resendCooldownSec ?? DEFAULT_RESEND_COOLDOWN_SEC);
       return;
     }
 
@@ -67,13 +73,14 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
       return;
     }
     setDebugOtp(registerContext.debugOtp ?? null);
-    setResendCooldownSec(registerContext.resendCooldownSec ?? 60);
+    setResendCooldownSec(registerContext.resendCooldownSec ?? DEFAULT_RESEND_COOLDOWN_SEC);
   }, [flow, router]);
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const otpCode = otpDigits.join("");
-    if (otpCode.length !== 6) {
+    const otpCode = buildOtpCode(otpDigits);
+    if (otpCode.length !== OTP_LENGTH) {
+      setErrorTitle("Verifikasi Gagal");
       setErrorMessage("Kode OTP harus 6 digit.");
       setShowOtpErrorModal(true);
       return;
@@ -88,25 +95,15 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
 
       try {
         setIsSubmitting(true);
-        const result = await apiFetch(
-          "/api/v1/auth/password/otp/verify",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              identifier: context.identifier,
-              otp: otpCode,
-            }),
-          },
-          PasswordResetOtpVerifyResponseSchema,
-        );
+        const result = await verifyPasswordResetOtp(context.identifier, otpCode);
 
         updatePasswordResetContext({ resetToken: result.resetToken });
         router.push("/login/reset-password");
         return;
       } catch (error) {
-        const message =
-          error instanceof ApiClientError ? error.message : "Verifikasi OTP gagal. Silakan coba lagi.";
-        setErrorMessage(message);
+        const mapped = mapVerifyOtpError(error);
+        setErrorTitle(mapped.title);
+        setErrorMessage(mapped.message);
         setShowOtpErrorModal(true);
       } finally {
         setIsSubmitting(false);
@@ -114,61 +111,42 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
       return;
     }
 
-    if (flow === "register") {
-      const context = getRegisterOtpContext();
-      if (!context) {
-        router.replace("/register");
-        return;
-      }
-      try {
-        setIsSubmitting(true);
-        const result = await apiFetch(
-          "/api/v1/auth/register/otp/verify",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              email: context.email,
-              otp: otpCode,
-            }),
-          },
-          RegisterOtpVerifyResponseSchema,
-        );
-
-        if (result.session) {
-          setAuthSession(result.session, result.user, result.roles);
-        }
-        clearRegisterOtpContext();
-        router.push("/register/success");
-      } catch (error) {
-        const message =
-          error instanceof ApiClientError ? error.message : "Verifikasi OTP gagal. Silakan coba lagi.";
-        setErrorMessage(message);
-        setShowOtpErrorModal(true);
-      } finally {
-        setIsSubmitting(false);
-      }
+    const context = getRegisterOtpContext();
+    if (!context) {
+      router.replace("/register");
       return;
     }
-  }
+    try {
+      setIsSubmitting(true);
+      const result = await verifyRegisterOtp(context.email, otpCode);
 
-  function onChangeDigit(index: number, value: string) {
-    const sanitized = value.replace(/\D/g, "").slice(0, 1);
+      if (result.session) {
+        setAuthSession(result.session, result.user, result.roles);
+      }
+      clearRegisterOtpContext();
+      router.push("/register/success");
+    } catch (error) {
+      const mapped = mapVerifyOtpError(error);
+      setErrorTitle(mapped.title);
+      setErrorMessage(mapped.message);
+      setShowOtpErrorModal(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onChangeDigit = (index: number, value: string) => {
+    const sanitized = sanitizeOtpDigit(value);
     setOtpDigits((prev) => {
       const next = [...prev];
       next[index] = sanitized;
       return next;
     });
-  }
+  };
 
-  const backHref = flow === "register" ? "/register" : "/login";
-  const backLabel = flow === "register" ? "Kembali ke Daftar" : "Kembali ke Login";
-  const description =
-    flow === "register"
-      ? "Masukkan 6 digit kode yang dikirim ke email untuk menyelesaikan pendaftaran"
-      : "Masukkan 6 digit kode yang dikirim ke email/WhatsApp Anda";
-
-  async function onResendOtp() {
+  const onResendOtp = async () => {
     if (isResending || resendCooldownSec > 0) return;
+
     if (flow === "reset-password") {
       const context = getPasswordResetContext();
       if (!context) {
@@ -178,17 +156,7 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
 
       try {
         setIsResending(true);
-        const result = await apiFetch(
-          "/api/v1/auth/password/otp/request",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              identifier: context.identifier,
-              method: context.method,
-            }),
-          },
-          PasswordResetOtpRequestResponseSchema,
-        );
+        const result = await resendPasswordResetOtp(context.identifier, context.method);
         updatePasswordResetContext({
           debugOtp: result.debugOtp,
           resendCooldownSec: result.resendCooldownSec,
@@ -202,9 +170,9 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
           setResendCooldownSec(retryAfterSec);
           return;
         }
-        const message =
-          error instanceof ApiClientError ? error.message : "Gagal kirim ulang OTP.";
-        setErrorMessage(message);
+        const mapped = mapResendOtpError(error);
+        setErrorTitle(mapped.title);
+        setErrorMessage(mapped.message);
         setShowOtpErrorModal(true);
       } finally {
         setIsResending(false);
@@ -220,16 +188,7 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
 
     try {
       setIsResending(true);
-      const result = await apiFetch(
-        "/api/v1/auth/register/otp/resend",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: registerContext.email,
-          }),
-        },
-        RegisterOtpRequestResponseSchema,
-      );
+      const result = await resendRegisterOtp(registerContext.email);
       updateRegisterOtpContext({
         debugOtp: result.debugOtp,
         resendCooldownSec: result.resendCooldownSec,
@@ -243,32 +202,16 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
         setResendCooldownSec(retryAfterSec);
         return;
       }
-      const message =
-        error instanceof ApiClientError ? error.message : "Gagal kirim ulang OTP.";
-      setErrorMessage(message);
+      const mapped = mapResendOtpError(error);
+      setErrorTitle(mapped.title);
+      setErrorMessage(mapped.message);
       setShowOtpErrorModal(true);
     } finally {
       setIsResending(false);
     }
-  }
+  };
 
-  function formatCooldown(sec: number) {
-    const minute = Math.floor(sec / 60);
-    const second = sec % 60;
-    return `${String(minute).padStart(2, "0")}:${String(second).padStart(2, "0")}`;
-  }
-
-  function extractRetryAfterSec(error: unknown): number | null {
-    if (!(error instanceof ApiClientError)) return null;
-    const errorDetails = error.details as
-      | { details?: { retryAfterSec?: unknown } }
-      | undefined;
-    const retryAfterSec = errorDetails?.details?.retryAfterSec;
-    if (typeof retryAfterSec !== "number" || !Number.isFinite(retryAfterSec) || retryAfterSec <= 0) {
-      return null;
-    }
-    return Math.floor(retryAfterSec);
-  }
+  const { backHref, backLabel, description } = getOtpFlowUiMeta(flow);
 
   return (
     <>
@@ -278,7 +221,7 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
         onClose={() => setShowOtpErrorModal(false)}
         onPrimaryAction={() => setShowOtpErrorModal(false)}
         primaryActionLabel="Coba Lagi"
-        title="Verifikasi Gagal"
+        title={errorTitle}
         variant="error"
       />
       <ResultModal
@@ -321,7 +264,7 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
 
           <form className="space-y-8" onSubmit={onSubmit}>
             <div className="flex justify-between gap-2 sm:gap-4">
-              {Array.from({ length: 6 }).map((_, idx) => (
+              {Array.from({ length: OTP_LENGTH }).map((_, idx) => (
                 <input
                   autoFocus={idx === 0}
                   className="h-14 w-12 rounded-xl border-2 border-transparent bg-gray-50 text-center text-2xl font-bold text-gray-900 outline-none transition-all focus:border-primary dark:bg-slate-800 dark:text-white dark:focus:border-secondary sm:h-16 sm:w-14"
@@ -403,4 +346,6 @@ export default function OtpVerificationPage({ flow }: OtpVerificationPageProps) 
       </div>
     </>
   );
-}
+};
+
+export default OtpVerificationPage;

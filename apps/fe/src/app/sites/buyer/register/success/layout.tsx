@@ -4,7 +4,8 @@ export const metadata: Metadata = {
   title: "Registrasi Berhasil | GameMarket",
 };
 
-export default function BuyerRegisterSuccessLayout({ children }: { children: React.ReactNode }) {
+const BuyerRegisterSuccessLayout = ({ children }: { children: React.ReactNode }) => {
   return children;
-}
+};
 
+export default BuyerRegisterSuccessLayout;
