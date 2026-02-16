@@ -1,35 +1,30 @@
-import { jsonError, jsonOk, readJson } from "@/lib/api";
+import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import {
   consumeResetToken,
   normalizeEmail,
   normalizePhone,
 } from "@/lib/password-reset-otp-store";
 import { getSupabaseAdminClient } from "@/lib/supabase";
-import { PasswordResetErrorCode, PasswordResetSubmitSchema } from "@acme/shared";
+import {
+  EMAIL_REGEX,
+  PasswordResetErrorCode,
+  PasswordResetSubmitSchema,
+  isStrongPassword,
+} from "@acme/shared";
 
 export const runtime = "nodejs";
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const strongPasswordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]).{8,}$/;
-
 export async function POST(req: Request) {
   try {
-    const body = await readJson<unknown>(req);
-    const parsed = PasswordResetSubmitSchema.safeParse(body);
-    if (!parsed.success) {
-      return jsonError(
-        {
-          code: PasswordResetErrorCode.VALIDATION_ERROR,
-          message: "Input tidak valid",
-          details: parsed.error.flatten(),
-        },
-        422,
-      );
-    }
+    const parsed = await parseJsonWithSchema(req, PasswordResetSubmitSchema, {
+      code: PasswordResetErrorCode.VALIDATION_ERROR,
+      message: "Input tidak valid",
+      status: 422,
+    });
+    if (!parsed.ok) return parsed.response;
 
     const { identifier, resetToken, newPassword } = parsed.data;
-    if (!strongPasswordRegex.test(newPassword)) {
+    if (!isStrongPassword(newPassword)) {
       return jsonError(
         {
           code: PasswordResetErrorCode.VALIDATION_ERROR,
@@ -40,7 +35,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const normalizedIdentifier = emailRegex.test(identifier)
+    const normalizedIdentifier = EMAIL_REGEX.test(identifier)
       ? normalizeEmail(identifier)
       : normalizePhone(identifier);
 

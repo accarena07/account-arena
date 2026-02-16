@@ -2,6 +2,29 @@
 
 import { z } from "zod";
 
+export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+export const FULL_NAME_MIN_LENGTH = 2;
+export const FULL_NAME_MAX_LENGTH = 80;
+export const INDONESIAN_PHONE_REGEX = /^(?:\+62|62|0)8[1-9][0-9]{7,10}$/;
+export const STRONG_PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]).{8,}$/;
+
+export const PASSWORD_HAS_LOWERCASE_REGEX = /[a-z]/;
+export const PASSWORD_HAS_UPPERCASE_REGEX = /[A-Z]/;
+export const PASSWORD_HAS_NUMBER_REGEX = /\d/;
+export const PASSWORD_HAS_SPECIAL_CHAR_REGEX = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
+
+export const isValidEmail = (value: string) => EMAIL_REGEX.test(value);
+export const isValidIndonesianPhone = (value: string) => INDONESIAN_PHONE_REGEX.test(value);
+export const isStrongPassword = (value: string) => STRONG_PASSWORD_REGEX.test(value);
+export const isValidFullName = (value: string) => {
+  const normalized = value.trim();
+  return (
+    normalized.length >= FULL_NAME_MIN_LENGTH &&
+    normalized.length <= FULL_NAME_MAX_LENGTH
+  );
+};
+
 export const HealthSchema = z.object({
   ok: z.boolean(),
   service: z.string(),
@@ -166,7 +189,7 @@ export type SellerAccess = z.infer<typeof SellerAccessSchema>;
 export const AuthSignupRequestSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-  fullName: z.string().min(2).max(80).optional(),
+  fullName: z.string().min(FULL_NAME_MIN_LENGTH).max(FULL_NAME_MAX_LENGTH).optional(),
   phone: z.string().min(8).max(20).optional(),
 });
 export type AuthSignupRequest = z.infer<typeof AuthSignupRequestSchema>;
@@ -261,7 +284,7 @@ export type PasswordResetSubmitResponse = z.infer<typeof PasswordResetSubmitResp
 export const RegisterOtpRequestSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-  fullName: z.string().min(2).max(80),
+  fullName: z.string().min(FULL_NAME_MIN_LENGTH).max(FULL_NAME_MAX_LENGTH),
   phone: z.string().min(8).max(20),
   termsAccepted: z.literal(true),
 });

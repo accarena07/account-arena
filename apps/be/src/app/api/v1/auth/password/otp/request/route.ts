@@ -1,4 +1,4 @@
-import { jsonError, jsonOk, readJson } from "@/lib/api";
+import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import { hasMailerEnv, sendPasswordResetOtpEmail } from "@/lib/mailer";
 import {
   createOtpEntry,
@@ -7,26 +7,18 @@ import {
   normalizeEmail,
 } from "@/lib/password-reset-otp-store";
 import { getSupabaseAdminClient } from "@/lib/supabase";
-import { PasswordResetErrorCode, PasswordResetOtpRequestSchema } from "@acme/shared";
+import { EMAIL_REGEX, PasswordResetErrorCode, PasswordResetOtpRequestSchema } from "@acme/shared";
 
 export const runtime = "nodejs";
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
 export async function POST(req: Request) {
   try {
-    const body = await readJson<unknown>(req);
-    const parsed = PasswordResetOtpRequestSchema.safeParse(body);
-    if (!parsed.success) {
-      return jsonError(
-        {
-          code: PasswordResetErrorCode.VALIDATION_ERROR,
-          message: "Input tidak valid",
-          details: parsed.error.flatten(),
-        },
-        422,
-      );
-    }
+    const parsed = await parseJsonWithSchema(req, PasswordResetOtpRequestSchema, {
+      code: PasswordResetErrorCode.VALIDATION_ERROR,
+      message: "Input tidak valid",
+      status: 422,
+    });
+    if (!parsed.ok) return parsed.response;
 
     const { identifier, method: requestedMethod } = parsed.data;
     if (requestedMethod && requestedMethod !== "email") {
@@ -41,7 +33,7 @@ export async function POST(req: Request) {
     const method = "email" as const;
     const normalizedIdentifier = normalizeEmail(identifier);
 
-    if (!emailRegex.test(normalizedIdentifier)) {
+    if (!EMAIL_REGEX.test(normalizedIdentifier)) {
       return jsonError(
         { code: PasswordResetErrorCode.VALIDATION_ERROR, message: "Format email tidak valid." },
         422,

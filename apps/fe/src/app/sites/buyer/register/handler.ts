@@ -1,6 +1,11 @@
 import {
+  EMAIL_REGEX,
+  FULL_NAME_MAX_LENGTH,
+  FULL_NAME_MIN_LENGTH,
   RegisterErrorCode,
   RegisterOtpRequestResponseSchema,
+  isStrongPassword,
+  isValidIndonesianPhone,
   isRegisterSystemErrorCode,
 } from "@acme/shared";
 import { ApiClientError, apiFetch } from "@/lib/apiClient";
@@ -12,10 +17,6 @@ import type {
 } from "./register.type";
 
 export const EMAIL_MIN_LENGTH = 6;
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const indonesianPhoneRegex = /^(?:\+62|62|0)8[1-9][0-9]{7,10}$/;
-const strongPasswordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]).{8,}$/;
 
 export const clearRegisterFieldError = (
   errors: RegisterFormErrors,
@@ -30,23 +31,23 @@ export const validateRegisterForm = (values: RegisterFormValues): RegisterFormEr
   const normalizedEmail = values.email.trim();
   const normalizedPhone = values.whatsApp.trim().replace(/[\s-]/g, "");
 
-  if (normalizedFullName.length < 2) {
-    nextErrors.fullName = "Nama lengkap minimal 2 karakter.";
-  } else if (normalizedFullName.length > 80) {
-    nextErrors.fullName = "Nama lengkap maksimal 80 karakter.";
+  if (normalizedFullName.length < FULL_NAME_MIN_LENGTH) {
+    nextErrors.fullName = `Nama lengkap minimal ${FULL_NAME_MIN_LENGTH} karakter.`;
+  } else if (normalizedFullName.length > FULL_NAME_MAX_LENGTH) {
+    nextErrors.fullName = `Nama lengkap maksimal ${FULL_NAME_MAX_LENGTH} karakter.`;
   }
 
   if (normalizedEmail.length < EMAIL_MIN_LENGTH) {
     nextErrors.email = `Email minimal ${EMAIL_MIN_LENGTH} karakter.`;
-  } else if (!emailRegex.test(normalizedEmail)) {
+  } else if (!EMAIL_REGEX.test(normalizedEmail)) {
     nextErrors.email = "Format email tidak valid.";
   }
 
-  if (!indonesianPhoneRegex.test(normalizedPhone)) {
+  if (!isValidIndonesianPhone(normalizedPhone)) {
     nextErrors.whatsapp = "Nomor WhatsApp harus nomor Indonesia (08xx / 62xx / +62xx).";
   }
 
-  if (!strongPasswordRegex.test(values.password)) {
+  if (!isStrongPassword(values.password)) {
     nextErrors.password =
       "Kata sandi minimal 8 karakter dan wajib ada huruf besar, huruf kecil, angka, serta karakter spesial.";
   }

@@ -4,8 +4,13 @@ import { useEffect, useState } from "react";
 import { Inter, Poppins } from "next/font/google";
 import { useRouter } from "next/navigation";
 import {
+  PASSWORD_HAS_LOWERCASE_REGEX,
+  PASSWORD_HAS_NUMBER_REGEX,
+  PASSWORD_HAS_SPECIAL_CHAR_REGEX,
+  PASSWORD_HAS_UPPERCASE_REGEX,
   PasswordResetErrorCode,
   PasswordResetSubmitResponseSchema,
+  isStrongPassword,
   isPasswordResetSystemErrorCode,
 } from "@acme/shared";
 import ResultModal from "@/components/common/ResultModal";
@@ -18,10 +23,6 @@ import {
 
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
-const hasLowercaseRegex = /[a-z]/;
-const hasUppercaseRegex = /[A-Z]/;
-const hasNumberRegex = /\d/;
-const hasSpecialCharRegex = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
 const RESET_PASSWORD_SYSTEM_ERROR_MESSAGE = "Sistem sedang mengalami gangguan. Silakan coba beberapa saat lagi.";
 
 const BuyerResetPasswordPage = () => {
@@ -37,10 +38,10 @@ const BuyerResetPasswordPage = () => {
   const [errorMessage, setErrorMessage] = useState("Gagal menyimpan kata sandi.");
   const [hasValidResetContext, setHasValidResetContext] = useState<boolean | null>(null);
   const meetsMinLength = password.length >= 8;
-  const hasLowercase = hasLowercaseRegex.test(password);
-  const hasUppercase = hasUppercaseRegex.test(password);
-  const hasNumber = hasNumberRegex.test(password);
-  const hasSpecialChar = hasSpecialCharRegex.test(password);
+  const hasLowercase = PASSWORD_HAS_LOWERCASE_REGEX.test(password);
+  const hasUppercase = PASSWORD_HAS_UPPERCASE_REGEX.test(password);
+  const hasNumber = PASSWORD_HAS_NUMBER_REGEX.test(password);
+  const hasSpecialChar = PASSWORD_HAS_SPECIAL_CHAR_REGEX.test(password);
 
   useEffect(() => {
     const context = getPasswordResetContext();
@@ -72,9 +73,7 @@ const BuyerResetPasswordPage = () => {
       return;
     }
 
-    const strongPasswordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]).{8,}$/;
-    if (!strongPasswordRegex.test(password)) {
+    if (!isStrongPassword(password)) {
       setPasswordError(
         "Kata sandi minimal 8 karakter dan wajib ada huruf besar, huruf kecil, angka, serta karakter spesial.",
       );

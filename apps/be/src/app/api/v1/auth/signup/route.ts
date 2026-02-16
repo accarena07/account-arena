@@ -1,10 +1,8 @@
 import { jsonError, jsonOk, readJson } from "@/lib/api";
 import { getSupabaseAnonClient } from "@/lib/supabase";
-import { AuthSignupRequestSchema } from "@acme/shared";
+import { AuthSignupRequestSchema, isValidIndonesianPhone } from "@acme/shared";
 
 export const runtime = "nodejs";
-
-const indonesianPhoneRegex = /^(?:\+62|62|0)8[1-9][0-9]{7,10}$/;
 
 export async function POST(req: Request) {
   try {
@@ -24,7 +22,7 @@ export async function POST(req: Request) {
 
     const { email, password, fullName, phone } = parsed.data;
 
-    if (phone && !indonesianPhoneRegex.test(phone)) {
+    if (phone && !isValidIndonesianPhone(phone)) {
       return jsonError(
         {
           code: "VALIDATION_ERROR",

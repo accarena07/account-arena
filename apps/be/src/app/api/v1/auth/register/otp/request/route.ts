@@ -12,11 +12,13 @@ import {
 import { findProfileIdByEmail, findProfileIdByPhone } from "@/lib/register-profile-lookup";
 import { getClientIp } from "@/lib/request-ip";
 import { getSupabaseAdminClient } from "@/lib/supabase";
-import { RegisterErrorCode, RegisterOtpRequestSchema } from "@acme/shared";
+import {
+  RegisterErrorCode,
+  RegisterOtpRequestSchema,
+  isValidIndonesianPhone,
+} from "@acme/shared";
 
 export const runtime = "nodejs";
-
-const indonesianPhoneRegex = /^(?:\+62|62|0)8[1-9][0-9]{7,10}$/;
 
 export async function POST(req: Request) {
   try {
@@ -47,7 +49,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!indonesianPhoneRegex.test(normalizedPhone)) {
+    if (!isValidIndonesianPhone(normalizedPhone)) {
       return jsonError(
         {
           code: RegisterErrorCode.VALIDATION_ERROR,

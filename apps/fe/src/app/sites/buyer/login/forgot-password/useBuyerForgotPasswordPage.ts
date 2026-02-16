@@ -1,51 +1,11 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import {
-  PasswordResetErrorCode,
-  PasswordResetOtpRequestResponseSchema,
-  isPasswordResetSystemErrorCode,
-} from "@acme/shared";
-import { apiFetch, ApiClientError } from "@/lib/apiClient";
 import { setPasswordResetContext } from "../password-reset-context";
-
-const SYSTEM_ERROR_MESSAGE = "Sistem sedang mengalami gangguan. Silakan coba beberapa saat lagi.";
-const FALLBACK_ERROR_MESSAGE = "Gagal mengirim OTP. Silakan coba lagi.";
-const BUSINESS_ERROR_CODES = new Set<string>([
-  PasswordResetErrorCode.VALIDATION_ERROR,
-  PasswordResetErrorCode.EMAIL_NOT_REGISTERED,
-  PasswordResetErrorCode.OTP_RESEND_TOO_FAST,
-]);
-const SYSTEM_ERROR_CODES = new Set<string>([
-  PasswordResetErrorCode.MAILER_NOT_CONFIGURED,
-  PasswordResetErrorCode.MAIL_SEND_TIMEOUT,
-  "BAD_REQUEST",
-]);
-
-const isSystemLevelError = (error: ApiClientError, errorCode?: string) => {
-  const loweredMessage = error.message.toLowerCase();
-  return (
-    (typeof error.status === "number" && error.status >= 500) ||
-    SYSTEM_ERROR_CODES.has(errorCode ?? "") ||
-    isPasswordResetSystemErrorCode(errorCode) ||
-    loweredMessage.includes("timeout") ||
-    loweredMessage.includes("network")
-  );
-};
-
-const mapForgotPasswordErrorMessage = (error: unknown) => {
-  if (!(error instanceof ApiClientError)) {
-    return SYSTEM_ERROR_MESSAGE;
-  }
-
-  const errorCode = (error.details as { code?: string } | undefined)?.code;
-  if (isSystemLevelError(error, errorCode)) {
-    return SYSTEM_ERROR_MESSAGE;
-  }
-  if (BUSINESS_ERROR_CODES.has(errorCode ?? "")) {
-    return error.message || FALLBACK_ERROR_MESSAGE;
-  }
-  return FALLBACK_ERROR_MESSAGE;
-};
+import {
+  OTP_SUCCESS_REDIRECT_DELAY_MS,
+  mapForgotPasswordErrorMessage,
+  requestPasswordResetOtp,
+} from "./handler";
 
 export const useBuyerForgotPasswordPage = () => {
   const router = useRouter();
@@ -82,21 +42,10 @@ export const useBuyerForgotPasswordPage = () => {
 
     try {
       setIsSubmitting(true);
-      const normalizedEmail = email.trim().toLowerCase();
-      const result = await apiFetch(
-        "/api/v1/auth/password/otp/request",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            identifier: normalizedEmail,
-            method: "email",
-          }),
-        },
-        PasswordResetOtpRequestResponseSchema,
-      );
+      const result = await requestPasswordResetOtp(email);
 
       setPasswordResetContext({
-        identifier: normalizedEmail,
+        identifier: result.normalizedEmail,
         method: "email",
         debugOtp: result.debugOtp,
         resendCooldownSec: result.resendCooldownSec,
@@ -104,7 +53,7 @@ export const useBuyerForgotPasswordPage = () => {
       setShowSuccessModal(true);
       navigateTimeoutRef.current = setTimeout(() => {
         navigateToOtpScreen();
-      }, 1200);
+      }, OTP_SUCCESS_REDIRECT_DELAY_MS);
     } catch (error) {
       const message = mapForgotPasswordErrorMessage(error);
       setErrorMessage(message);

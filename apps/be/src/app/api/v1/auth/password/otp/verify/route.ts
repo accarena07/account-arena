@@ -1,31 +1,23 @@
-import { jsonError, jsonOk, readJson } from "@/lib/api";
+import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import {
   normalizeEmail,
   normalizePhone,
   verifyOtp,
 } from "@/lib/password-reset-otp-store";
-import { PasswordResetErrorCode, PasswordResetOtpVerifySchema } from "@acme/shared";
+import { EMAIL_REGEX, PasswordResetErrorCode, PasswordResetOtpVerifySchema } from "@acme/shared";
 
 export const runtime = "nodejs";
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
 export async function POST(req: Request) {
   try {
-    const body = await readJson<unknown>(req);
-    const parsed = PasswordResetOtpVerifySchema.safeParse(body);
-    if (!parsed.success) {
-      return jsonError(
-        {
-          code: PasswordResetErrorCode.VALIDATION_ERROR,
-          message: "Input tidak valid",
-          details: parsed.error.flatten(),
-        },
-        422,
-      );
-    }
+    const parsed = await parseJsonWithSchema(req, PasswordResetOtpVerifySchema, {
+      code: PasswordResetErrorCode.VALIDATION_ERROR,
+      message: "Input tidak valid",
+      status: 422,
+    });
+    if (!parsed.ok) return parsed.response;
 
-    const normalizedIdentifier = emailRegex.test(parsed.data.identifier)
+    const normalizedIdentifier = EMAIL_REGEX.test(parsed.data.identifier)
       ? normalizeEmail(parsed.data.identifier)
       : normalizePhone(parsed.data.identifier);
 
