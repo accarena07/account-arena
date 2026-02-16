@@ -26,8 +26,15 @@ export const clearRegisterFieldError = (
 
 export const validateRegisterForm = (values: RegisterFormValues): RegisterFormErrors => {
   const nextErrors: RegisterFormErrors = {};
+  const normalizedFullName = values.fullName.trim();
   const normalizedEmail = values.email.trim();
   const normalizedPhone = values.whatsApp.trim().replace(/[\s-]/g, "");
+
+  if (normalizedFullName.length < 2) {
+    nextErrors.fullName = "Nama lengkap minimal 2 karakter.";
+  } else if (normalizedFullName.length > 80) {
+    nextErrors.fullName = "Nama lengkap maksimal 80 karakter.";
+  }
 
   if (normalizedEmail.length < EMAIL_MIN_LENGTH) {
     nextErrors.email = `Email minimal ${EMAIL_MIN_LENGTH} karakter.`;
@@ -62,7 +69,7 @@ export const submitRegisterOtpRequest = async (values: RegisterFormValues) => {
       body: JSON.stringify({
         email: values.email.trim(),
         password: values.password,
-        fullName: values.email.split("@")[0],
+        fullName: values.fullName.trim(),
         phone: values.whatsApp.trim(),
         termsAccepted: values.termsAccepted,
       }),

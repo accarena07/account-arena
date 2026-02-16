@@ -37,6 +37,7 @@ const VERIFY_BUSINESS_ERROR_CODES = new Set<string>([
 const RESEND_BUSINESS_ERROR_CODES = new Set<string>([
   RegisterErrorCode.VALIDATION_ERROR,
   RegisterErrorCode.OTP_RESEND_TOO_FAST,
+  RegisterErrorCode.IP_RATE_LIMITED,
   RegisterErrorCode.OTP_NOT_FOUND,
   PasswordResetErrorCode.EMAIL_NOT_REGISTERED,
 ]);

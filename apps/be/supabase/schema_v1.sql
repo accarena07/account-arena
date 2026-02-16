@@ -158,6 +158,16 @@ create table if not exists public.password_reset_otp_sessions (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.register_otp_ip_rate_limits (
+  scope text not null,
+  ip_address text not null,
+  request_count int not null default 0,
+  window_started_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  primary key (scope, ip_address)
+);
+
 alter table public.register_otp_sessions
   add column if not exists last_sent_at timestamptz not null default now();
 
@@ -412,6 +422,7 @@ create index if not exists idx_user_roles_user_id on public.user_roles(user_id);
 create index if not exists idx_register_otp_sessions_expires_at on public.register_otp_sessions(otp_expires_at);
 create index if not exists idx_password_reset_otp_sessions_expires_at on public.password_reset_otp_sessions(otp_expires_at);
 create index if not exists idx_password_reset_otp_sessions_user_id on public.password_reset_otp_sessions(user_id);
+create index if not exists idx_register_otp_ip_rate_limits_updated_at on public.register_otp_ip_rate_limits(updated_at);
 
 create index if not exists idx_games_category_id on public.games(category_id);
 create index if not exists idx_listings_seller_id on public.listings(seller_id);
@@ -473,6 +484,11 @@ for each row execute function public.set_updated_at();
 drop trigger if exists trg_password_reset_otp_sessions_updated_at on public.password_reset_otp_sessions;
 create trigger trg_password_reset_otp_sessions_updated_at
 before update on public.password_reset_otp_sessions
+for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_register_otp_ip_rate_limits_updated_at on public.register_otp_ip_rate_limits;
+create trigger trg_register_otp_ip_rate_limits_updated_at
+before update on public.register_otp_ip_rate_limits
 for each row execute function public.set_updated_at();
 
 drop trigger if exists trg_games_updated_at on public.games;

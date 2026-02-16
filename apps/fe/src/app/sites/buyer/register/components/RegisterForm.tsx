@@ -90,12 +90,14 @@ const RegisterPasswordField = ({
 };
 
 const RegisterPrimaryFields = ({
+  fullName,
   email,
   whatsApp,
   password,
   showPassword,
   isSubmitting,
   errors,
+  onFullNameChange,
   onEmailChange,
   onWhatsAppChange,
   onPasswordChange,
@@ -104,10 +106,12 @@ const RegisterPrimaryFields = ({
   return (
     <>
       <RegisterIdentityFields
+        fullName={fullName}
         email={email}
         errors={errors}
         isSubmitting={isSubmitting}
         whatsApp={whatsApp}
+        onFullNameChange={onFullNameChange}
         onEmailChange={onEmailChange}
         onWhatsAppChange={onWhatsAppChange}
       />
@@ -124,15 +128,27 @@ const RegisterPrimaryFields = ({
 };
 
 const RegisterIdentityFields = ({
+  fullName,
   email,
   whatsApp,
   isSubmitting,
   errors,
+  onFullNameChange,
   onEmailChange,
   onWhatsAppChange,
 }: RegisterIdentityFieldsProps) => {
   return (
     <>
+      <RegisterTextField
+        disabled={isSubmitting}
+        error={errors.fullName}
+        icon="person"
+        label="Nama Lengkap"
+        placeholder="Nama lengkap sesuai identitas"
+        type="text"
+        value={fullName}
+        onChange={onFullNameChange}
+      />
       <RegisterTextField
         disabled={isSubmitting}
         error={errors.email}
@@ -229,6 +245,7 @@ const SubmitSection = ({ isSubmitting }: RegisterSubmitSectionProps) => {
 };
 
 export const RegisterForm = ({
+  fullName,
   email,
   whatsApp,
   password,
@@ -236,6 +253,7 @@ export const RegisterForm = ({
   showPassword,
   isSubmitting,
   errors,
+  onFullNameChange,
   onEmailChange,
   onWhatsAppChange,
   onPasswordChange,
@@ -247,6 +265,7 @@ export const RegisterForm = ({
   return (
     <form className="space-y-5" id="register-form" onSubmit={onSubmit}>
       <RegisterPrimaryFields
+        fullName={fullName}
         email={email}
         errors={errors}
         isSubmitting={isSubmitting}
@@ -254,6 +273,7 @@ export const RegisterForm = ({
         showPassword={showPassword}
         termsAccepted={termsAccepted}
         whatsApp={whatsApp}
+        onFullNameChange={onFullNameChange}
         onEmailChange={onEmailChange}
         onPasswordChange={onPasswordChange}
         onTermsAcceptedChange={onTermsAcceptedChange}

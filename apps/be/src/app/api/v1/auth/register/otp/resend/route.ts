@@ -1,6 +1,7 @@
 import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import { hasMailerEnv, sendRegisterOtpEmail } from "@/lib/mailer";
 import { logError, logInfo, logWarn, maskEmail } from "@/lib/logger";
+import { checkRegisterIpRateLimit } from "@/lib/register-ip-rate-limit";
 import {
   getRegisterOtpCooldownRemainingSec,
   getRegisterOtpMeta,
@@ -8,6 +9,7 @@ import {
   rollbackResendRegisterOtp,
   resendRegisterOtp,
 } from "@/lib/register-otp-store";
+import { getClientIp } from "@/lib/request-ip";
 import { RegisterErrorCode } from "@acme/shared";
 import { z } from "zod";
 
@@ -25,6 +27,23 @@ export async function POST(req: Request) {
       status: 422,
     });
     if (!parsed.ok) return parsed.response;
+
+    const clientIp = getClientIp(req);
+    const ipRateLimit = await checkRegisterIpRateLimit("register_otp_resend", clientIp);
+    if (!ipRateLimit.allowed) {
+      logWarn("register.otp.resend.rate_limited", {
+        ipAddress: clientIp,
+        retryAfterSec: ipRateLimit.retryAfterSec,
+      });
+      return jsonError(
+        {
+          code: RegisterErrorCode.IP_RATE_LIMITED,
+          message: "Terlalu banyak permintaan kirim ulang OTP. Coba lagi beberapa saat.",
+          details: { retryAfterSec: ipRateLimit.retryAfterSec },
+        },
+        429,
+      );
+    }
 
     const normalizedEmail = normalizeEmail(parsed.data.email);
     const cooldownRemainingSec = await getRegisterOtpCooldownRemainingSec(normalizedEmail);

@@ -1,6 +1,7 @@
 import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import { hasMailerEnv, sendRegisterOtpEmail } from "@/lib/mailer";
 import { logError, logInfo, logWarn, maskEmail } from "@/lib/logger";
+import { checkRegisterIpRateLimit } from "@/lib/register-ip-rate-limit";
 import {
   createRegisterOtpEntry,
   getRegisterOtpCooldownRemainingSec,
@@ -9,6 +10,7 @@ import {
   normalizePhone,
 } from "@/lib/register-otp-store";
 import { findProfileIdByEmail, findProfileIdByPhone } from "@/lib/register-profile-lookup";
+import { getClientIp } from "@/lib/request-ip";
 import { getSupabaseAdminClient } from "@/lib/supabase";
 import { RegisterErrorCode, RegisterOtpRequestSchema } from "@acme/shared";
 
@@ -27,6 +29,24 @@ export async function POST(req: Request) {
 
     const normalizedEmail = normalizeEmail(parsed.data.email);
     const normalizedPhone = normalizePhone(parsed.data.phone);
+    const clientIp = getClientIp(req);
+
+    const ipRateLimit = await checkRegisterIpRateLimit("register_otp_request", clientIp);
+    if (!ipRateLimit.allowed) {
+      logWarn("register.otp.request.rate_limited", {
+        ipAddress: clientIp,
+        retryAfterSec: ipRateLimit.retryAfterSec,
+      });
+      return jsonError(
+        {
+          code: RegisterErrorCode.IP_RATE_LIMITED,
+          message: "Terlalu banyak permintaan OTP. Coba lagi beberapa saat.",
+          details: { retryAfterSec: ipRateLimit.retryAfterSec },
+        },
+        429,
+      );
+    }
+
     if (!indonesianPhoneRegex.test(normalizedPhone)) {
       return jsonError(
         {

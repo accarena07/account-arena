@@ -45,6 +45,7 @@ const BuyerRegisterPage = () => {
         leftTitle="Mulai Petualangan Gaming Anda"
       >
         <RegisterForm
+          fullName={pageState.fullName}
           email={pageState.email}
           errors={pageState.errors}
           isSubmitting={pageState.isSubmitting}
@@ -52,6 +53,7 @@ const BuyerRegisterPage = () => {
           termsAccepted={pageState.termsAccepted}
           showPassword={pageState.showPassword}
           whatsApp={pageState.whatsApp}
+          onFullNameChange={pageState.onFullNameChange}
           onEmailChange={pageState.onEmailChange}
           onOpenTncModal={pageState.onOpenTncModal}
           onPasswordChange={pageState.onPasswordChange}

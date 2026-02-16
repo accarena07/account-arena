@@ -15,6 +15,7 @@ export type TermsDocument = {
 };
 
 export type RegisterFormValues = {
+  fullName: string;
   email: string;
   whatsApp: string;
   password: string;
@@ -22,6 +23,7 @@ export type RegisterFormValues = {
 };
 
 export type RegisterFormErrors = {
+  fullName?: string;
   email?: string;
   whatsapp?: string;
   password?: string;
@@ -62,6 +64,7 @@ export type RegisterOtpContext = {
 };
 
 export type RegisterFormProps = {
+  fullName: string;
   email: string;
   whatsApp: string;
   password: string;
@@ -69,6 +72,7 @@ export type RegisterFormProps = {
   showPassword: boolean;
   isSubmitting: boolean;
   errors: RegisterFormErrors;
+  onFullNameChange: (value: string) => void;
   onEmailChange: (value: string) => void;
   onWhatsAppChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
@@ -80,6 +84,7 @@ export type RegisterFormProps = {
 
 export type RegisterInputProps = Pick<
   RegisterFormProps,
+  | "fullName"
   | "email"
   | "whatsApp"
   | "password"
@@ -87,6 +92,7 @@ export type RegisterInputProps = Pick<
   | "showPassword"
   | "isSubmitting"
   | "errors"
+  | "onFullNameChange"
   | "onEmailChange"
   | "onWhatsAppChange"
   | "onPasswordChange"
@@ -121,7 +127,14 @@ export type PasswordVisibilityButtonProps = Pick<
 
 export type RegisterIdentityFieldsProps = Pick<
   RegisterInputProps,
-  "email" | "whatsApp" | "isSubmitting" | "errors" | "onEmailChange" | "onWhatsAppChange"
+  | "fullName"
+  | "email"
+  | "whatsApp"
+  | "isSubmitting"
+  | "errors"
+  | "onFullNameChange"
+  | "onEmailChange"
+  | "onWhatsAppChange"
 >;
 
 export type RegisterTermsAgreementProps = {

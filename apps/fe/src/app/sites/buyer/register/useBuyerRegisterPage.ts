@@ -5,12 +5,18 @@ import { setRegisterOtpContext } from "./register-otp-context";
 import type { RegisterFormErrors } from "./register.type";
 
 const useRegisterInputState = () => {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsApp, setWhatsApp] = useState("");
   const [password, setPassword] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [errors, setErrors] = useState<RegisterFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onFullNameChange = (value: string) => {
+    setFullName(value);
+    setErrors((prev) => clearRegisterFieldError(prev, "fullName"));
+  };
 
   const onEmailChange = (value: string) => {
     setEmail(value);
@@ -32,6 +38,7 @@ const useRegisterInputState = () => {
   };
 
   return {
+    fullName,
     email,
     whatsApp,
     password,
@@ -40,6 +47,7 @@ const useRegisterInputState = () => {
     isSubmitting,
     setIsSubmitting,
     setErrors,
+    onFullNameChange,
     onEmailChange,
     onWhatsAppChange,
     onPasswordChange,
@@ -109,6 +117,7 @@ const useRegisterSubmitAction = (
 
     inputState.setIsSubmitting(true);
     const result = await submitRegisterForm({
+      fullName: inputState.fullName,
       email: inputState.email,
       whatsApp: inputState.whatsApp,
       password: inputState.password,

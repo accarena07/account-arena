@@ -43,6 +43,7 @@ alter table public.profiles enable row level security;
 alter table public.user_roles enable row level security;
 alter table public.register_otp_sessions enable row level security;
 alter table public.password_reset_otp_sessions enable row level security;
+alter table public.register_otp_ip_rate_limits enable row level security;
 alter table public.game_categories enable row level security;
 alter table public.games enable row level security;
 alter table public.listings enable row level security;
