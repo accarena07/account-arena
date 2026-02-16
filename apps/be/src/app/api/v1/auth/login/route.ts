@@ -1,5 +1,6 @@
 import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import { createAuthCookieHeaders } from "@/lib/auth-cookie";
+import { logError, logInfo, logWarn, maskEmail } from "@/lib/logger";
 import { getSupabaseAnonClient, getSupabaseAdminClient } from "@/lib/supabase";
 import { AuthLoginRequestSchema } from "@acme/shared";
 
@@ -34,6 +35,10 @@ export const POST = async (req: Request) => {
     const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
 
     if (error || !data.user || !data.session) {
+      logWarn("auth.login.failed", {
+        email: maskEmail(parsed.data.email),
+        error,
+      });
       return jsonError(
         {
           code: "AUTH_LOGIN_FAILED",
@@ -68,6 +73,12 @@ export const POST = async (req: Request) => {
         ? Math.max(60, Math.floor(data.session.expires_in))
         : 60 * 60;
 
+    logInfo("auth.login.success", {
+      userId: data.user.id,
+      email: maskEmail(data.user.email),
+      roles: (rolesRows ?? []).map((r) => r.role),
+    });
+
     return jsonOk(payload, {
       headers: createAuthCookieHeaders({
         accessToken: data.session.access_token,
@@ -76,6 +87,7 @@ export const POST = async (req: Request) => {
       }),
     });
   } catch (e: any) {
+    logError("auth.login.unexpected_error", e);
     return jsonError(
       {
         code: e?.code ?? "BAD_REQUEST",

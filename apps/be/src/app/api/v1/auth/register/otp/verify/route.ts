@@ -7,6 +7,7 @@ import {
   verifyRegisterOtp,
 } from "@/lib/register-otp-store";
 import { findProfileIdByEmail } from "@/lib/register-profile-lookup";
+import { logError, logInfo, logWarn, maskEmail } from "@/lib/logger";
 import { RegisterErrorCode, RegisterOtpVerifySchema } from "@acme/shared";
 
 export const runtime = "nodejs";
@@ -15,7 +16,7 @@ const REGISTER_TERMS_VERSION = process.env.REGISTER_TERMS_VERSION ?? "v1";
 const mapCreateUserError = () => {
   return {
     code: RegisterErrorCode.REGISTER_CREATE_USER_FAILED,
-    message: "Gagal membuat akun. Silakan coba lagi beberapa saat.",
+    message: "Verifikasi OTP belum dapat diproses karena gangguan sistem. Silakan coba lagi.",
     status: 500,
   };
 };
@@ -24,10 +25,11 @@ const mapCreateUserErrorSafe = (error: unknown) => {
   const authError = (error ?? {}) as { status?: unknown; code?: unknown; message?: unknown };
   const code = typeof authError.code === "string" ? authError.code.toLowerCase() : "";
 
+  // This can still happen after pre-check due to race condition or legacy auth rows.
   if (code === "email_exists" || code === "user_already_exists") {
     return {
       code: RegisterErrorCode.EMAIL_ALREADY_REGISTERED,
-      message: "Email sudah terdaftar.",
+      message: "Email sudah terdaftar. Silakan login atau gunakan email lain.",
       status: 409,
     };
   }
@@ -95,6 +97,18 @@ export async function POST(req: Request) {
     });
 
     if (createError || !created.user) {
+      if (createError) {
+        logWarn("register.otp.verify.create_user_failed", {
+          email: maskEmail(otpVerified.payload.email),
+          code: createError.code,
+          status: createError.status,
+          message: createError.message,
+        });
+      } else {
+        logWarn("register.otp.verify.create_user_empty_without_error", {
+          email: maskEmail(otpVerified.payload.email),
+        });
+      }
       const mapped = mapCreateUserErrorSafe(createError);
       return jsonError(
         {
@@ -119,9 +133,9 @@ export async function POST(req: Request) {
       const { error: deleteCreatedUserError } = await admin.auth.admin.deleteUser(created.user.id);
       if (profileUpdateError.code === "23505") {
         if (deleteCreatedUserError) {
-          console.warn("[register-otp-verify] failed to rollback created user after phone conflict", {
+          logWarn("register.otp.verify.rollback_failed_after_phone_conflict", {
             userId: created.user.id,
-            email: otpVerified.payload.email,
+            email: maskEmail(otpVerified.payload.email),
             error: deleteCreatedUserError,
           });
         }
@@ -135,9 +149,9 @@ export async function POST(req: Request) {
       }
 
       if (deleteCreatedUserError) {
-        console.warn("[register-otp-verify] failed to rollback created user after profile sync failure", {
+        logWarn("register.otp.verify.rollback_failed_after_profile_sync_failure", {
           userId: created.user.id,
-          email: otpVerified.payload.email,
+          email: maskEmail(otpVerified.payload.email),
           error: deleteCreatedUserError,
         });
       }
@@ -156,15 +170,15 @@ export async function POST(req: Request) {
       password: otpVerified.payload.password,
     });
     if (signInError || !signInData.session) {
-      console.warn("[register-otp-verify] auto-login failed after successful registration", {
-        email: otpVerified.payload.email,
+      logWarn("register.otp.verify.auto_login_failed_after_registration", {
+        email: maskEmail(otpVerified.payload.email),
         error: signInError,
       });
     }
 
     await deleteRegisterOtpSession(normalizedEmail).catch((error: unknown) => {
-      console.warn("[register-otp-verify] failed to delete OTP session after success", {
-        email: normalizedEmail,
+      logWarn("register.otp.verify.delete_otp_session_failed_after_success", {
+        email: maskEmail(normalizedEmail),
         error,
       });
     });
@@ -185,6 +199,10 @@ export async function POST(req: Request) {
     };
 
     if (!signInData?.session) {
+      logInfo("register.otp.verify.success_without_auto_login_session", {
+        userId: created.user.id,
+        email: maskEmail(otpVerified.payload.email),
+      });
       return jsonOk(payload);
     }
 
@@ -192,6 +210,12 @@ export async function POST(req: Request) {
       typeof signInData.session.expires_in === "number" && Number.isFinite(signInData.session.expires_in)
         ? Math.max(60, Math.floor(signInData.session.expires_in))
         : 60 * 60;
+
+    logInfo("register.otp.verify.success", {
+      userId: created.user.id,
+      email: maskEmail(otpVerified.payload.email),
+      autoLogin: true,
+    });
 
     return jsonOk(payload, {
       headers: createAuthCookieHeaders({
@@ -219,6 +243,7 @@ export async function POST(req: Request) {
         415,
       );
     }
+    logError("register.otp.verify.failed", e);
     return jsonError(
       {
         code: RegisterErrorCode.REGISTER_OTP_VERIFY_FAILED,

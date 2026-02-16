@@ -1,5 +1,6 @@
 import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import { hasMailerEnv, sendRegisterOtpEmail } from "@/lib/mailer";
+import { logError, logInfo, logWarn, maskEmail } from "@/lib/logger";
 import {
   getRegisterOtpCooldownRemainingSec,
   getRegisterOtpMeta,
@@ -67,13 +68,17 @@ export async function POST(req: Request) {
       });
     } catch (error) {
       await rollbackResendRegisterOtp(normalizedEmail, resent.rollbackState).catch((rollbackError: unknown) => {
-        console.warn("[register-otp-resend] failed to rollback OTP session after send failure", {
-          email: normalizedEmail,
+        logWarn("register.otp.resend.rollback_failed_after_mail_send_failure", {
+          email: maskEmail(normalizedEmail),
           error: rollbackError,
         });
       });
       throw error;
     }
+
+    logInfo("register.otp.resend.sent", {
+      email: maskEmail(normalizedEmail),
+    });
 
     return jsonOk({
       sent: true,
@@ -109,6 +114,7 @@ export async function POST(req: Request) {
         415,
       );
     }
+    logError("register.otp.resend.failed", e);
     return jsonError(
       {
         code: RegisterErrorCode.REGISTER_OTP_RESEND_FAILED,

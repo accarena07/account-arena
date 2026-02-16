@@ -1,5 +1,6 @@
 import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import { hasMailerEnv, sendRegisterOtpEmail } from "@/lib/mailer";
+import { logError, logInfo, logWarn, maskEmail } from "@/lib/logger";
 import {
   createRegisterOtpEntry,
   getRegisterOtpCooldownRemainingSec,
@@ -102,13 +103,17 @@ export async function POST(req: Request) {
         .delete()
         .eq("email", normalizedEmail);
       if (cleanupError) {
-        console.warn("[register-otp-request] failed to cleanup OTP session after send failure", {
-          email: normalizedEmail,
+        logWarn("register.otp.request.cleanup_failed_after_mail_send_failure", {
+          email: maskEmail(normalizedEmail),
           error: cleanupError,
         });
       }
       throw error;
     }
+
+    logInfo("register.otp.request.sent", {
+      email: maskEmail(normalizedEmail),
+    });
 
     return jsonOk({
       sent: true,
@@ -144,6 +149,7 @@ export async function POST(req: Request) {
         415,
       );
     }
+    logError("register.otp.request.failed", e);
     return jsonError(
       {
         code: RegisterErrorCode.REGISTER_OTP_REQUEST_FAILED,
