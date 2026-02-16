@@ -4,20 +4,12 @@ import { clearRegisterFieldError, submitRegisterForm } from "./handler";
 import { setRegisterOtpContext } from "./register-otp-context";
 import type { RegisterFormErrors } from "./register.type";
 
-export const useBuyerRegisterPage = () => {
-  const router = useRouter();
-  const [showTncModal, setShowTncModal] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+const useRegisterInputState = () => {
   const [email, setEmail] = useState("");
   const [whatsApp, setWhatsApp] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<RegisterFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorTitle, setErrorTitle] = useState("Registrasi Gagal");
-  const [errorMessage, setErrorMessage] = useState("Pendaftaran gagal. Silakan coba lagi.");
-  const [errorSecondaryActionLabel, setErrorSecondaryActionLabel] = useState<string | undefined>(undefined);
-  const [errorSecondaryActionHref, setErrorSecondaryActionHref] = useState<string | undefined>(undefined);
 
   const onEmailChange = (value: string) => {
     setEmail(value);
@@ -34,6 +26,24 @@ export const useBuyerRegisterPage = () => {
     setErrors((prev) => clearRegisterFieldError(prev, "password"));
   };
 
+  return {
+    email,
+    whatsApp,
+    password,
+    errors,
+    isSubmitting,
+    setIsSubmitting,
+    setErrors,
+    onEmailChange,
+    onWhatsAppChange,
+    onPasswordChange,
+  };
+};
+
+const useRegisterUiState = () => {
+  const [showTncModal, setShowTncModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const onOpenTncModal = () => {
     setShowTncModal(true);
   };
@@ -46,30 +56,70 @@ export const useBuyerRegisterPage = () => {
     setShowPassword((prev) => !prev);
   };
 
+  return {
+    showTncModal,
+    showPassword,
+    onOpenTncModal,
+    onCloseTncModal,
+    onTogglePassword,
+  };
+};
+
+const useRegisterErrorModalState = () => {
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorTitle, setErrorTitle] = useState("Registrasi Gagal");
+  const [errorMessage, setErrorMessage] = useState("Pendaftaran gagal. Silakan coba lagi.");
+  const [errorSecondaryActionLabel, setErrorSecondaryActionLabel] = useState<string | undefined>(undefined);
+  const [errorSecondaryActionHref, setErrorSecondaryActionHref] = useState<string | undefined>(undefined);
+
   const onCloseErrorModal = () => {
     setShowErrorModal(false);
   };
 
+  return {
+    showErrorModal,
+    errorTitle,
+    errorMessage,
+    errorSecondaryActionLabel,
+    errorSecondaryActionHref,
+    setShowErrorModal,
+    setErrorTitle,
+    setErrorMessage,
+    setErrorSecondaryActionLabel,
+    setErrorSecondaryActionHref,
+    onCloseErrorModal,
+  };
+};
+
+const useRegisterSubmitAction = (
+  router: ReturnType<typeof useRouter>,
+  inputState: ReturnType<typeof useRegisterInputState>,
+  modalState: ReturnType<typeof useRegisterErrorModalState>,
+) => {
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (isSubmitting) return;
+    if (inputState.isSubmitting) return;
 
-    setIsSubmitting(true);
-    const result = await submitRegisterForm({ email, whatsApp, password });
+    inputState.setIsSubmitting(true);
+    const result = await submitRegisterForm({
+      email: inputState.email,
+      whatsApp: inputState.whatsApp,
+      password: inputState.password,
+    });
 
     if (!result.ok && "formErrors" in result) {
-      setErrors(result.formErrors);
-      setIsSubmitting(false);
+      inputState.setErrors(result.formErrors);
+      inputState.setIsSubmitting(false);
       return;
     }
 
     if (!result.ok && "modalError" in result) {
-      setErrorTitle(result.modalError.title);
-      setErrorMessage(result.modalError.message);
-      setErrorSecondaryActionLabel(result.modalError.secondaryActionLabel);
-      setErrorSecondaryActionHref(result.modalError.secondaryActionHref);
-      setShowErrorModal(true);
-      setIsSubmitting(false);
+      modalState.setErrorTitle(result.modalError.title);
+      modalState.setErrorMessage(result.modalError.message);
+      modalState.setErrorSecondaryActionLabel(result.modalError.secondaryActionLabel);
+      modalState.setErrorSecondaryActionHref(result.modalError.secondaryActionHref);
+      modalState.setShowErrorModal(true);
+      inputState.setIsSubmitting(false);
       return;
     }
 
@@ -81,26 +131,20 @@ export const useBuyerRegisterPage = () => {
     router.push("/register/otp");
   };
 
+  return { onSubmit };
+};
+
+export const useBuyerRegisterPage = () => {
+  const router = useRouter();
+  const inputState = useRegisterInputState();
+  const uiState = useRegisterUiState();
+  const modalState = useRegisterErrorModalState();
+  const { onSubmit } = useRegisterSubmitAction(router, inputState, modalState);
+
   return {
-    showTncModal,
-    showPassword,
-    email,
-    whatsApp,
-    password,
-    errors,
-    isSubmitting,
-    showErrorModal,
-    errorTitle,
-    errorMessage,
-    errorSecondaryActionLabel,
-    errorSecondaryActionHref,
-    onEmailChange,
-    onWhatsAppChange,
-    onPasswordChange,
-    onOpenTncModal,
-    onCloseTncModal,
-    onTogglePassword,
-    onCloseErrorModal,
+    ...inputState,
+    ...uiState,
+    ...modalState,
     onSubmit,
   };
 };
