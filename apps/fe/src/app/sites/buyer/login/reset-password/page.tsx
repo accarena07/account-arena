@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import { Inter, Poppins } from "next/font/google";
 import { useRouter } from "next/navigation";
-import { PasswordResetSubmitResponseSchema } from "@acme/shared";
+import {
+  PasswordResetErrorCode,
+  PasswordResetSubmitResponseSchema,
+  isPasswordResetSystemErrorCode,
+} from "@acme/shared";
 import ResultModal from "@/components/common/ResultModal";
 import { apiFetch, ApiClientError } from "@/lib/apiClient";
 import ThemeToggleButton from "../../components/ThemeToggleButton";
@@ -18,6 +22,7 @@ const hasLowercaseRegex = /[a-z]/;
 const hasUppercaseRegex = /[A-Z]/;
 const hasNumberRegex = /\d/;
 const hasSpecialCharRegex = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
+const RESET_PASSWORD_SYSTEM_ERROR_MESSAGE = "Sistem sedang mengalami gangguan. Silakan coba beberapa saat lagi.";
 
 const BuyerResetPasswordPage = () => {
   const router = useRouter();
@@ -95,8 +100,20 @@ const BuyerResetPasswordPage = () => {
       clearPasswordResetContext();
       setShowSuccessModal(true);
     } catch (error) {
-      const message =
-        error instanceof ApiClientError ? error.message : "Gagal menyimpan kata sandi.";
+      let message = "Gagal menyimpan kata sandi.";
+      if (error instanceof ApiClientError) {
+        const errorCode = (error.details as { code?: string } | undefined)?.code;
+        if (
+          (typeof error.status === "number" && error.status >= 500) ||
+          isPasswordResetSystemErrorCode(errorCode)
+        ) {
+          message = RESET_PASSWORD_SYSTEM_ERROR_MESSAGE;
+        } else if (errorCode === PasswordResetErrorCode.INVALID_RESET_TOKEN) {
+          message = "Sesi reset tidak valid atau sudah kedaluwarsa. Silakan ulangi dari lupa kata sandi.";
+        } else {
+          message = error.message || "Gagal menyimpan kata sandi.";
+        }
+      }
       setErrorMessage(message);
       setShowErrorModal(true);
     } finally {

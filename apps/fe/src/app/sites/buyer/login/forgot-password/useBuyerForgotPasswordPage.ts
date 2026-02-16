@@ -1,19 +1,23 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { PasswordResetOtpRequestResponseSchema } from "@acme/shared";
+import {
+  PasswordResetErrorCode,
+  PasswordResetOtpRequestResponseSchema,
+  isPasswordResetSystemErrorCode,
+} from "@acme/shared";
 import { apiFetch, ApiClientError } from "@/lib/apiClient";
 import { setPasswordResetContext } from "../password-reset-context";
 
 const SYSTEM_ERROR_MESSAGE = "Sistem sedang mengalami gangguan. Silakan coba beberapa saat lagi.";
 const FALLBACK_ERROR_MESSAGE = "Gagal mengirim OTP. Silakan coba lagi.";
-const BUSINESS_ERROR_CODES = new Set([
-  "VALIDATION_ERROR",
-  "EMAIL_NOT_REGISTERED",
-  "OTP_RESEND_TOO_FAST",
+const BUSINESS_ERROR_CODES = new Set<string>([
+  PasswordResetErrorCode.VALIDATION_ERROR,
+  PasswordResetErrorCode.EMAIL_NOT_REGISTERED,
+  PasswordResetErrorCode.OTP_RESEND_TOO_FAST,
 ]);
-const SYSTEM_ERROR_CODES = new Set([
-  "MAILER_NOT_CONFIGURED",
-  "MAIL_SEND_TIMEOUT",
+const SYSTEM_ERROR_CODES = new Set<string>([
+  PasswordResetErrorCode.MAILER_NOT_CONFIGURED,
+  PasswordResetErrorCode.MAIL_SEND_TIMEOUT,
   "BAD_REQUEST",
 ]);
 
@@ -22,6 +26,7 @@ const isSystemLevelError = (error: ApiClientError, errorCode?: string) => {
   return (
     (typeof error.status === "number" && error.status >= 500) ||
     SYSTEM_ERROR_CODES.has(errorCode ?? "") ||
+    isPasswordResetSystemErrorCode(errorCode) ||
     loweredMessage.includes("timeout") ||
     loweredMessage.includes("network")
   );

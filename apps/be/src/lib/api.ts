@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { z } from "zod";
 
 export type ApiError = {
   code: string;
@@ -28,4 +29,45 @@ export async function readJson<T>(req: Request): Promise<T> {
     throw { code: "UNSUPPORTED_MEDIA_TYPE", message: "Content-Type harus application/json" };
   }
   return (await req.json()) as T;
+}
+
+type ParseJsonSuccess<T> = {
+  ok: true;
+  data: T;
+};
+
+type ParseJsonFailure = {
+  ok: false;
+  response: Response;
+};
+
+export type ParseJsonResult<T> = ParseJsonSuccess<T> | ParseJsonFailure;
+
+export async function parseJsonWithSchema<S extends z.ZodTypeAny>(
+  req: Request,
+  schema: S,
+  options?: {
+    code?: string;
+    message?: string;
+    status?: number;
+  }
+): Promise<ParseJsonResult<z.infer<S>>> {
+  const body = await readJson<unknown>(req);
+  const parsed = schema.safeParse(body);
+
+  if (!parsed.success) {
+    return {
+      ok: false,
+      response: jsonError(
+        {
+          code: options?.code ?? "VALIDATION_ERROR",
+          message: options?.message ?? "Input tidak valid",
+          details: parsed.error.flatten(),
+        },
+        options?.status ?? 422
+      ),
+    };
+  }
+
+  return { ok: true, data: parsed.data };
 }

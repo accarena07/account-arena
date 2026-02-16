@@ -1,4 +1,4 @@
-import { jsonError, jsonOk, readJson } from "@/lib/api";
+import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import { createAuthCookieHeaders } from "@/lib/auth-cookie";
 import { getSupabaseAnonClient, getSupabaseAdminClient } from "@/lib/supabase";
 import {
@@ -6,22 +6,15 @@ import {
   normalizeEmail,
   verifyRegisterOtp,
 } from "@/lib/register-otp-store";
-import { RegisterOtpVerifySchema } from "@acme/shared";
+import { findProfileIdByEmail } from "@/lib/register-profile-lookup";
+import { RegisterErrorCode, RegisterOtpVerifySchema } from "@acme/shared";
 
 export const runtime = "nodejs";
 const REGISTER_TERMS_VERSION = process.env.REGISTER_TERMS_VERSION ?? "v1";
 
-const mapCreateUserError = (rawMessage?: string) => {
-  const normalized = (rawMessage ?? "").toLowerCase();
-  if (normalized.includes("already") && normalized.includes("registered")) {
-    return {
-      code: "EMAIL_ALREADY_REGISTERED",
-      message: "Email sudah terdaftar.",
-      status: 409,
-    };
-  }
+const mapCreateUserError = () => {
   return {
-    code: "REGISTER_CREATE_USER_FAILED",
+    code: RegisterErrorCode.REGISTER_CREATE_USER_FAILED,
     message: "Gagal membuat akun. Silakan coba lagi beberapa saat.",
     status: 500,
   };
@@ -29,34 +22,27 @@ const mapCreateUserError = (rawMessage?: string) => {
 
 const mapCreateUserErrorSafe = (error: unknown) => {
   const authError = (error ?? {}) as { status?: unknown; code?: unknown; message?: unknown };
-  const status = typeof authError.status === "number" ? authError.status : null;
   const code = typeof authError.code === "string" ? authError.code.toLowerCase() : "";
 
-  if (code === "email_exists" || code === "user_already_exists" || status === 422) {
+  if (code === "email_exists" || code === "user_already_exists") {
     return {
-      code: "EMAIL_ALREADY_REGISTERED",
+      code: RegisterErrorCode.EMAIL_ALREADY_REGISTERED,
       message: "Email sudah terdaftar.",
       status: 409,
     };
   }
 
-  return mapCreateUserError(typeof authError.message === "string" ? authError.message : undefined);
+  return mapCreateUserError();
 };
 
 export async function POST(req: Request) {
   try {
-    const body = await readJson<unknown>(req);
-    const parsed = RegisterOtpVerifySchema.safeParse(body);
-    if (!parsed.success) {
-      return jsonError(
-        {
-          code: "VALIDATION_ERROR",
-          message: "Input tidak valid",
-          details: parsed.error.flatten(),
-        },
-        422,
-      );
-    }
+    const parsed = await parseJsonWithSchema(req, RegisterOtpVerifySchema, {
+      code: RegisterErrorCode.VALIDATION_ERROR,
+      message: "Input tidak valid",
+      status: 422,
+    });
+    if (!parsed.ok) return parsed.response;
 
     const normalizedEmail = normalizeEmail(parsed.data.email);
     const otpVerified = await verifyRegisterOtp({
@@ -66,13 +52,14 @@ export async function POST(req: Request) {
 
     if (!otpVerified.ok) {
       const status =
-        otpVerified.code === "OTP_NOT_FOUND"
+        otpVerified.code === RegisterErrorCode.OTP_NOT_FOUND
           ? 404
-          : otpVerified.code === "OTP_EXPIRED" || otpVerified.code === "OTP_ATTEMPTS_EXCEEDED"
+          : otpVerified.code === RegisterErrorCode.OTP_EXPIRED ||
+              otpVerified.code === RegisterErrorCode.OTP_ATTEMPTS_EXCEEDED
             ? 410
             : 400;
       const message =
-        otpVerified.code === "OTP_ATTEMPTS_EXCEEDED"
+        otpVerified.code === RegisterErrorCode.OTP_ATTEMPTS_EXCEEDED
           ? "Batas percobaan OTP tercapai. Silakan minta OTP baru."
           : "Verifikasi OTP gagal.";
       return jsonError(
@@ -84,22 +71,19 @@ export async function POST(req: Request) {
       );
     }
 
-    const admin = getSupabaseAdminClient();
-    const { data: existingProfileByEmail } = await admin
-      .from("profiles")
-      .select("id")
-      .ilike("email", otpVerified.payload.email)
-      .maybeSingle();
+    const existingProfileByEmail = await findProfileIdByEmail(otpVerified.payload.email);
+
     if (existingProfileByEmail) {
       return jsonError(
         {
-          code: "EMAIL_ALREADY_REGISTERED",
+          code: RegisterErrorCode.EMAIL_ALREADY_REGISTERED,
           message: "Email sudah terdaftar.",
         },
         409,
       );
     }
 
+    const admin = getSupabaseAdminClient();
     const { data: created, error: createError } = await admin.auth.admin.createUser({
       email: otpVerified.payload.email,
       password: otpVerified.payload.password,
@@ -143,7 +127,7 @@ export async function POST(req: Request) {
         }
         return jsonError(
           {
-            code: "PHONE_ALREADY_REGISTERED",
+            code: RegisterErrorCode.PHONE_ALREADY_REGISTERED,
             message: "Nomor WhatsApp sudah terdaftar.",
           },
           409,
@@ -159,7 +143,7 @@ export async function POST(req: Request) {
       }
       return jsonError(
         {
-          code: "REGISTER_PROFILE_UPDATE_FAILED",
+          code: RegisterErrorCode.REGISTER_PROFILE_UPDATE_FAILED,
           message: "Registrasi gagal saat sinkronisasi profil. Silakan coba lagi.",
         },
         500,
@@ -217,19 +201,19 @@ export async function POST(req: Request) {
       }),
     });
   } catch (e: any) {
-    if (e?.code === "OTP_ENCRYPTION_KEY_MISSING") {
+    if (e?.code === RegisterErrorCode.OTP_ENCRYPTION_KEY_MISSING) {
       return jsonError(
         {
-          code: "OTP_ENCRYPTION_KEY_MISSING",
+          code: RegisterErrorCode.OTP_ENCRYPTION_KEY_MISSING,
           message: "Konfigurasi keamanan OTP belum lengkap di server.",
         },
         503,
       );
     }
-    if (e?.code === "UNSUPPORTED_MEDIA_TYPE") {
+    if (e?.code === RegisterErrorCode.UNSUPPORTED_MEDIA_TYPE) {
       return jsonError(
         {
-          code: "UNSUPPORTED_MEDIA_TYPE",
+          code: RegisterErrorCode.UNSUPPORTED_MEDIA_TYPE,
           message: "Content-Type harus application/json",
         },
         415,
@@ -237,7 +221,7 @@ export async function POST(req: Request) {
     }
     return jsonError(
       {
-        code: "REGISTER_OTP_VERIFY_FAILED",
+        code: RegisterErrorCode.REGISTER_OTP_VERIFY_FAILED,
         message: "Verifikasi registrasi gagal. Silakan coba lagi.",
       },
       500,

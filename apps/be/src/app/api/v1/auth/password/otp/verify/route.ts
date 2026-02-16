@@ -4,7 +4,7 @@ import {
   normalizePhone,
   verifyOtp,
 } from "@/lib/password-reset-otp-store";
-import { PasswordResetOtpVerifySchema } from "@acme/shared";
+import { PasswordResetErrorCode, PasswordResetOtpVerifySchema } from "@acme/shared";
 
 export const runtime = "nodejs";
 
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return jsonError(
         {
-          code: "VALIDATION_ERROR",
+          code: PasswordResetErrorCode.VALIDATION_ERROR,
           message: "Input tidak valid",
           details: parsed.error.flatten(),
         },
@@ -36,13 +36,15 @@ export async function POST(req: Request) {
 
     if (!result.ok) {
       const status =
-        result.code === "USER_NOT_FOUND" || result.code === "OTP_NOT_FOUND"
+        result.code === PasswordResetErrorCode.USER_NOT_FOUND ||
+        result.code === PasswordResetErrorCode.OTP_NOT_FOUND
           ? 404
-          : result.code === "OTP_ATTEMPTS_EXCEEDED" || result.code === "OTP_EXPIRED"
+          : result.code === PasswordResetErrorCode.OTP_ATTEMPTS_EXCEEDED ||
+              result.code === PasswordResetErrorCode.OTP_EXPIRED
             ? 410
             : 400;
       const message =
-        result.code === "OTP_ATTEMPTS_EXCEEDED"
+        result.code === PasswordResetErrorCode.OTP_ATTEMPTS_EXCEEDED
           ? "Batas percobaan OTP tercapai. Silakan minta OTP baru."
           : "Verifikasi OTP gagal.";
       return jsonError(
@@ -60,13 +62,30 @@ export async function POST(req: Request) {
       expiresInSec: result.expiresInSec,
     });
   } catch (e: any) {
+    if (e?.code === PasswordResetErrorCode.OTP_ENCRYPTION_KEY_MISSING) {
+      return jsonError(
+        {
+          code: PasswordResetErrorCode.OTP_ENCRYPTION_KEY_MISSING,
+          message: "Konfigurasi keamanan OTP belum lengkap di server.",
+        },
+        503,
+      );
+    }
+    if (e?.code === PasswordResetErrorCode.UNSUPPORTED_MEDIA_TYPE) {
+      return jsonError(
+        {
+          code: PasswordResetErrorCode.UNSUPPORTED_MEDIA_TYPE,
+          message: "Content-Type harus application/json",
+        },
+        415,
+      );
+    }
     return jsonError(
       {
-        code: e?.code ?? "BAD_REQUEST",
-        message: e?.message ?? "Bad request",
-        details: e?.details,
+        code: PasswordResetErrorCode.PASSWORD_RESET_OTP_VERIFY_FAILED,
+        message: "Verifikasi OTP reset password gagal. Silakan coba lagi.",
       },
-      e?.code === "UNSUPPORTED_MEDIA_TYPE" ? 415 : 400,
+      500,
     );
   }
 }

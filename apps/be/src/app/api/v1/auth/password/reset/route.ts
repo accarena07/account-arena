@@ -5,7 +5,7 @@ import {
   normalizePhone,
 } from "@/lib/password-reset-otp-store";
 import { getSupabaseAdminClient } from "@/lib/supabase";
-import { PasswordResetSubmitSchema } from "@acme/shared";
+import { PasswordResetErrorCode, PasswordResetSubmitSchema } from "@acme/shared";
 
 export const runtime = "nodejs";
 
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return jsonError(
         {
-          code: "VALIDATION_ERROR",
+          code: PasswordResetErrorCode.VALIDATION_ERROR,
           message: "Input tidak valid",
           details: parsed.error.flatten(),
         },
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     if (!strongPasswordRegex.test(newPassword)) {
       return jsonError(
         {
-          code: "VALIDATION_ERROR",
+          code: PasswordResetErrorCode.VALIDATION_ERROR,
           message:
             "Kata sandi minimal 8 karakter dan wajib ada huruf besar, huruf kecil, angka, serta karakter spesial.",
         },
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     if (!consumed.ok) {
       return jsonError(
         {
-          code: consumed.code,
+          code: PasswordResetErrorCode.INVALID_RESET_TOKEN,
           message: "Reset token tidak valid atau sudah kedaluwarsa.",
         },
         401,
@@ -66,8 +66,11 @@ export async function POST(req: Request) {
 
     if (error) {
       return jsonError(
-        { code: "PASSWORD_RESET_FAILED", message: error.message },
-        400,
+        {
+          code: PasswordResetErrorCode.PASSWORD_RESET_FAILED,
+          message: "Gagal memperbarui kata sandi. Silakan coba lagi.",
+        },
+        500,
       );
     }
 
@@ -75,13 +78,21 @@ export async function POST(req: Request) {
       passwordUpdated: true,
     });
   } catch (e: any) {
+    if (e?.code === PasswordResetErrorCode.UNSUPPORTED_MEDIA_TYPE) {
+      return jsonError(
+        {
+          code: PasswordResetErrorCode.UNSUPPORTED_MEDIA_TYPE,
+          message: "Content-Type harus application/json",
+        },
+        415,
+      );
+    }
     return jsonError(
       {
-        code: e?.code ?? "BAD_REQUEST",
-        message: e?.message ?? "Bad request",
-        details: e?.details,
+        code: PasswordResetErrorCode.PASSWORD_RESET_SUBMIT_FAILED,
+        message: "Reset password gagal. Silakan coba lagi.",
       },
-      e?.code === "UNSUPPORTED_MEDIA_TYPE" ? 415 : 400,
+      500,
     );
   }
 }

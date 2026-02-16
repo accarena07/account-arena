@@ -7,7 +7,7 @@ import {
   normalizeEmail,
 } from "@/lib/password-reset-otp-store";
 import { getSupabaseAdminClient } from "@/lib/supabase";
-import { PasswordResetOtpRequestSchema } from "@acme/shared";
+import { PasswordResetErrorCode, PasswordResetOtpRequestSchema } from "@acme/shared";
 
 export const runtime = "nodejs";
 
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return jsonError(
         {
-          code: "VALIDATION_ERROR",
+          code: PasswordResetErrorCode.VALIDATION_ERROR,
           message: "Input tidak valid",
           details: parsed.error.flatten(),
         },
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     if (requestedMethod && requestedMethod !== "email") {
       return jsonError(
         {
-          code: "METHOD_NOT_SUPPORTED",
+          code: PasswordResetErrorCode.METHOD_NOT_SUPPORTED,
           message: "Saat ini OTP hanya dapat dikirim melalui email.",
         },
         422,
@@ -42,14 +42,17 @@ export async function POST(req: Request) {
     const normalizedIdentifier = normalizeEmail(identifier);
 
     if (!emailRegex.test(normalizedIdentifier)) {
-      return jsonError({ code: "VALIDATION_ERROR", message: "Format email tidak valid." }, 422);
+      return jsonError(
+        { code: PasswordResetErrorCode.VALIDATION_ERROR, message: "Format email tidak valid." },
+        422,
+      );
     }
 
     const cooldownRemainingSec = await getPasswordResetOtpCooldownRemainingSec(normalizedIdentifier);
     if (cooldownRemainingSec > 0) {
       return jsonError(
         {
-          code: "OTP_RESEND_TOO_FAST",
+          code: PasswordResetErrorCode.OTP_RESEND_TOO_FAST,
           message: "Tunggu sebelum meminta OTP baru.",
           details: { retryAfterSec: cooldownRemainingSec },
         },
@@ -66,10 +69,20 @@ export async function POST(req: Request) {
     if (!profile?.id) {
       return jsonError(
         {
-          code: "EMAIL_NOT_REGISTERED",
+          code: PasswordResetErrorCode.EMAIL_NOT_REGISTERED,
           message: "Email belum terdaftar.",
         },
         404,
+      );
+    }
+
+    if (!hasMailerEnv()) {
+      return jsonError(
+        {
+          code: PasswordResetErrorCode.MAILER_NOT_CONFIGURED,
+          message: "SMTP belum dikonfigurasi di server.",
+        },
+        503,
       );
     }
 
@@ -78,16 +91,6 @@ export async function POST(req: Request) {
       method,
       userId: profile.id,
     });
-
-    if (!hasMailerEnv()) {
-      return jsonError(
-        {
-          code: "MAILER_NOT_CONFIGURED",
-          message: "SMTP belum dikonfigurasi di server.",
-        },
-        503,
-      );
-    }
 
     await sendPasswordResetOtpEmail({
       to: normalizedIdentifier,
@@ -103,22 +106,39 @@ export async function POST(req: Request) {
       ...(process.env.NODE_ENV !== "production" ? { debugOtp: otpEntry.otp } : {}),
     });
   } catch (e: any) {
-    if (e?.code === "MAIL_SEND_TIMEOUT") {
+    if (e?.code === PasswordResetErrorCode.MAIL_SEND_TIMEOUT) {
       return jsonError(
         {
-          code: "MAIL_SEND_TIMEOUT",
+          code: PasswordResetErrorCode.MAIL_SEND_TIMEOUT,
           message: "Pengiriman OTP timeout. Coba lagi.",
         },
         504,
       );
     }
+    if (e?.code === PasswordResetErrorCode.OTP_ENCRYPTION_KEY_MISSING) {
+      return jsonError(
+        {
+          code: PasswordResetErrorCode.OTP_ENCRYPTION_KEY_MISSING,
+          message: "Konfigurasi keamanan OTP belum lengkap di server.",
+        },
+        503,
+      );
+    }
+    if (e?.code === PasswordResetErrorCode.UNSUPPORTED_MEDIA_TYPE) {
+      return jsonError(
+        {
+          code: PasswordResetErrorCode.UNSUPPORTED_MEDIA_TYPE,
+          message: "Content-Type harus application/json",
+        },
+        415,
+      );
+    }
     return jsonError(
       {
-        code: e?.code ?? "BAD_REQUEST",
-        message: e?.message ?? "Bad request",
-        details: e?.details,
+        code: PasswordResetErrorCode.PASSWORD_RESET_OTP_REQUEST_FAILED,
+        message: "Permintaan OTP reset password gagal. Silakan coba lagi.",
       },
-      e?.code === "UNSUPPORTED_MEDIA_TYPE" ? 415 : 400,
+      500,
     );
   }
 }

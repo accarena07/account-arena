@@ -1,5 +1,6 @@
 import { getSupabaseAdminClient } from "@/lib/supabase";
 import { decryptString, encryptString } from "@/lib/secure-string";
+import { RegisterErrorCode } from "@acme/shared";
 import { randomInt } from "crypto";
 
 type RegisterOtpEntry = {
@@ -175,12 +176,12 @@ export async function verifyRegisterOtp(params: { email: string; otp: string }) 
   if (selectError) {
     throw new Error(selectError.message);
   }
-  if (!entry) return { ok: false as const, code: "OTP_NOT_FOUND" as const };
+  if (!entry) return { ok: false as const, code: RegisterErrorCode.OTP_NOT_FOUND };
   if (new Date(entry.otp_expires_at).getTime() < nowMs()) {
-    return { ok: false as const, code: "OTP_EXPIRED" as const };
+    return { ok: false as const, code: RegisterErrorCode.OTP_EXPIRED };
   }
   if (entry.attempts >= MAX_ATTEMPTS) {
-    return { ok: false as const, code: "OTP_ATTEMPTS_EXCEEDED" as const };
+    return { ok: false as const, code: RegisterErrorCode.OTP_ATTEMPTS_EXCEEDED };
   }
   if (entry.otp_code !== params.otp) {
     const nextAttempts = entry.attempts + 1;
@@ -195,9 +196,9 @@ export async function verifyRegisterOtp(params: { email: string; otp: string }) 
       throw new Error(updateError.message);
     }
     if (nextAttempts >= MAX_ATTEMPTS) {
-      return { ok: false as const, code: "OTP_ATTEMPTS_EXCEEDED" as const };
+      return { ok: false as const, code: RegisterErrorCode.OTP_ATTEMPTS_EXCEEDED };
     }
-    return { ok: false as const, code: "OTP_INVALID" as const };
+    return { ok: false as const, code: RegisterErrorCode.OTP_INVALID };
   }
 
   return {

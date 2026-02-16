@@ -1,4 +1,8 @@
-import { RegisterOtpRequestResponseSchema } from "@acme/shared";
+import {
+  RegisterErrorCode,
+  RegisterOtpRequestResponseSchema,
+  isRegisterSystemErrorCode,
+} from "@acme/shared";
 import { ApiClientError, apiFetch } from "@/lib/apiClient";
 import type {
   RegisterFormErrors,
@@ -81,12 +85,18 @@ export const mapRegisterSubmitError = (error: unknown): RegisterModalError => {
 
   if (error instanceof ApiClientError) {
     const errorCode = (error.details as { code?: string } | undefined)?.code;
-    if (errorCode === "EMAIL_ALREADY_REGISTERED" || errorCode === "PHONE_ALREADY_REGISTERED") {
+    if (
+      errorCode === RegisterErrorCode.EMAIL_ALREADY_REGISTERED ||
+      errorCode === RegisterErrorCode.PHONE_ALREADY_REGISTERED
+    ) {
       title = "Akun Sudah Terdaftar";
       message = "Email atau nomor WhatsApp ini sudah terpakai. Silakan login.";
       secondaryLabel = "Masuk ke Akun";
       secondaryHref = "/login";
-    } else if (typeof error.status === "number" && error.status >= 500) {
+    } else if (
+      (typeof error.status === "number" && error.status >= 500) ||
+      isRegisterSystemErrorCode(errorCode)
+    ) {
       message = "Server sedang mengalami gangguan. Silakan coba beberapa saat lagi.";
     } else if (
       error.message.toLowerCase().includes("timeout") ||

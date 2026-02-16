@@ -1,4 +1,4 @@
-import { jsonError, jsonOk, readJson } from "@/lib/api";
+import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import { hasMailerEnv, sendRegisterOtpEmail } from "@/lib/mailer";
 import {
   getRegisterOtpCooldownRemainingSec,
@@ -7,6 +7,7 @@ import {
   rollbackResendRegisterOtp,
   resendRegisterOtp,
 } from "@/lib/register-otp-store";
+import { RegisterErrorCode } from "@acme/shared";
 import { z } from "zod";
 
 export const runtime = "nodejs";
@@ -17,25 +18,19 @@ const ResendRegisterOtpSchema = z.object({
 
 export async function POST(req: Request) {
   try {
-    const body = await readJson<unknown>(req);
-    const parsed = ResendRegisterOtpSchema.safeParse(body);
-    if (!parsed.success) {
-      return jsonError(
-        {
-          code: "VALIDATION_ERROR",
-          message: "Input tidak valid",
-          details: parsed.error.flatten(),
-        },
-        422,
-      );
-    }
+    const parsed = await parseJsonWithSchema(req, ResendRegisterOtpSchema, {
+      code: RegisterErrorCode.VALIDATION_ERROR,
+      message: "Input tidak valid",
+      status: 422,
+    });
+    if (!parsed.ok) return parsed.response;
 
     const normalizedEmail = normalizeEmail(parsed.data.email);
     const cooldownRemainingSec = await getRegisterOtpCooldownRemainingSec(normalizedEmail);
     if (cooldownRemainingSec > 0) {
       return jsonError(
         {
-          code: "OTP_RESEND_TOO_FAST",
+          code: RegisterErrorCode.OTP_RESEND_TOO_FAST,
           message: "Tunggu sebelum meminta OTP baru.",
           details: { retryAfterSec: cooldownRemainingSec },
         },
@@ -46,7 +41,7 @@ export async function POST(req: Request) {
     if (!hasMailerEnv()) {
       return jsonError(
         {
-          code: "MAILER_NOT_CONFIGURED",
+          code: RegisterErrorCode.MAILER_NOT_CONFIGURED,
           message: "SMTP belum dikonfigurasi di server.",
         },
         503,
@@ -57,7 +52,7 @@ export async function POST(req: Request) {
     if (!resent) {
       return jsonError(
         {
-          code: "OTP_NOT_FOUND",
+          code: RegisterErrorCode.OTP_NOT_FOUND,
           message: "Sesi OTP tidak ditemukan. Ulangi proses registrasi.",
         },
         404,
@@ -87,28 +82,28 @@ export async function POST(req: Request) {
       ...(process.env.NODE_ENV !== "production" ? { debugOtp: resent.otp } : {}),
     });
   } catch (e: any) {
-    if (e?.code === "OTP_ENCRYPTION_KEY_MISSING") {
+    if (e?.code === RegisterErrorCode.OTP_ENCRYPTION_KEY_MISSING) {
       return jsonError(
         {
-          code: "OTP_ENCRYPTION_KEY_MISSING",
+          code: RegisterErrorCode.OTP_ENCRYPTION_KEY_MISSING,
           message: "Konfigurasi keamanan OTP belum lengkap di server.",
         },
         503,
       );
     }
-    if (e?.code === "MAIL_SEND_TIMEOUT") {
+    if (e?.code === RegisterErrorCode.MAIL_SEND_TIMEOUT) {
       return jsonError(
         {
-          code: "MAIL_SEND_TIMEOUT",
+          code: RegisterErrorCode.MAIL_SEND_TIMEOUT,
           message: "Pengiriman OTP timeout. Coba lagi.",
         },
         504,
       );
     }
-    if (e?.code === "UNSUPPORTED_MEDIA_TYPE") {
+    if (e?.code === RegisterErrorCode.UNSUPPORTED_MEDIA_TYPE) {
       return jsonError(
         {
-          code: "UNSUPPORTED_MEDIA_TYPE",
+          code: RegisterErrorCode.UNSUPPORTED_MEDIA_TYPE,
           message: "Content-Type harus application/json",
         },
         415,
@@ -116,7 +111,7 @@ export async function POST(req: Request) {
     }
     return jsonError(
       {
-        code: "REGISTER_OTP_RESEND_FAILED",
+        code: RegisterErrorCode.REGISTER_OTP_RESEND_FAILED,
         message: "Kirim ulang OTP registrasi gagal. Silakan coba lagi.",
       },
       500,

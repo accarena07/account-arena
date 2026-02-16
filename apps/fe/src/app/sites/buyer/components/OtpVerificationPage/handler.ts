@@ -1,8 +1,12 @@
 import {
+  PasswordResetErrorCode,
   PasswordResetOtpRequestResponseSchema,
   PasswordResetOtpVerifyResponseSchema,
+  RegisterErrorCode,
   RegisterOtpRequestResponseSchema,
   RegisterOtpVerifyResponseSchema,
+  isPasswordResetSystemErrorCode,
+  isRegisterSystemErrorCode,
 } from "@acme/shared";
 import { ApiClientError, apiFetch } from "@/lib/apiClient";
 import type {
@@ -22,23 +26,25 @@ export const OTP_LENGTH_ERROR_MESSAGE = "Kode OTP harus 6 digit.";
 const SYSTEM_ERROR_MESSAGE = "Sistem sedang mengalami gangguan. Silakan coba beberapa saat lagi.";
 const VERIFY_FALLBACK_MESSAGE = "Verifikasi OTP gagal. Silakan coba lagi.";
 const RESEND_FALLBACK_MESSAGE = "Gagal kirim ulang OTP.";
-const VERIFY_BUSINESS_ERROR_CODES = new Set([
-  "VALIDATION_ERROR",
-  "OTP_INVALID",
-  "OTP_EXPIRED",
-  "OTP_NOT_FOUND",
-  "OTP_ATTEMPTS_EXCEEDED",
-  "USER_NOT_FOUND",
+const VERIFY_BUSINESS_ERROR_CODES = new Set<string>([
+  RegisterErrorCode.VALIDATION_ERROR,
+  RegisterErrorCode.OTP_INVALID,
+  RegisterErrorCode.OTP_EXPIRED,
+  RegisterErrorCode.OTP_NOT_FOUND,
+  RegisterErrorCode.OTP_ATTEMPTS_EXCEEDED,
+  PasswordResetErrorCode.USER_NOT_FOUND,
 ]);
-const RESEND_BUSINESS_ERROR_CODES = new Set([
-  "VALIDATION_ERROR",
-  "OTP_RESEND_TOO_FAST",
-  "OTP_NOT_FOUND",
-  "EMAIL_NOT_REGISTERED",
+const RESEND_BUSINESS_ERROR_CODES = new Set<string>([
+  RegisterErrorCode.VALIDATION_ERROR,
+  RegisterErrorCode.OTP_RESEND_TOO_FAST,
+  RegisterErrorCode.OTP_NOT_FOUND,
+  PasswordResetErrorCode.EMAIL_NOT_REGISTERED,
 ]);
-const SYSTEM_ERROR_CODES = new Set([
-  "MAILER_NOT_CONFIGURED",
-  "MAIL_SEND_TIMEOUT",
+const SYSTEM_ERROR_CODES = new Set<string>([
+  RegisterErrorCode.MAILER_NOT_CONFIGURED,
+  RegisterErrorCode.MAIL_SEND_TIMEOUT,
+  PasswordResetErrorCode.MAILER_NOT_CONFIGURED,
+  PasswordResetErrorCode.MAIL_SEND_TIMEOUT,
   "BAD_REQUEST",
 ]);
 
@@ -47,6 +53,8 @@ const isSystemLevelError = (error: ApiClientError, errorCode?: string) => {
   return (
     (typeof error.status === "number" && error.status >= 500) ||
     SYSTEM_ERROR_CODES.has(errorCode ?? "") ||
+    isRegisterSystemErrorCode(errorCode) ||
+    isPasswordResetSystemErrorCode(errorCode) ||
     loweredMessage.includes("timeout") ||
     loweredMessage.includes("network")
   );

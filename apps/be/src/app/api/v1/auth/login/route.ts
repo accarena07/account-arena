@@ -1,4 +1,4 @@
-import { jsonError, jsonOk, readJson } from "@/lib/api";
+import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import { createAuthCookieHeaders } from "@/lib/auth-cookie";
 import { getSupabaseAnonClient, getSupabaseAdminClient } from "@/lib/supabase";
 import { AuthLoginRequestSchema } from "@acme/shared";
@@ -23,19 +23,12 @@ const mapLoginErrorMessage = (rawMessage?: string) => {
 
 export const POST = async (req: Request) => {
   try {
-    const body = await readJson<unknown>(req);
-    const parsed = AuthLoginRequestSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return jsonError(
-        {
-          code: "VALIDATION_ERROR",
-          message: "Input tidak valid",
-          details: parsed.error.flatten(),
-        },
-        422,
-      );
-    }
+    const parsed = await parseJsonWithSchema(req, AuthLoginRequestSchema, {
+      code: "VALIDATION_ERROR",
+      message: "Input tidak valid",
+      status: 422,
+    });
+    if (!parsed.ok) return parsed.response;
 
     const supabase = getSupabaseAnonClient();
     const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
