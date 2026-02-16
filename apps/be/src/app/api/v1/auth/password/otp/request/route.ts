@@ -1,10 +1,10 @@
 import { jsonError, jsonOk, readJson } from "@/lib/api";
+import { hasMailerEnv, sendPasswordResetOtpEmail } from "@/lib/mailer";
 import {
   createOtpEntry,
   getPasswordResetOtpCooldownRemainingSec,
   getOtpMeta,
   normalizeEmail,
-  normalizePhone,
 } from "@/lib/password-reset-otp-store";
 import { getSupabaseAdminClient } from "@/lib/supabase";
 import { PasswordResetOtpRequestSchema } from "@acme/shared";
@@ -12,14 +12,6 @@ import { PasswordResetOtpRequestSchema } from "@acme/shared";
 export const runtime = "nodejs";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const indonesianPhoneRegex = /^(?:\+62|62|0)8[1-9][0-9]{7,10}$/;
-
-type OtpMethod = "email" | "whatsapp";
-
-function resolveMethod(identifier: string, requested?: OtpMethod): OtpMethod {
-  if (requested) return requested;
-  return emailRegex.test(identifier) ? "email" : "whatsapp";
-}
 
 export async function POST(req: Request) {
   try {
@@ -37,21 +29,20 @@ export async function POST(req: Request) {
     }
 
     const { identifier, method: requestedMethod } = parsed.data;
-    const method = resolveMethod(identifier, requestedMethod);
-    const normalizedIdentifier =
-      method === "email" ? normalizeEmail(identifier) : normalizePhone(identifier);
-
-    if (method === "email" && !emailRegex.test(normalizedIdentifier)) {
-      return jsonError({ code: "VALIDATION_ERROR", message: "Format email tidak valid." }, 422);
-    }
-    if (method === "whatsapp" && !indonesianPhoneRegex.test(normalizedIdentifier)) {
+    if (requestedMethod && requestedMethod !== "email") {
       return jsonError(
         {
-          code: "VALIDATION_ERROR",
-          message: "Nomor WhatsApp harus nomor Indonesia (08xx / 62xx / +62xx).",
+          code: "METHOD_NOT_SUPPORTED",
+          message: "Saat ini OTP hanya dapat dikirim melalui email.",
         },
         422,
       );
+    }
+    const method = "email" as const;
+    const normalizedIdentifier = normalizeEmail(identifier);
+
+    if (!emailRegex.test(normalizedIdentifier)) {
+      return jsonError({ code: "VALIDATION_ERROR", message: "Format email tidak valid." }, 422);
     }
 
     const cooldownRemainingSec = await getPasswordResetOtpCooldownRemainingSec(normalizedIdentifier);
@@ -71,18 +62,39 @@ export async function POST(req: Request) {
       .from("profiles")
       .select("id")
       .limit(1);
-    const { data: profile } =
-      method === "email"
-        ? await query.ilike("email", normalizedIdentifier).maybeSingle()
-        : await query.eq("phone", normalizedIdentifier).maybeSingle();
+    const { data: profile } = await query.ilike("email", normalizedIdentifier).maybeSingle();
+    if (!profile?.id) {
+      return jsonError(
+        {
+          code: "EMAIL_NOT_REGISTERED",
+          message: "Email belum terdaftar.",
+        },
+        404,
+      );
+    }
 
     const otpEntry = await createOtpEntry({
       identifier: normalizedIdentifier,
       method,
-      userId: profile?.id ?? null,
+      userId: profile.id,
     });
 
-    // TODO: integrate real provider for email/whatsapp OTP delivery.
+    if (!hasMailerEnv()) {
+      return jsonError(
+        {
+          code: "MAILER_NOT_CONFIGURED",
+          message: "SMTP belum dikonfigurasi di server.",
+        },
+        503,
+      );
+    }
+
+    await sendPasswordResetOtpEmail({
+      to: normalizedIdentifier,
+      otp: otpEntry.otp,
+      expiresInMin: Math.floor(getOtpMeta().otpExpiresSec / 60),
+    });
+
     return jsonOk({
       sent: true,
       method,
@@ -91,6 +103,15 @@ export async function POST(req: Request) {
       ...(process.env.NODE_ENV !== "production" ? { debugOtp: otpEntry.otp } : {}),
     });
   } catch (e: any) {
+    if (e?.code === "MAIL_SEND_TIMEOUT") {
+      return jsonError(
+        {
+          code: "MAIL_SEND_TIMEOUT",
+          message: "Pengiriman OTP timeout. Coba lagi.",
+        },
+        504,
+      );
+    }
     return jsonError(
       {
         code: e?.code ?? "BAD_REQUEST",

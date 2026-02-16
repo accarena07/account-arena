@@ -1,71 +1,45 @@
 "use client";
 
 import { Inter, Poppins } from "next/font/google";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { PasswordResetOtpRequestResponseSchema } from "@acme/shared";
 import ResultModal from "@/components/common/ResultModal";
-import { apiFetch, ApiClientError } from "@/lib/apiClient";
 import ThemeToggleButton from "../../components/ThemeToggleButton";
-import { setPasswordResetContext, type PasswordResetMethod } from "../password-reset-context";
+import { useBuyerForgotPasswordPage } from "./useBuyerForgotPasswordPage";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
-export default function BuyerForgotPasswordPage() {
-  const router = useRouter();
-  const [identifier, setIdentifier] = useState("");
-  const [method, setMethod] = useState<PasswordResetMethod>("email");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [showErrorModal, setShowErrorModal] = useState(false);
-
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (isSubmitting) return;
-
-    try {
-      setIsSubmitting(true);
-      const result = await apiFetch(
-        "/api/v1/auth/password/otp/request",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            identifier: identifier.trim(),
-            method,
-          }),
-        },
-        PasswordResetOtpRequestResponseSchema,
-      );
-
-      setPasswordResetContext({
-        identifier: identifier.trim(),
-        method: result.method,
-        debugOtp: result.debugOtp,
-        resendCooldownSec: result.resendCooldownSec,
-      });
-
-      router.push("/login/otp");
-    } catch (error) {
-      const message =
-        error instanceof ApiClientError ? error.message : "Gagal mengirim OTP. Silakan coba lagi.";
-      setErrorMessage(message);
-      setShowErrorModal(true);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
+const BuyerForgotPasswordPage = () => {
+  const {
+    email,
+    isSubmitting,
+    errorMessage,
+    showErrorModal,
+    showSuccessModal,
+    setEmail,
+    onCloseErrorModal,
+    navigateToOtpScreen,
+    onSubmit,
+  } = useBuyerForgotPasswordPage();
 
   return (
     <>
       <ResultModal
         isOpen={showErrorModal}
         message={errorMessage}
-        onClose={() => setShowErrorModal(false)}
-        onPrimaryAction={() => setShowErrorModal(false)}
+        onClose={onCloseErrorModal}
+        onPrimaryAction={onCloseErrorModal}
         primaryActionLabel="Coba Lagi"
         title="Gagal Mengirim OTP"
         variant="error"
+      />
+      <ResultModal
+        isOpen={showSuccessModal}
+        message="Kode OTP sudah dikirim ke email Anda. Anda akan diarahkan ke halaman verifikasi."
+        onClose={navigateToOtpScreen}
+        onPrimaryAction={navigateToOtpScreen}
+        primaryActionLabel="Lanjut Verifikasi"
+        title="OTP Terkirim"
+        variant="success"
       />
 
       <div
@@ -100,57 +74,30 @@ export default function BuyerForgotPasswordPage() {
             </div>
             <h1 className={`${poppins.className} mb-3 text-2xl font-bold text-gray-900 dark:text-white`}>Lupa Kata Sandi?</h1>
             <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-              Masukkan Email atau Nomor WhatsApp yang terdaftar untuk menerima kode verifikasi OTP.
+              Masukkan email terdaftar untuk menerima kode verifikasi OTP.
             </p>
           </div>
 
           <form className="space-y-6" onSubmit={onSubmit}>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Identifikasi Akun</label>
+              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email Terdaftar</label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute top-1/2 left-4 -translate-y-1/2 text-xl text-gray-400">
-                  contact_mail
+                  mail
                 </span>
                 <input
                   className="w-full rounded-xl border-none bg-gray-50 py-4 pr-4 pl-12 text-gray-900 placeholder-gray-400 transition-all focus:ring-2 focus:ring-primary dark:bg-slate-800 dark:text-white"
                   disabled={isSubmitting}
-                  placeholder="Email atau No. WhatsApp"
+                  placeholder="nama@email.com"
                   required
-                  type="text"
-                  value={identifier}
-                  onChange={(event) => setIdentifier(event.target.value)}
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                 />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Kirim OTP ke</label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  className={`rounded-xl border px-4 py-3 text-sm font-semibold transition-all ${
-                    method === "email"
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-slate-700 dark:text-gray-300 dark:hover:bg-slate-800"
-                  }`}
-                  disabled={isSubmitting}
-                  onClick={() => setMethod("email")}
-                  type="button"
-                >
-                  Email
-                </button>
-                <button
-                  className={`rounded-xl border px-4 py-3 text-sm font-semibold transition-all ${
-                    method === "whatsapp"
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-slate-700 dark:text-gray-300 dark:hover:bg-slate-800"
-                  }`}
-                  disabled={isSubmitting}
-                  onClick={() => setMethod("whatsapp")}
-                  type="button"
-                >
-                  WhatsApp
-                </button>
-              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                OTP akan dikirim ke email yang sudah terdaftar.
+              </p>
             </div>
 
             <button
@@ -159,7 +106,9 @@ export default function BuyerForgotPasswordPage() {
               type="submit"
             >
               {isSubmitting ? "Memproses..." : "Kirim Kode OTP"}
-              <span className="material-symbols-outlined text-xl">{isSubmitting ? "progress_activity" : "send"}</span>
+              <span className={`material-symbols-outlined text-xl ${isSubmitting ? "animate-spin" : ""}`}>
+                {isSubmitting ? "progress_activity" : "send"}
+              </span>
             </button>
 
             <div className="pt-4 text-center">
@@ -181,4 +130,6 @@ export default function BuyerForgotPasswordPage() {
       </div>
     </>
   );
-}
+};
+
+export default BuyerForgotPasswordPage;

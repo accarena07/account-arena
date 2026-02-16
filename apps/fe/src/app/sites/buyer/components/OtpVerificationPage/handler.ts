@@ -17,6 +17,40 @@ import type {
 
 export const OTP_LENGTH = 6;
 export const DEFAULT_RESEND_COOLDOWN_SEC = 60;
+export const RESEND_SUCCESS_MESSAGE = "Kode OTP baru sudah dikirim. Silakan cek email Anda.";
+export const OTP_LENGTH_ERROR_MESSAGE = "Kode OTP harus 6 digit.";
+const SYSTEM_ERROR_MESSAGE = "Sistem sedang mengalami gangguan. Silakan coba beberapa saat lagi.";
+const VERIFY_FALLBACK_MESSAGE = "Verifikasi OTP gagal. Silakan coba lagi.";
+const RESEND_FALLBACK_MESSAGE = "Gagal kirim ulang OTP.";
+const VERIFY_BUSINESS_ERROR_CODES = new Set([
+  "VALIDATION_ERROR",
+  "OTP_INVALID",
+  "OTP_EXPIRED",
+  "OTP_NOT_FOUND",
+  "OTP_ATTEMPTS_EXCEEDED",
+  "USER_NOT_FOUND",
+]);
+const RESEND_BUSINESS_ERROR_CODES = new Set([
+  "VALIDATION_ERROR",
+  "OTP_RESEND_TOO_FAST",
+  "OTP_NOT_FOUND",
+  "EMAIL_NOT_REGISTERED",
+]);
+const SYSTEM_ERROR_CODES = new Set([
+  "MAILER_NOT_CONFIGURED",
+  "MAIL_SEND_TIMEOUT",
+  "BAD_REQUEST",
+]);
+
+const isSystemLevelError = (error: ApiClientError, errorCode?: string) => {
+  const loweredMessage = error.message.toLowerCase();
+  return (
+    (typeof error.status === "number" && error.status >= 500) ||
+    SYSTEM_ERROR_CODES.has(errorCode ?? "") ||
+    loweredMessage.includes("timeout") ||
+    loweredMessage.includes("network")
+  );
+};
 
 export const getOtpFlowUiMeta = (flow: OtpFlow): OtpFlowUiMeta => {
   if (flow === "register") {
@@ -30,8 +64,12 @@ export const getOtpFlowUiMeta = (flow: OtpFlow): OtpFlowUiMeta => {
   return {
     backHref: "/login",
     backLabel: "Kembali ke Login",
-    description: "Masukkan 6 digit kode yang dikirim ke email/WhatsApp Anda",
+    description: "Masukkan 6 digit kode yang dikirim ke email Anda",
   };
+};
+
+export const getOtpContextMissingRedirect = (flow: OtpFlow) => {
+  return flow === "register" ? "/register" : "/login/forgot-password";
 };
 
 export const sanitizeOtpDigit = (value: string): string => {
@@ -49,30 +87,56 @@ export const formatCooldown = (sec: number): string => {
 };
 
 export const mapVerifyOtpError = (error: unknown): OtpVerifyErrorState => {
-  if (error instanceof ApiClientError) {
+  if (!(error instanceof ApiClientError)) {
     return {
       title: "Verifikasi Gagal",
-      message: error.message || "Verifikasi OTP gagal. Silakan coba lagi.",
+      message: SYSTEM_ERROR_MESSAGE,
     };
   }
 
+  const errorCode = (error.details as { code?: string } | undefined)?.code;
+  if (isSystemLevelError(error, errorCode)) {
+    return {
+      title: "Verifikasi Gagal",
+      message: SYSTEM_ERROR_MESSAGE,
+    };
+  }
+  if (VERIFY_BUSINESS_ERROR_CODES.has(errorCode ?? "")) {
+    return {
+      title: "Verifikasi Gagal",
+      message: error.message || VERIFY_FALLBACK_MESSAGE,
+    };
+  }
   return {
     title: "Verifikasi Gagal",
-    message: "Verifikasi OTP gagal. Silakan coba lagi.",
+    message: VERIFY_FALLBACK_MESSAGE,
   };
 };
 
 export const mapResendOtpError = (error: unknown): OtpVerifyErrorState => {
-  if (error instanceof ApiClientError) {
+  if (!(error instanceof ApiClientError)) {
     return {
       title: "Gagal Kirim Ulang OTP",
-      message: error.message || "Gagal kirim ulang OTP.",
+      message: SYSTEM_ERROR_MESSAGE,
     };
   }
 
+  const errorCode = (error.details as { code?: string } | undefined)?.code;
+  if (isSystemLevelError(error, errorCode)) {
+    return {
+      title: "Gagal Kirim Ulang OTP",
+      message: SYSTEM_ERROR_MESSAGE,
+    };
+  }
+  if (RESEND_BUSINESS_ERROR_CODES.has(errorCode ?? "")) {
+    return {
+      title: "Gagal Kirim Ulang OTP",
+      message: error.message || RESEND_FALLBACK_MESSAGE,
+    };
+  }
   return {
     title: "Gagal Kirim Ulang OTP",
-    message: "Gagal kirim ulang OTP.",
+    message: RESEND_FALLBACK_MESSAGE,
   };
 };
 
@@ -149,7 +213,7 @@ export const resendRegisterOtp = async (email: string): Promise<RegisterOtpResen
 
 export const resendPasswordResetOtp = async (
   identifier: string,
-  method: "email" | "whatsapp",
+  method: "email",
 ): Promise<PasswordOtpResendResult> => {
   const result = await apiFetch(
     "/api/v1/auth/password/otp/request",

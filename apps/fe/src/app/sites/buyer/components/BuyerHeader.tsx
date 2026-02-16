@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { clearAuthSession, getStoredAuth } from "@/lib/auth-session";
 import ThemeToggleButton from "./ThemeToggleButton";
 
 type BuyerHeaderProps = {
@@ -11,11 +13,49 @@ type BuyerHeaderProps = {
 };
 
 export default function BuyerHeader({
-  isLoggedIn = false,
+  isLoggedIn,
   searchPlaceholder = "Cari game, item, atau akun...",
 }: BuyerHeaderProps) {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [storedAuthEmail, setStoredAuthEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const syncAuthState = () => {
+      const stored = getStoredAuth();
+      setStoredAuthEmail(stored?.user?.email ?? null);
+    };
+
+    syncAuthState();
+    window.addEventListener("storage", syncAuthState);
+    return () => {
+      window.removeEventListener("storage", syncAuthState);
+    };
+  }, []);
+
+  const effectiveIsLoggedIn = isLoggedIn ?? Boolean(storedAuthEmail);
+  const displayName = useMemo(() => {
+    if (!storedAuthEmail) return "Buyer";
+    return storedAuthEmail.split("@")[0] || "Buyer";
+  }, [storedAuthEmail]);
+  const displayInitials = useMemo(() => {
+    const parts = displayName
+      .split(/[.\s_-]+/)
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (parts.length === 0) return "BY";
+    const first = parts[0]?.[0] ?? "";
+    const second = parts[1]?.[0] ?? "";
+    return `${first}${second || (parts[0]?.[1] ?? "")}`.toUpperCase() || "BY";
+  }, [displayName]);
+
+  const onLogout = () => {
+    clearAuthSession();
+    setProfileMenuOpen(false);
+    setStoredAuthEmail(null);
+    router.push("/login");
+  };
 
   return (
     <>
@@ -30,7 +70,7 @@ export default function BuyerHeader({
 
       <header className="sticky top-0 z-60 border-b border-slate-200 bg-white/90 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/90">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:h-20 md:px-6">
-          {!isLoggedIn ? (
+          {!effectiveIsLoggedIn ? (
             <button
               className="-ml-2 cursor-pointer p-2 text-slate-600 dark:text-slate-400 md:hidden"
               onClick={() => setMobileMenuOpen(true)}
@@ -50,7 +90,7 @@ export default function BuyerHeader({
               </span>
             </Link>
 
-            {!isLoggedIn ? (
+            {!effectiveIsLoggedIn ? (
               <nav className="hidden items-center gap-6 md:flex">
                 <Link className="text-sm font-semibold text-primary dark:text-white" href="/">
                   Home
@@ -79,7 +119,7 @@ export default function BuyerHeader({
           <div className="relative flex items-center gap-2 md:gap-4">
             <ThemeToggleButton className="text-slate-500 dark:text-slate-400" />
 
-            {!isLoggedIn ? (
+            {!effectiveIsLoggedIn ? (
               <>
                 <div className="hidden items-center gap-4 md:flex">
                   <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400" href="/login">
@@ -119,7 +159,7 @@ export default function BuyerHeader({
                     />
                   </div>
                   <div className="hidden text-left lg:block">
-                    <p className="mb-1 text-sm leading-none font-bold">Felix Wijaya</p>
+                    <p className="mb-1 text-sm leading-none font-bold capitalize">{displayName}</p>
                     <div className="flex items-center gap-1">
                       <p className="text-[10px] font-medium tracking-wider text-slate-500 uppercase">Buyer Premium</p>
                       <span className="material-symbols-outlined text-[14px] text-slate-400 transition-colors group-hover:text-primary">
@@ -133,10 +173,10 @@ export default function BuyerHeader({
                   <div className="absolute top-14 right-0 z-70 w-72 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-800 md:top-16">
                     <div className="border-b border-slate-50 p-5 dark:border-slate-700">
                       <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-lg font-bold text-white">FW</div>
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-lg font-bold text-white">{displayInitials}</div>
                         <div>
-                          <h4 className="font-bold text-slate-900 dark:text-white">Felix Wijaya</h4>
-                          <p className="max-w-40 truncate text-xs text-slate-500">felix.wijaya@example.com</p>
+                          <h4 className="font-bold text-slate-900 capitalize dark:text-white">{displayName}</h4>
+                          <p className="max-w-40 truncate text-xs text-slate-500">{storedAuthEmail ?? "-"}</p>
                         </div>
                       </div>
                     </div>
@@ -170,14 +210,14 @@ export default function BuyerHeader({
                       </Link>
                     </div>
                     <div className="border-t border-slate-50 p-2 dark:border-slate-700">
-                      <Link
+                      <button
                         className="group flex items-center gap-3 rounded-xl px-4 py-3 transition-all hover:bg-red-50 dark:hover:bg-red-900/10"
-                        href="/"
-                        onClick={() => setProfileMenuOpen(false)}
+                        onClick={onLogout}
+                        type="button"
                       >
                         <span className="material-symbols-outlined text-slate-400 group-hover:text-red-500">logout</span>
                         <span className="text-sm font-semibold text-red-500">Keluar</span>
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 ) : null}
@@ -187,7 +227,7 @@ export default function BuyerHeader({
         </div>
       </header>
 
-      {!isLoggedIn && mobileMenuOpen ? (
+      {!effectiveIsLoggedIn && mobileMenuOpen ? (
         <button
           aria-label="Close menu overlay"
           className="fixed inset-0 z-50 bg-black/50 md:hidden"
@@ -196,7 +236,7 @@ export default function BuyerHeader({
         />
       ) : null}
 
-      {!isLoggedIn ? (
+      {!effectiveIsLoggedIn ? (
         <div
           className={`fixed top-0 left-0 bottom-0 z-60 w-70 overflow-y-auto bg-white shadow-2xl transition-transform duration-300 dark:bg-background-dark md:hidden ${
             mobileMenuOpen ? "translate-x-0" : "-translate-x-full"

@@ -2,7 +2,7 @@
 
 const STORAGE_KEY = "buyer_password_reset_context";
 
-export type PasswordResetMethod = "email" | "whatsapp";
+export type PasswordResetMethod = "email";
 
 export type PasswordResetContext = {
   identifier: string;
@@ -12,11 +12,11 @@ export type PasswordResetContext = {
   resetToken?: string;
 };
 
-function hasWindow() {
+const hasWindow = () => {
   return typeof window !== "undefined";
-}
+};
 
-export function getPasswordResetContext(): PasswordResetContext | null {
+export const getPasswordResetContext = (): PasswordResetContext | null => {
   if (!hasWindow()) return null;
   const raw = window.sessionStorage.getItem(STORAGE_KEY);
   if (!raw) return null;
@@ -26,22 +26,22 @@ export function getPasswordResetContext(): PasswordResetContext | null {
     window.sessionStorage.removeItem(STORAGE_KEY);
     return null;
   }
-}
+};
 
-export function setPasswordResetContext(next: PasswordResetContext) {
+export const setPasswordResetContext = (next: PasswordResetContext) => {
   if (!hasWindow()) return;
   window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-}
+};
 
-export function updatePasswordResetContext(
+export const updatePasswordResetContext = (
   patch: Partial<PasswordResetContext>,
-) {
+): void => {
   const current = getPasswordResetContext();
   if (!current) return;
   setPasswordResetContext({ ...current, ...patch });
-}
+};
 
-export function clearPasswordResetContext() {
+export const clearPasswordResetContext = () => {
   if (!hasWindow()) return;
   window.sessionStorage.removeItem(STORAGE_KEY);
-}
+};

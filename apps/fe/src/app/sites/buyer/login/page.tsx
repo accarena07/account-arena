@@ -1,12 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { AuthLoginResponseSchema } from "@acme/shared";
 import ResultModal from "@/components/common/ResultModal";
 import AuthPageShell from "../components/AuthPageShell";
-import { apiFetch, ApiClientError } from "@/lib/apiClient";
-import { setAuthSession } from "@/lib/auth-session";
+import { useBuyerLoginPage } from "./useBuyerLoginPage";
 
 const loginFeatures = [
   {
@@ -19,58 +15,28 @@ const loginFeatures = [
   },
 ] as const;
 
-export default function BuyerLoginPage() {
-  const router = useRouter();
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("Kata sandi yang Anda masukkan salah. Silakan coba lagi.");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (isSubmitting) return;
-    if (!email.trim() || !password) {
-      setErrorMessage("Email dan kata sandi wajib diisi.");
-      setShowErrorModal(true);
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      const result = await apiFetch(
-        "/api/v1/auth/login",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: email.trim(),
-            password,
-          }),
-        },
-        AuthLoginResponseSchema,
-      );
-
-      setAuthSession(result.session, result.user, result.roles);
-      router.push("/");
-    } catch (error) {
-      const message =
-        error instanceof ApiClientError ? error.message : "Terjadi kendala saat login. Silakan coba lagi.";
-      setErrorMessage(message);
-      setIsSubmitting(false);
-      setShowErrorModal(true);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
+const BuyerLoginPage = () => {
+  const {
+    showErrorModal,
+    errorMessage,
+    isSubmitting,
+    showPassword,
+    email,
+    password,
+    setEmail,
+    setPassword,
+    onCloseErrorModal,
+    onTogglePasswordVisibility,
+    onSubmit,
+  } = useBuyerLoginPage();
 
   return (
     <>
       <ResultModal
         isOpen={showErrorModal}
         message={errorMessage}
-        onClose={() => setShowErrorModal(false)}
-        onPrimaryAction={() => setShowErrorModal(false)}
+        onClose={onCloseErrorModal}
+        onPrimaryAction={onCloseErrorModal}
         primaryActionLabel="Coba Lagi"
         secondaryActionHref="/login/forgot-password"
         secondaryActionLabel="Lupa Kata Sandi?"
@@ -125,7 +91,7 @@ export default function BuyerLoginPage() {
               aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
               className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
               disabled={isSubmitting}
-              onClick={() => setShowPassword((prev) => !prev)}
+              onClick={onTogglePasswordVisibility}
               type="button"
             >
               <span className="material-symbols-outlined">{showPassword ? "visibility_off" : "visibility"}</span>
@@ -152,4 +118,6 @@ export default function BuyerLoginPage() {
       </AuthPageShell>
     </>
   );
-}
+};
+
+export default BuyerLoginPage;

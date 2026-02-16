@@ -4,6 +4,8 @@ export const metadata: Metadata = {
   title: "Login & Register | GameMarket",
 };
 
-export default function BuyerLoginLayout({ children }: { children: React.ReactNode }) {
+const BuyerLoginLayout = ({ children }: { children: React.ReactNode }) => {
   return children;
-}
+};
+
+export default BuyerLoginLayout;

@@ -1,5 +1,7 @@
 import OtpVerificationPage from "../../components/OtpVerificationPage";
 
-export default function BuyerOtpPage() {
+const BuyerOtpPage = () => {
   return <OtpVerificationPage flow="reset-password" />;
-}
+};
+
+export default BuyerOtpPage;

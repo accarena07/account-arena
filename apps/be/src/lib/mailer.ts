@@ -71,3 +71,38 @@ export async function sendRegisterOtpEmail(params: {
 
   await Promise.race([sendMailPromise, timeoutPromise]);
 }
+
+export async function sendPasswordResetOtpEmail(params: {
+  to: string;
+  otp: string;
+  expiresInMin: number;
+}) {
+  const tx = await getTransporter();
+  const from = getRequiredEnv("SMTP_FROM", SMTP_FROM);
+
+  const sendMailPromise = tx.sendMail({
+    from,
+    to: params.to,
+    subject: "Kode OTP Reset Password Account Arena",
+    text: `Kode OTP reset password Anda adalah ${params.otp}. Berlaku ${params.expiresInMin} menit.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height:1.6; color:#0f172a;">
+        <h2 style="margin:0 0 12px;">Reset Password</h2>
+        <p style="margin:0 0 8px;">Gunakan kode OTP berikut untuk reset password akun Anda:</p>
+        <div style="font-size:28px; font-weight:700; letter-spacing:6px; margin:12px 0; color:#1d4ed8;">
+          ${params.otp}
+        </div>
+        <p style="margin:0 0 8px;">Kode berlaku selama ${params.expiresInMin} menit.</p>
+        <p style="margin:0;">Jika Anda tidak merasa meminta reset password, abaikan email ini.</p>
+      </div>
+    `,
+  });
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    const timeoutErr = new Error("Mail send timeout");
+    (timeoutErr as Error & { code?: string }).code = "MAIL_SEND_TIMEOUT";
+    setTimeout(() => reject(timeoutErr), MAILER_TIMEOUT_MS);
+  });
+
+  await Promise.race([sendMailPromise, timeoutPromise]);
+}

@@ -4,7 +4,8 @@ export const metadata: Metadata = {
   title: "Lupa Kata Sandi | GameMarket",
 };
 
-export default function BuyerForgotPasswordLayout({ children }: { children: React.ReactNode }) {
+const BuyerForgotPasswordLayout = ({ children }: { children: React.ReactNode }) => {
   return children;
-}
+};
 
+export default BuyerForgotPasswordLayout;

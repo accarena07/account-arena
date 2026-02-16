@@ -1,234 +1,53 @@
 "use client";
 
 import { Inter, Poppins } from "next/font/google";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import ResultModal from "@/components/common/ResultModal";
-import { setAuthSession } from "@/lib/auth-session";
-import {
-  getPasswordResetContext,
-  updatePasswordResetContext,
-} from "../../login/password-reset-context";
-import {
-  clearRegisterOtpContext,
-  getRegisterOtpContext,
-  updateRegisterOtpContext,
-} from "../../register/register-otp-context";
 import ThemeToggleButton from "../ThemeToggleButton";
-import {
-  DEFAULT_RESEND_COOLDOWN_SEC,
-  OTP_LENGTH,
-  buildOtpCode,
-  extractRetryAfterSec,
-  formatCooldown,
-  getOtpFlowUiMeta,
-  mapResendOtpError,
-  mapVerifyOtpError,
-  resendPasswordResetOtp,
-  resendRegisterOtp,
-  sanitizeOtpDigit,
-  verifyPasswordResetOtp,
-  verifyRegisterOtp,
-} from "./handler";
+import { OTP_LENGTH } from "./handler";
 import type { OtpVerificationPageProps } from "./otp-verification.type";
+import { useOtpVerificationPage } from "./useOtpVerificationPage";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
 const OtpVerificationPage = ({ flow }: OtpVerificationPageProps) => {
-  const router = useRouter();
-  const [otpDigits, setOtpDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
-  const [showOtpErrorModal, setShowOtpErrorModal] = useState(false);
-  const [showResendSuccessModal, setShowResendSuccessModal] = useState(false);
-  const [errorTitle, setErrorTitle] = useState("Verifikasi Gagal");
-  const [errorMessage, setErrorMessage] = useState("Kode OTP yang Anda masukkan salah. Silakan cek kembali dan coba lagi.");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isResending, setIsResending] = useState(false);
-  const [resendCooldownSec, setResendCooldownSec] = useState(DEFAULT_RESEND_COOLDOWN_SEC);
-  const [debugOtp, setDebugOtp] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (resendCooldownSec <= 0) return;
-    const timer = window.setInterval(() => {
-      setResendCooldownSec((prev) => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
-    return () => window.clearInterval(timer);
-  }, [resendCooldownSec]);
-
-  useEffect(() => {
-    if (flow === "reset-password") {
-      const context = getPasswordResetContext();
-      if (!context) {
-        router.replace("/login/forgot-password");
-        return;
-      }
-      setDebugOtp(context.debugOtp ?? null);
-      setResendCooldownSec(context.resendCooldownSec ?? DEFAULT_RESEND_COOLDOWN_SEC);
-      return;
-    }
-
-    const registerContext = getRegisterOtpContext();
-    if (!registerContext) {
-      router.replace("/register");
-      return;
-    }
-    setDebugOtp(registerContext.debugOtp ?? null);
-    setResendCooldownSec(registerContext.resendCooldownSec ?? DEFAULT_RESEND_COOLDOWN_SEC);
-  }, [flow, router]);
-
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const otpCode = buildOtpCode(otpDigits);
-    if (otpCode.length !== OTP_LENGTH) {
-      setErrorTitle("Verifikasi Gagal");
-      setErrorMessage("Kode OTP harus 6 digit.");
-      setShowOtpErrorModal(true);
-      return;
-    }
-
-    if (flow === "reset-password") {
-      const context = getPasswordResetContext();
-      if (!context) {
-        router.replace("/login/forgot-password");
-        return;
-      }
-
-      try {
-        setIsSubmitting(true);
-        const result = await verifyPasswordResetOtp(context.identifier, otpCode);
-
-        updatePasswordResetContext({ resetToken: result.resetToken });
-        router.push("/login/reset-password");
-        return;
-      } catch (error) {
-        const mapped = mapVerifyOtpError(error);
-        setErrorTitle(mapped.title);
-        setErrorMessage(mapped.message);
-        setShowOtpErrorModal(true);
-      } finally {
-        setIsSubmitting(false);
-      }
-      return;
-    }
-
-    const context = getRegisterOtpContext();
-    if (!context) {
-      router.replace("/register");
-      return;
-    }
-    try {
-      setIsSubmitting(true);
-      const result = await verifyRegisterOtp(context.email, otpCode);
-
-      if (result.session) {
-        setAuthSession(result.session, result.user, result.roles);
-      }
-      clearRegisterOtpContext();
-      router.push("/register/success");
-    } catch (error) {
-      const mapped = mapVerifyOtpError(error);
-      setErrorTitle(mapped.title);
-      setErrorMessage(mapped.message);
-      setShowOtpErrorModal(true);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const onChangeDigit = (index: number, value: string) => {
-    const sanitized = sanitizeOtpDigit(value);
-    setOtpDigits((prev) => {
-      const next = [...prev];
-      next[index] = sanitized;
-      return next;
-    });
-  };
-
-  const onResendOtp = async () => {
-    if (isResending || resendCooldownSec > 0) return;
-
-    if (flow === "reset-password") {
-      const context = getPasswordResetContext();
-      if (!context) {
-        router.replace("/login/forgot-password");
-        return;
-      }
-
-      try {
-        setIsResending(true);
-        const result = await resendPasswordResetOtp(context.identifier, context.method);
-        updatePasswordResetContext({
-          debugOtp: result.debugOtp,
-          resendCooldownSec: result.resendCooldownSec,
-        });
-        setDebugOtp(result.debugOtp ?? null);
-        setResendCooldownSec(result.resendCooldownSec);
-        setShowResendSuccessModal(true);
-      } catch (error) {
-        const retryAfterSec = extractRetryAfterSec(error);
-        if (retryAfterSec) {
-          setResendCooldownSec(retryAfterSec);
-          return;
-        }
-        const mapped = mapResendOtpError(error);
-        setErrorTitle(mapped.title);
-        setErrorMessage(mapped.message);
-        setShowOtpErrorModal(true);
-      } finally {
-        setIsResending(false);
-      }
-      return;
-    }
-
-    const registerContext = getRegisterOtpContext();
-    if (!registerContext) {
-      router.replace("/register");
-      return;
-    }
-
-    try {
-      setIsResending(true);
-      const result = await resendRegisterOtp(registerContext.email);
-      updateRegisterOtpContext({
-        debugOtp: result.debugOtp,
-        resendCooldownSec: result.resendCooldownSec,
-      });
-      setDebugOtp(result.debugOtp ?? null);
-      setResendCooldownSec(result.resendCooldownSec);
-      setShowResendSuccessModal(true);
-    } catch (error) {
-      const retryAfterSec = extractRetryAfterSec(error);
-      if (retryAfterSec) {
-        setResendCooldownSec(retryAfterSec);
-        return;
-      }
-      const mapped = mapResendOtpError(error);
-      setErrorTitle(mapped.title);
-      setErrorMessage(mapped.message);
-      setShowOtpErrorModal(true);
-    } finally {
-      setIsResending(false);
-    }
-  };
-
-  const { backHref, backLabel, description } = getOtpFlowUiMeta(flow);
+  const {
+    otpDigits,
+    showOtpErrorModal,
+    showResendSuccessModal,
+    errorTitle,
+    errorMessage,
+    isSubmitting,
+    isResending,
+    resendCooldownSec,
+    backHref,
+    backLabel,
+    description,
+    onCloseOtpErrorModal,
+    onCloseResendSuccessModal,
+    onChangeDigit,
+    onSubmit,
+    onResendOtp,
+    formatCooldown,
+    resendSuccessMessage,
+  } = useOtpVerificationPage(flow);
 
   return (
     <>
       <ResultModal
         isOpen={showOtpErrorModal}
         message={errorMessage}
-        onClose={() => setShowOtpErrorModal(false)}
-        onPrimaryAction={() => setShowOtpErrorModal(false)}
+        onClose={onCloseOtpErrorModal}
+        onPrimaryAction={onCloseOtpErrorModal}
         primaryActionLabel="Coba Lagi"
         title={errorTitle}
         variant="error"
       />
       <ResultModal
         isOpen={showResendSuccessModal}
-        message="Kode OTP baru sudah dikirim. Silakan cek email Anda."
-        onClose={() => setShowResendSuccessModal(false)}
-        onPrimaryAction={() => setShowResendSuccessModal(false)}
+        message={resendSuccessMessage}
+        onClose={onCloseResendSuccessModal}
+        onPrimaryAction={onCloseResendSuccessModal}
         primaryActionLabel="OK"
         title="OTP Terkirim"
         variant="success"
@@ -298,11 +117,6 @@ const OtpVerificationPage = ({ flow }: OtpVerificationPageProps) => {
                       : "Kirim Ulang OTP"}
                 </button>
               </p>
-              {flow === "reset-password" && debugOtp ? (
-                <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
-                  Dev OTP: <span className="font-bold tracking-wider">{debugOtp}</span>
-                </p>
-              ) : null}
             </div>
 
             <div className="space-y-4">

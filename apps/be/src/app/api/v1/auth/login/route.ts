@@ -4,7 +4,23 @@ import { AuthLoginRequestSchema } from "@acme/shared";
 
 export const runtime = "nodejs";
 
-export async function POST(req: Request) {
+const mapLoginErrorMessage = (rawMessage?: string) => {
+  const normalized = (rawMessage ?? "").toLowerCase();
+
+  if (normalized.includes("invalid login credentials")) {
+    return "Email atau kata sandi salah.";
+  }
+  if (normalized.includes("email not confirmed")) {
+    return "Email belum terverifikasi. Silakan cek email Anda.";
+  }
+  if (normalized.includes("too many requests")) {
+    return "Terlalu banyak percobaan login. Silakan coba lagi beberapa saat.";
+  }
+
+  return "Login gagal. Silakan coba lagi.";
+};
+
+export const POST = async (req: Request) => {
   try {
     const body = await readJson<unknown>(req);
     const parsed = AuthLoginRequestSchema.safeParse(body);
@@ -25,7 +41,10 @@ export async function POST(req: Request) {
 
     if (error || !data.user || !data.session) {
       return jsonError(
-        { code: "AUTH_LOGIN_FAILED", message: error?.message ?? "Login gagal" },
+        {
+          code: "AUTH_LOGIN_FAILED",
+          message: mapLoginErrorMessage(error?.message),
+        },
         401,
       );
     }
@@ -59,4 +78,4 @@ export async function POST(req: Request) {
       e?.code === "UNSUPPORTED_MEDIA_TYPE" ? 415 : 400,
     );
   }
-}
+};

@@ -97,13 +97,13 @@ export type AuthMeResponse = z.infer<typeof AuthMeResponseSchema>;
 
 export const PasswordResetOtpRequestSchema = z.object({
   identifier: z.string().min(3).max(120),
-  method: z.enum(["email", "whatsapp"]).optional(),
+  method: z.literal("email").optional(),
 });
 export type PasswordResetOtpRequest = z.infer<typeof PasswordResetOtpRequestSchema>;
 
 export const PasswordResetOtpRequestResponseSchema = z.object({
   sent: z.boolean(),
-  method: z.enum(["email", "whatsapp"]),
+  method: z.literal("email"),
   expiresInSec: z.number().int().positive(),
   resendCooldownSec: z.number().int().positive(),
   debugOtp: z.string().optional(),

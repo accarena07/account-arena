@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Inter, Poppins } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { PasswordResetSubmitResponseSchema } from "@acme/shared";
@@ -14,8 +14,12 @@ import {
 
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
+const hasLowercaseRegex = /[a-z]/;
+const hasUppercaseRegex = /[A-Z]/;
+const hasNumberRegex = /\d/;
+const hasSpecialCharRegex = /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
 
-export default function BuyerResetPasswordPage() {
+const BuyerResetPasswordPage = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -26,8 +30,28 @@ export default function BuyerResetPasswordPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("Gagal menyimpan kata sandi.");
+  const [hasValidResetContext, setHasValidResetContext] = useState<boolean | null>(null);
+  const meetsMinLength = password.length >= 8;
+  const hasLowercase = hasLowercaseRegex.test(password);
+  const hasUppercase = hasUppercaseRegex.test(password);
+  const hasNumber = hasNumberRegex.test(password);
+  const hasSpecialChar = hasSpecialCharRegex.test(password);
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    const context = getPasswordResetContext();
+    if (!context?.resetToken) {
+      setHasValidResetContext(false);
+      router.replace("/login/forgot-password");
+      return;
+    }
+    setHasValidResetContext(true);
+  }, [router]);
+
+  if (hasValidResetContext !== true) {
+    return null;
+  }
+
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isSubmitting) return;
 
@@ -78,7 +102,7 @@ export default function BuyerResetPasswordPage() {
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <>
@@ -193,15 +217,53 @@ export default function BuyerResetPasswordPage() {
                 </h3>
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                    <span className="material-symbols-outlined text-lg text-green-500">check_circle</span>
+                    <span
+                      className={`material-symbols-outlined text-lg ${
+                        meetsMinLength ? "text-green-500" : "text-gray-300 dark:text-gray-600"
+                      }`}
+                    >
+                      {meetsMinLength ? "check_circle" : "radio_button_unchecked"}
+                    </span>
                     Minimal 8 karakter
                   </li>
                   <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                    <span className="material-symbols-outlined text-lg text-gray-300 dark:text-gray-600">radio_button_unchecked</span>
+                    <span
+                      className={`material-symbols-outlined text-lg ${
+                        hasLowercase ? "text-green-500" : "text-gray-300 dark:text-gray-600"
+                      }`}
+                    >
+                      {hasLowercase ? "check_circle" : "radio_button_unchecked"}
+                    </span>
+                    Mengandung huruf kecil
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <span
+                      className={`material-symbols-outlined text-lg ${
+                        hasUppercase ? "text-green-500" : "text-gray-300 dark:text-gray-600"
+                      }`}
+                    >
+                      {hasUppercase ? "check_circle" : "radio_button_unchecked"}
+                    </span>
+                    Mengandung huruf besar
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <span
+                      className={`material-symbols-outlined text-lg ${
+                        hasNumber ? "text-green-500" : "text-gray-300 dark:text-gray-600"
+                      }`}
+                    >
+                      {hasNumber ? "check_circle" : "radio_button_unchecked"}
+                    </span>
                     Mengandung setidaknya satu angka
                   </li>
                   <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                    <span className="material-symbols-outlined text-lg text-gray-300 dark:text-gray-600">radio_button_unchecked</span>
+                    <span
+                      className={`material-symbols-outlined text-lg ${
+                        hasSpecialChar ? "text-green-500" : "text-gray-300 dark:text-gray-600"
+                      }`}
+                    >
+                      {hasSpecialChar ? "check_circle" : "radio_button_unchecked"}
+                    </span>
                     Mengandung karakter spesial (!@#$%^&*)
                   </li>
                 </ul>
@@ -244,4 +306,6 @@ export default function BuyerResetPasswordPage() {
       </div>
     </>
   );
-}
+};
+
+export default BuyerResetPasswordPage;
