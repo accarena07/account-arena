@@ -31,11 +31,22 @@ export const clearAuthCookieHeaders = () => {
 };
 
 export const getAccessTokenFromCookieHeader = (cookieHeader: string | null): string | null => {
+  return getTokenFromCookieHeader(cookieHeader, ACCESS_COOKIE_NAME);
+};
+
+export const getRefreshTokenFromCookieHeader = (cookieHeader: string | null): string | null => {
+  return getTokenFromCookieHeader(cookieHeader, REFRESH_COOKIE_NAME);
+};
+
+const getTokenFromCookieHeader = (
+  cookieHeader: string | null,
+  cookieName: string,
+): string | null => {
   if (!cookieHeader) return null;
   const parts = cookieHeader.split(";").map((part) => part.trim());
-  const target = parts.find((part) => part.startsWith(`${ACCESS_COOKIE_NAME}=`));
+  const target = parts.find((part) => part.startsWith(`${cookieName}=`));
   if (!target) return null;
-  const raw = target.slice(`${ACCESS_COOKIE_NAME}=`.length);
+  const raw = target.slice(`${cookieName}=`.length);
   if (!raw) return null;
   try {
     return decodeURIComponent(raw);

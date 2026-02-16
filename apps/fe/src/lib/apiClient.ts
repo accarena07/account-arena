@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { ApiEnvelopeSchema } from "@acme/shared";
+import { ApiEnvelopeSchema, AuthRefreshResponseSchema } from "@acme/shared";
+import { clearAuthSession, setAuthSession } from "@/lib/auth-session";
 
 const BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
 const API_TIMEOUT_MS = process.env.NEXT_PUBLIC_API_TIMEOUT_MS
@@ -21,41 +22,111 @@ export class ApiClientError extends Error {
   }
 }
 
+let ongoingRefresh: Promise<boolean> | null = null;
+
+const tryRefreshSession = async (): Promise<boolean> => {
+  if (!ongoingRefresh) {
+    ongoingRefresh = (async () => {
+      try {
+        const res = await fetch(`${BASE}/api/v1/auth/refresh`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          credentials: "include",
+          cache: "no-store",
+        });
+
+        const json = await res.json().catch(() => null);
+        const parsedEnvelope = ApiEnvelopeSchema.safeParse(json);
+
+        if (!parsedEnvelope.success) {
+          clearAuthSession();
+          return false;
+        }
+
+        const envelope = parsedEnvelope.data;
+        if (!envelope.ok) {
+          clearAuthSession();
+          return false;
+        }
+
+        const parsedData = AuthRefreshResponseSchema.safeParse(envelope.data);
+        if (!parsedData.success) {
+          clearAuthSession();
+          return false;
+        }
+
+        setAuthSession(parsedData.data.session, parsedData.data.user, parsedData.data.roles);
+        return true;
+      } catch {
+        clearAuthSession();
+        return false;
+      } finally {
+        ongoingRefresh = null;
+      }
+    })();
+  }
+
+  return ongoingRefresh;
+};
+
 export async function apiFetch<T>(
   path: string,
   init?: RequestInit,
   dataSchema?: z.ZodType<T>
 ): Promise<T> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
-  let res: Response;
-  try {
-    res = await fetch(`${BASE}${path}`, {
-      ...init,
-      headers: {
-        "content-type": "application/json",
-        ...(init?.headers ?? {})
-      },
-      credentials: "include",
-      cache: "no-store",
-      signal: controller.signal,
-    });
-  } catch (error: unknown) {
-    if (error instanceof Error && error.name === "AbortError") {
-      throw new ApiClientError("Request timeout. Coba lagi.");
+  const request = async (): Promise<Response> => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+    try {
+      return await fetch(`${BASE}${path}`, {
+        ...init,
+        headers: {
+          "content-type": "application/json",
+          ...(init?.headers ?? {})
+        },
+        credentials: "include",
+        cache: "no-store",
+        signal: controller.signal,
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new ApiClientError("Request timeout. Coba lagi.");
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
     }
-    throw error;
-  } finally {
-    clearTimeout(timeoutId);
-  }
+  };
 
-  const json = await res.json().catch(() => null);
-  const parsedEnvelope = ApiEnvelopeSchema.safeParse(json);
+  const parseEnvelopeOrThrow = async (res: Response) => {
+    const json = await res.json().catch(() => null);
+    const parsedEnvelope = ApiEnvelopeSchema.safeParse(json);
 
-  if (!parsedEnvelope.success) {
-    throw new ApiClientError("Response format tidak sesuai", res.status, { json });
+    if (!parsedEnvelope.success) {
+      throw new ApiClientError("Response format tidak sesuai", res.status, { json });
+    }
+
+    return parsedEnvelope.data;
+  };
+
+  let res = await request();
+  let envelope = await parseEnvelopeOrThrow(res);
+
+  const shouldTryRefresh =
+    !envelope.ok &&
+    res.status === 401 &&
+    path !== "/api/v1/auth/refresh" &&
+    path !== "/api/v1/auth/login";
+
+  if (shouldTryRefresh) {
+    const refreshed = await tryRefreshSession();
+    if (refreshed) {
+      res = await request();
+      envelope = await parseEnvelopeOrThrow(res);
+    }
   }
-  const envelope = parsedEnvelope.data;
 
   if (!envelope.ok) {
     throw new ApiClientError(

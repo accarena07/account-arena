@@ -1,5 +1,6 @@
 import { jsonError } from "@/lib/api";
 import { getAccessTokenFromCookieHeader } from "@/lib/auth-cookie";
+import { logError, logWarn } from "@/lib/logger";
 import { getSupabaseAdminClient } from "@/lib/supabase";
 
 type UserProfile = {
@@ -64,17 +65,24 @@ export async function requireAuth(req: Request): Promise<GuardResult> {
   const { data: authData, error: authError } = await admin.auth.getUser(accessToken);
 
   if (authError || !authData.user) {
+    logWarn("auth.guard.invalid_token", {
+      error: authError,
+    });
     return {
       ok: false,
       response: jsonError(
-        { code: "UNAUTHORIZED", message: authError?.message ?? "Invalid token" },
+        { code: "UNAUTHORIZED", message: "Sesi tidak valid atau sudah berakhir." },
         401,
       ),
     };
   }
 
   const userId = authData.user.id;
-  const [{ data: profile }, { data: roleRows }, { data: latestKyc }] =
+  const [
+    { data: profile, error: profileError },
+    { data: roleRows, error: rolesError },
+    { data: latestKyc, error: kycError },
+  ] =
     await Promise.all([
       admin
         .from("profiles")
@@ -96,6 +104,22 @@ export async function requireAuth(req: Request): Promise<GuardResult> {
         .limit(1)
         .maybeSingle(),
     ]);
+
+  if (profileError || rolesError || kycError) {
+    logError("auth.guard.context_query_failed", undefined, {
+      profileError,
+      rolesError,
+      kycError,
+      userId,
+    });
+    return {
+      ok: false,
+      response: jsonError(
+        { code: "AUTH_CONTEXT_LOAD_FAILED", message: "Gagal memuat sesi pengguna" },
+        500,
+      ),
+    };
+  }
 
   const roles = (roleRows ?? []).map((r) => r.role);
   const hasSellerRole = roles.includes("seller");

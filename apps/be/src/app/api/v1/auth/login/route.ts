@@ -1,6 +1,8 @@
+import { checkAuthIpRateLimit } from "@/lib/auth-ip-rate-limit";
 import { jsonError, jsonOk, parseJsonWithSchema } from "@/lib/api";
 import { createAuthCookieHeaders } from "@/lib/auth-cookie";
 import { logError, logInfo, logWarn, maskEmail } from "@/lib/logger";
+import { getClientIp } from "@/lib/request-ip";
 import { getSupabaseAnonClient, getSupabaseAdminClient } from "@/lib/supabase";
 import { AuthLoginRequestSchema } from "@acme/shared";
 
@@ -31,6 +33,23 @@ export const POST = async (req: Request) => {
     });
     if (!parsed.ok) return parsed.response;
 
+    const clientIp = getClientIp(req);
+    const ipRateLimit = await checkAuthIpRateLimit("auth_login", clientIp);
+    if (!ipRateLimit.allowed) {
+      logWarn("auth.login.rate_limited", {
+        ipAddress: clientIp,
+        retryAfterSec: ipRateLimit.retryAfterSec,
+      });
+      return jsonError(
+        {
+          code: "AUTH_LOGIN_RATE_LIMITED",
+          message: "Terlalu banyak percobaan login. Silakan coba lagi beberapa saat.",
+          details: { retryAfterSec: ipRateLimit.retryAfterSec },
+        },
+        429,
+      );
+    }
+
     const supabase = getSupabaseAnonClient();
     const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
 
@@ -49,11 +68,25 @@ export const POST = async (req: Request) => {
     }
 
     const admin = getSupabaseAdminClient();
-    const { data: rolesRows } = await admin
+    const { data: rolesRows, error: rolesError } = await admin
       .from("user_roles")
       .select("role, is_active")
       .eq("user_id", data.user.id)
       .eq("is_active", true);
+
+    if (rolesError) {
+      logError("auth.login.roles_query_failed", rolesError, {
+        userId: data.user.id,
+        email: maskEmail(data.user.email),
+      });
+      return jsonError(
+        {
+          code: "AUTH_LOGIN_FAILED",
+          message: "Login gagal karena gangguan sistem. Silakan coba lagi.",
+        },
+        500,
+      );
+    }
 
     const payload = {
       user: {

@@ -61,7 +61,7 @@ const BuyerLoginPage = () => {
       >
         <form aria-busy={isSubmitting || isCheckingAuth} className="space-y-5" onSubmit={onSubmit}>
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email atau Username</label>
+          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
           <div className="relative">
             <span className="material-symbols-outlined absolute top-1/2 left-4 -translate-y-1/2 text-xl text-gray-400">
               alternate_email

@@ -211,6 +211,13 @@ export const AuthMeResponseSchema = z.object({
 });
 export type AuthMeResponse = z.infer<typeof AuthMeResponseSchema>;
 
+export const AuthRefreshResponseSchema = z.object({
+  user: AuthUserSchema,
+  roles: z.array(z.string()),
+  session: AuthSessionSchema,
+});
+export type AuthRefreshResponse = z.infer<typeof AuthRefreshResponseSchema>;
+
 export const PasswordResetOtpRequestSchema = z.object({
   identifier: z.string().min(3).max(120),
   method: z.literal("email").optional(),
