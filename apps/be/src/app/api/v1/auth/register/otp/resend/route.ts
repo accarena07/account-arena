@@ -4,6 +4,7 @@ import {
   getRegisterOtpCooldownRemainingSec,
   getRegisterOtpMeta,
   normalizeEmail,
+  rollbackResendRegisterOtp,
   resendRegisterOtp,
 } from "@/lib/register-otp-store";
 import { z } from "zod";
@@ -42,6 +43,16 @@ export async function POST(req: Request) {
       );
     }
 
+    if (!hasMailerEnv()) {
+      return jsonError(
+        {
+          code: "MAILER_NOT_CONFIGURED",
+          message: "SMTP belum dikonfigurasi di server.",
+        },
+        503,
+      );
+    }
+
     const resent = await resendRegisterOtp(normalizedEmail);
     if (!resent) {
       return jsonError(
@@ -53,21 +64,21 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!hasMailerEnv()) {
-      return jsonError(
-        {
-          code: "MAILER_NOT_CONFIGURED",
-          message: "SMTP belum dikonfigurasi di server.",
-        },
-        503,
-      );
+    try {
+      await sendRegisterOtpEmail({
+        to: normalizedEmail,
+        otp: resent.otp,
+        expiresInMin: Math.floor(getRegisterOtpMeta().otpExpiresSec / 60),
+      });
+    } catch (error) {
+      await rollbackResendRegisterOtp(normalizedEmail, resent.rollbackState).catch((rollbackError: unknown) => {
+        console.warn("[register-otp-resend] failed to rollback OTP session after send failure", {
+          email: normalizedEmail,
+          error: rollbackError,
+        });
+      });
+      throw error;
     }
-
-    await sendRegisterOtpEmail({
-      to: normalizedEmail,
-      otp: resent.otp,
-      expiresInMin: Math.floor(getRegisterOtpMeta().otpExpiresSec / 60),
-    });
 
     return jsonOk({
       sent: true,
@@ -76,6 +87,15 @@ export async function POST(req: Request) {
       ...(process.env.NODE_ENV !== "production" ? { debugOtp: resent.otp } : {}),
     });
   } catch (e: any) {
+    if (e?.code === "OTP_ENCRYPTION_KEY_MISSING") {
+      return jsonError(
+        {
+          code: "OTP_ENCRYPTION_KEY_MISSING",
+          message: "Konfigurasi keamanan OTP belum lengkap di server.",
+        },
+        503,
+      );
+    }
     if (e?.code === "MAIL_SEND_TIMEOUT") {
       return jsonError(
         {
@@ -85,13 +105,21 @@ export async function POST(req: Request) {
         504,
       );
     }
+    if (e?.code === "UNSUPPORTED_MEDIA_TYPE") {
+      return jsonError(
+        {
+          code: "UNSUPPORTED_MEDIA_TYPE",
+          message: "Content-Type harus application/json",
+        },
+        415,
+      );
+    }
     return jsonError(
       {
-        code: e?.code ?? "BAD_REQUEST",
-        message: e?.message ?? "Bad request",
-        details: e?.details,
+        code: "REGISTER_OTP_RESEND_FAILED",
+        message: "Kirim ulang OTP registrasi gagal. Silakan coba lagi.",
       },
-      e?.code === "UNSUPPORTED_MEDIA_TYPE" ? 415 : 400,
+      500,
     );
   }
 }

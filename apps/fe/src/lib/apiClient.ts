@@ -36,6 +36,7 @@ export async function apiFetch<T>(
         "content-type": "application/json",
         ...(init?.headers ?? {})
       },
+      credentials: "include",
       cache: "no-store",
       signal: controller.signal,
     });

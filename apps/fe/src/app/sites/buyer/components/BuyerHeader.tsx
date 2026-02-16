@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { apiFetch } from "@/lib/apiClient";
 import { clearAuthSession, getStoredAuth } from "@/lib/auth-session";
 import ThemeToggleButton from "./ThemeToggleButton";
 
@@ -50,11 +51,17 @@ export default function BuyerHeader({
     return `${first}${second || (parts[0]?.[1] ?? "")}`.toUpperCase() || "BY";
   }, [displayName]);
 
-  const onLogout = () => {
-    clearAuthSession();
-    setProfileMenuOpen(false);
-    setStoredAuthEmail(null);
-    router.push("/login");
+  const onLogout = async () => {
+    try {
+      await apiFetch("/api/v1/auth/logout", { method: "POST" });
+    } catch {
+      // Continue local cleanup even if server logout fails.
+    } finally {
+      clearAuthSession();
+      setProfileMenuOpen(false);
+      setStoredAuthEmail(null);
+      router.push("/login");
+    }
   };
 
   return (

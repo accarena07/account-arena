@@ -168,32 +168,39 @@ const OtpInfo = () => {
 };
 
 const TermsAgreement = ({
+  termsAccepted,
+  error,
   isSubmitting,
+  onTermsAcceptedChange,
   onOpenTncModal,
 }: RegisterTermsAgreementProps) => {
   return (
-    <div className="mt-6 flex items-start gap-3">
-      <input
-        className="mt-1 h-5 w-5 rounded-md border-gray-200 bg-gray-50 text-primary focus:ring-primary"
-        disabled={isSubmitting}
-        id="terms"
-        required
-        type="checkbox"
-      />
-      <label className="text-xs leading-normal text-gray-500 dark:text-gray-400" htmlFor="terms">
-        Saya menyetujui{" "}
-        <button
-          className="font-semibold text-primary hover:underline dark:text-secondary"
-          onClick={(event) => {
-            event.preventDefault();
-            onOpenTncModal();
-          }}
-          type="button"
-        >
-          Syarat & Ketentuan
-        </button>{" "}
-        yang berlaku.
-      </label>
+    <div className="mt-6">
+      <div className="flex items-start gap-3">
+        <input
+          checked={termsAccepted}
+          className="mt-1 h-5 w-5 rounded-md border-gray-200 bg-gray-50 text-primary focus:ring-primary"
+          disabled={isSubmitting}
+          id="terms"
+          type="checkbox"
+          onChange={(event) => onTermsAcceptedChange(event.target.checked)}
+        />
+        <label className="text-xs leading-normal text-gray-500 dark:text-gray-400" htmlFor="terms">
+          Saya menyetujui{" "}
+          <button
+            className="font-semibold text-primary hover:underline dark:text-secondary"
+            onClick={(event) => {
+              event.preventDefault();
+              onOpenTncModal();
+            }}
+            type="button"
+          >
+            Syarat & Ketentuan
+          </button>{" "}
+          yang berlaku.
+        </label>
+      </div>
+      {error ? <p className="mt-2 text-xs font-medium text-red-500">{error}</p> : null}
     </div>
   );
 };
@@ -225,12 +232,14 @@ export const RegisterForm = ({
   email,
   whatsApp,
   password,
+  termsAccepted,
   showPassword,
   isSubmitting,
   errors,
   onEmailChange,
   onWhatsAppChange,
   onPasswordChange,
+  onTermsAcceptedChange,
   onTogglePassword,
   onOpenTncModal,
   onSubmit,
@@ -243,14 +252,22 @@ export const RegisterForm = ({
         isSubmitting={isSubmitting}
         password={password}
         showPassword={showPassword}
+        termsAccepted={termsAccepted}
         whatsApp={whatsApp}
         onEmailChange={onEmailChange}
         onPasswordChange={onPasswordChange}
+        onTermsAcceptedChange={onTermsAcceptedChange}
         onTogglePassword={onTogglePassword}
         onWhatsAppChange={onWhatsAppChange}
       />
       <OtpInfo />
-      <TermsAgreement isSubmitting={isSubmitting} onOpenTncModal={onOpenTncModal} />
+      <TermsAgreement
+        error={errors.terms}
+        isSubmitting={isSubmitting}
+        termsAccepted={termsAccepted}
+        onOpenTncModal={onOpenTncModal}
+        onTermsAcceptedChange={onTermsAcceptedChange}
+      />
       <SubmitSection isSubmitting={isSubmitting} />
     </form>
   );

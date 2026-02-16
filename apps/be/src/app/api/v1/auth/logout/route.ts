@@ -1,10 +1,24 @@
-import { jsonOk } from "@/lib/api";
+import { jsonError, jsonOk } from "@/lib/api";
+import { clearAuthCookieHeaders } from "@/lib/auth-cookie";
 
 export const runtime = "nodejs";
 
 export async function POST() {
-  return jsonOk({
-    loggedOut: true,
-    message: "Logout endpoint success. Remove client tokens on frontend.",
-  });
+  try {
+    return jsonOk(
+      { loggedOut: true },
+      {
+        headers: clearAuthCookieHeaders(),
+      },
+    );
+  } catch (e: any) {
+    return jsonError(
+      {
+        code: e?.code ?? "BAD_REQUEST",
+        message: e?.message ?? "Bad request",
+        details: e?.details,
+      },
+      400,
+    );
+  }
 }

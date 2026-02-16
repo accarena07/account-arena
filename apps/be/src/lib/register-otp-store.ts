@@ -1,5 +1,6 @@
 import { getSupabaseAdminClient } from "@/lib/supabase";
 import { decryptString, encryptString } from "@/lib/secure-string";
+import { randomInt } from "crypto";
 
 type RegisterOtpEntry = {
   email: string;
@@ -11,6 +12,21 @@ type RegisterOtpEntry = {
   attempts: number;
 };
 
+type RegisterOtpResendRollbackState = {
+  otpCode: string;
+  otpExpiresAt: string;
+  attempts: number;
+  lastSentAt: string;
+};
+
+type RegisterOtpResendEntry = {
+  email: string;
+  otp: string;
+  otpExpiresAt: string;
+  attempts: number;
+  rollbackState: RegisterOtpResendRollbackState;
+};
+
 const OTP_EXPIRES_SEC = 10 * 60;
 const MAX_ATTEMPTS = 5;
 const RESEND_COOLDOWN_SEC = 60;
@@ -19,7 +35,11 @@ function nowMs() {
   return Date.now();
 }
 
-async function deleteRegisterOtpSession(email: string) {
+function generateOtpCode() {
+  return String(randomInt(100000, 1000000));
+}
+
+export async function deleteRegisterOtpSession(email: string) {
   const admin = getSupabaseAdminClient();
   const { error } = await admin
     .from("register_otp_sessions")
@@ -50,7 +70,7 @@ export async function createRegisterOtpEntry(params: {
   phone: string;
 }) {
   const admin = getSupabaseAdminClient();
-  const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
+  const otp = generateOtpCode();
   const otpExpiresAt = new Date(nowMs() + OTP_EXPIRES_SEC * 1000).toISOString();
 
   const { error } = await admin.from("register_otp_sessions").upsert(
@@ -83,7 +103,7 @@ export async function resendRegisterOtp(email: string) {
   const admin = getSupabaseAdminClient();
   const { data: entry, error: selectError } = await admin
     .from("register_otp_sessions")
-    .select("email,password,full_name,phone")
+    .select("email,otp_code,otp_expires_at,attempts,last_sent_at")
     .eq("email", email)
     .maybeSingle();
 
@@ -92,7 +112,7 @@ export async function resendRegisterOtp(email: string) {
   }
   if (!entry) return null;
 
-  const otp = `${Math.floor(100000 + Math.random() * 900000)}`;
+  const otp = generateOtpCode();
   const otpExpiresAt = new Date(nowMs() + OTP_EXPIRES_SEC * 1000).toISOString();
   const { error: updateError } = await admin
     .from("register_otp_sessions")
@@ -111,13 +131,37 @@ export async function resendRegisterOtp(email: string) {
 
   return {
     email: entry.email,
-    password: entry.password,
-    fullName: entry.full_name,
-    phone: entry.phone,
     otp,
     otpExpiresAt,
     attempts: 0,
-  } satisfies RegisterOtpEntry;
+    rollbackState: {
+      otpCode: entry.otp_code,
+      otpExpiresAt: entry.otp_expires_at,
+      attempts: entry.attempts,
+      lastSentAt: entry.last_sent_at,
+    } satisfies RegisterOtpResendRollbackState,
+  } satisfies RegisterOtpResendEntry;
+}
+
+export async function rollbackResendRegisterOtp(
+  email: string,
+  state: RegisterOtpResendRollbackState,
+) {
+  const admin = getSupabaseAdminClient();
+  const { error } = await admin
+    .from("register_otp_sessions")
+    .update({
+      otp_code: state.otpCode,
+      otp_expires_at: state.otpExpiresAt,
+      attempts: state.attempts,
+      last_sent_at: state.lastSentAt,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("email", email);
+
+  if (error) {
+    throw new Error(error.message);
+  }
 }
 
 export async function verifyRegisterOtp(params: { email: string; otp: string }) {
@@ -140,10 +184,6 @@ export async function verifyRegisterOtp(params: { email: string; otp: string }) 
   }
   if (entry.otp_code !== params.otp) {
     const nextAttempts = entry.attempts + 1;
-    if (nextAttempts >= MAX_ATTEMPTS) {
-      return { ok: false as const, code: "OTP_ATTEMPTS_EXCEEDED" as const };
-    }
-
     const { error: updateError } = await admin
       .from("register_otp_sessions")
       .update({
@@ -154,10 +194,11 @@ export async function verifyRegisterOtp(params: { email: string; otp: string }) 
     if (updateError) {
       throw new Error(updateError.message);
     }
+    if (nextAttempts >= MAX_ATTEMPTS) {
+      return { ok: false as const, code: "OTP_ATTEMPTS_EXCEEDED" as const };
+    }
     return { ok: false as const, code: "OTP_INVALID" as const };
   }
-
-  await deleteRegisterOtpSession(params.email);
 
   return {
     ok: true as const,

@@ -18,12 +18,14 @@ export type RegisterFormValues = {
   email: string;
   whatsApp: string;
   password: string;
+  termsAccepted: boolean;
 };
 
 export type RegisterFormErrors = {
   email?: string;
   whatsapp?: string;
   password?: string;
+  terms?: string;
 };
 
 export type RegisterModalError = {
@@ -63,12 +65,14 @@ export type RegisterFormProps = {
   email: string;
   whatsApp: string;
   password: string;
+  termsAccepted: boolean;
   showPassword: boolean;
   isSubmitting: boolean;
   errors: RegisterFormErrors;
   onEmailChange: (value: string) => void;
   onWhatsAppChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
+  onTermsAcceptedChange: (value: boolean) => void;
   onTogglePassword: () => void;
   onOpenTncModal: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
@@ -79,12 +83,14 @@ export type RegisterInputProps = Pick<
   | "email"
   | "whatsApp"
   | "password"
+  | "termsAccepted"
   | "showPassword"
   | "isSubmitting"
   | "errors"
   | "onEmailChange"
   | "onWhatsAppChange"
   | "onPasswordChange"
+  | "onTermsAcceptedChange"
   | "onTogglePassword"
 >;
 
@@ -119,7 +125,10 @@ export type RegisterIdentityFieldsProps = Pick<
 >;
 
 export type RegisterTermsAgreementProps = {
+  termsAccepted: boolean;
+  error?: string;
   isSubmitting: boolean;
+  onTermsAcceptedChange: (value: boolean) => void;
   onOpenTncModal: () => void;
 };
 

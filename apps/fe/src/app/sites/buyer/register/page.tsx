@@ -49,11 +49,13 @@ const BuyerRegisterPage = () => {
           errors={pageState.errors}
           isSubmitting={pageState.isSubmitting}
           password={pageState.password}
+          termsAccepted={pageState.termsAccepted}
           showPassword={pageState.showPassword}
           whatsApp={pageState.whatsApp}
           onEmailChange={pageState.onEmailChange}
           onOpenTncModal={pageState.onOpenTncModal}
           onPasswordChange={pageState.onPasswordChange}
+          onTermsAcceptedChange={pageState.onTermsAcceptedChange}
           onSubmit={pageState.onSubmit}
           onTogglePassword={pageState.onTogglePassword}
           onWhatsAppChange={pageState.onWhatsAppChange}

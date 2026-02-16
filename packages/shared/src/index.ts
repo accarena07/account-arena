@@ -140,6 +140,7 @@ export const RegisterOtpRequestSchema = z.object({
   password: z.string().min(8),
   fullName: z.string().min(2).max(80),
   phone: z.string().min(8).max(20),
+  termsAccepted: z.literal(true),
 });
 export type RegisterOtpRequest = z.infer<typeof RegisterOtpRequestSchema>;
 

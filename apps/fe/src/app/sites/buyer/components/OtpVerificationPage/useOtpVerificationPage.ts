@@ -168,6 +168,10 @@ const verifyRegisterOtpFlow = async (
       setAuthSession(result.session, result.user, result.roles);
     }
     clearRegisterOtpContext();
+    if (!result.session) {
+      router.push("/register/success?loginRequired=1");
+      return;
+    }
     router.push("/register/success");
   } catch (error) {
     applyOtpError(state, mapVerifyOtpError(error));

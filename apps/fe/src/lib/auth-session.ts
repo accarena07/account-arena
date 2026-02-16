@@ -5,9 +5,9 @@ import type { AuthSession, AuthUser } from "@acme/shared";
 const STORAGE_KEY = "account_arena_auth";
 
 type StoredAuth = {
-  session: AuthSession;
   user: AuthUser;
   roles: string[];
+  expiresAt: number | null;
 };
 
 function hasWindow() {
@@ -16,7 +16,22 @@ function hasWindow() {
 
 export function setAuthSession(session: AuthSession, user: AuthUser, roles: string[]) {
   if (!hasWindow()) return;
-  const payload: StoredAuth = { session, user, roles };
+  const payload: StoredAuth = {
+    user,
+    roles,
+    expiresAt: session.expiresAt ?? null,
+  };
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+export function setAuthIdentity(user: AuthUser, roles: string[]) {
+  if (!hasWindow()) return;
+  const existing = getStoredAuth();
+  const payload: StoredAuth = {
+    user,
+    roles,
+    expiresAt: existing?.expiresAt ?? null,
+  };
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
 }
 
@@ -33,7 +48,7 @@ export function getStoredAuth(): StoredAuth | null {
 }
 
 export function getAccessToken(): string | null {
-  return getStoredAuth()?.session.accessToken ?? null;
+  return null;
 }
 
 export function clearAuthSession() {

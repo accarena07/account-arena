@@ -1,14 +1,18 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "crypto";
 
 const ALGO = "aes-256-gcm";
+const OTP_ENCRYPTION_KEY_MISSING = "OTP_ENCRYPTION_KEY_MISSING";
+
+function createOtpEncryptionKeyMissingError(): Error & { code: string } {
+  const error = new Error("OTP encryption key is missing") as Error & { code: string };
+  error.code = OTP_ENCRYPTION_KEY_MISSING;
+  return error;
+}
 
 function getKey(): Buffer {
-  const fromEnv = process.env.OTP_ENCRYPTION_KEY ?? process.env.SUPABASE_SECRET_KEY;
-  const fallback = process.env.NODE_ENV !== "production" ? "dev-otp-encryption-key" : "";
-  const material = fromEnv || fallback;
-
+  const material = process.env.OTP_ENCRYPTION_KEY;
   if (!material) {
-    throw new Error("OTP_ENCRYPTION_KEY is required in production");
+    throw createOtpEncryptionKeyMissingError();
   }
 
   return createHash("sha256").update(material).digest();
@@ -39,4 +43,3 @@ export function decryptString(value: string): string {
   const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
   return decrypted.toString("utf8");
 }
-

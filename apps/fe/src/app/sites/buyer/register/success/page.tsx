@@ -3,6 +3,7 @@
 import { Inter, Poppins } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import ThemeToggleButton from "../../components/ThemeToggleButton";
 
 const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
@@ -100,9 +101,14 @@ const SuccessBadge = () => {
   );
 };
 
-const SuccessActions = () => {
+const SuccessActions = ({ showLoginRequiredNotice }: { showLoginRequiredNotice: boolean }) => {
   return (
     <div className="space-y-4">
+      {showLoginRequiredNotice ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900/60 dark:bg-amber-900/30 dark:text-amber-200">
+          Akun berhasil dibuat, tetapi sesi login otomatis belum terbentuk. Silakan login manual.
+        </div>
+      ) : null}
       <Link
         className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-white shadow-lg shadow-primary/20 transition-all active:scale-95 hover:bg-[#1a306e]"
         href="/login"
@@ -130,7 +136,7 @@ const PartnerLogoGrid = () => {
   );
 };
 
-const RightPanel = () => {
+const RightPanel = ({ showLoginRequiredNotice }: { showLoginRequiredNotice: boolean }) => {
   return (
     <div className="relative flex flex-col items-center justify-center bg-white p-8 text-center dark:bg-slate-900 lg:w-7/12 lg:p-16">
       <div className="mb-12 flex items-center gap-3 self-start lg:absolute lg:top-16 lg:left-[41.666667%] lg:ml-16">
@@ -146,7 +152,7 @@ const RightPanel = () => {
         <p className="mb-10 text-lg leading-relaxed text-gray-600 dark:text-gray-400">
           Akun Anda telah berhasil dibuat. Silakan masuk untuk mulai menjelajahi marketplace.
         </p>
-        <SuccessActions />
+        <SuccessActions showLoginRequiredNotice={showLoginRequiredNotice} />
       </div>
 
       <PartnerLogoGrid />
@@ -155,13 +161,16 @@ const RightPanel = () => {
 };
 
 const BuyerRegisterSuccessPage = () => {
+  const searchParams = useSearchParams();
+  const showLoginRequiredNotice = searchParams.get("loginRequired") === "1";
+
   return (
     <div className={`${inter.className} bg-background-light flex min-h-screen items-center justify-center p-4 transition-colors duration-300 dark:bg-background-dark`}>
       <ThemeToggle />
 
       <main className="mx-auto flex min-h-187.5 w-full max-w-6xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900 lg:flex-row">
         <LeftPanel />
-        <RightPanel />
+        <RightPanel showLoginRequiredNotice={showLoginRequiredNotice} />
       </main>
     </div>
   );

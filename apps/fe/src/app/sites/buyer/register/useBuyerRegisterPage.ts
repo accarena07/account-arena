@@ -8,6 +8,7 @@ const useRegisterInputState = () => {
   const [email, setEmail] = useState("");
   const [whatsApp, setWhatsApp] = useState("");
   const [password, setPassword] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [errors, setErrors] = useState<RegisterFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -25,11 +26,16 @@ const useRegisterInputState = () => {
     setPassword(value);
     setErrors((prev) => clearRegisterFieldError(prev, "password"));
   };
+  const onTermsAcceptedChange = (value: boolean) => {
+    setTermsAccepted(value);
+    setErrors((prev) => clearRegisterFieldError(prev, "terms"));
+  };
 
   return {
     email,
     whatsApp,
     password,
+    termsAccepted,
     errors,
     isSubmitting,
     setIsSubmitting,
@@ -37,6 +43,7 @@ const useRegisterInputState = () => {
     onEmailChange,
     onWhatsAppChange,
     onPasswordChange,
+    onTermsAcceptedChange,
   };
 };
 
@@ -105,6 +112,7 @@ const useRegisterSubmitAction = (
       email: inputState.email,
       whatsApp: inputState.whatsApp,
       password: inputState.password,
+      termsAccepted: inputState.termsAccepted,
     });
 
     if (!result.ok && "formErrors" in result) {

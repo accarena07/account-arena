@@ -1,4 +1,5 @@
 import { jsonError, jsonOk, readJson } from "@/lib/api";
+import { createAuthCookieHeaders } from "@/lib/auth-cookie";
 import { getSupabaseAnonClient, getSupabaseAdminClient } from "@/lib/supabase";
 import { AuthLoginRequestSchema } from "@acme/shared";
 
@@ -56,7 +57,7 @@ export const POST = async (req: Request) => {
       .eq("user_id", data.user.id)
       .eq("is_active", true);
 
-    return jsonOk({
+    const payload = {
       user: {
         id: data.user.id,
         email: data.user.email,
@@ -67,6 +68,19 @@ export const POST = async (req: Request) => {
         refreshToken: data.session.refresh_token,
         expiresAt: data.session.expires_at ?? null,
       },
+    };
+
+    const accessTokenMaxAgeSec =
+      typeof data.session.expires_in === "number" && Number.isFinite(data.session.expires_in)
+        ? Math.max(60, Math.floor(data.session.expires_in))
+        : 60 * 60;
+
+    return jsonOk(payload, {
+      headers: createAuthCookieHeaders({
+        accessToken: data.session.access_token,
+        refreshToken: data.session.refresh_token,
+        accessTokenMaxAgeSec,
+      }),
     });
   } catch (e: any) {
     return jsonError(

@@ -1,4 +1,5 @@
 import { jsonError } from "@/lib/api";
+import { getAccessTokenFromCookieHeader } from "@/lib/auth-cookie";
 import { getSupabaseAdminClient } from "@/lib/supabase";
 
 type UserProfile = {
@@ -41,13 +42,19 @@ function getBearerToken(req: Request): string | null {
   return token.trim();
 }
 
+function getAuthToken(req: Request): string | null {
+  const bearerToken = getBearerToken(req);
+  if (bearerToken) return bearerToken;
+  return getAccessTokenFromCookieHeader(req.headers.get("cookie"));
+}
+
 export async function requireAuth(req: Request): Promise<GuardResult> {
-  const accessToken = getBearerToken(req);
+  const accessToken = getAuthToken(req);
   if (!accessToken) {
     return {
       ok: false,
       response: jsonError(
-        { code: "UNAUTHORIZED", message: "Missing bearer token" },
+        { code: "UNAUTHORIZED", message: "Missing auth token" },
         401,
       ),
     };

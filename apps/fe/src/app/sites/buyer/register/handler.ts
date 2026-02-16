@@ -39,6 +39,9 @@ export const validateRegisterForm = (values: RegisterFormValues): RegisterFormEr
     nextErrors.password =
       "Kata sandi minimal 8 karakter dan wajib ada huruf besar, huruf kecil, angka, serta karakter spesial.";
   }
+  if (!values.termsAccepted) {
+    nextErrors.terms = "Anda harus menyetujui Syarat & Ketentuan.";
+  }
 
   return nextErrors;
 };
@@ -57,6 +60,7 @@ export const submitRegisterOtpRequest = async (values: RegisterFormValues) => {
         password: values.password,
         fullName: values.email.split("@")[0],
         phone: values.whatsApp.trim(),
+        termsAccepted: values.termsAccepted,
       }),
     },
     RegisterOtpRequestResponseSchema,

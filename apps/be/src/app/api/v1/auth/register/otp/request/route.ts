@@ -86,13 +86,6 @@ export async function POST(req: Request) {
       );
     }
 
-    const entry = await createRegisterOtpEntry({
-      email: normalizedEmail,
-      password: parsed.data.password,
-      fullName: parsed.data.fullName.trim(),
-      phone: normalizedPhone,
-    });
-
     if (!hasMailerEnv()) {
       return jsonError(
         {
@@ -103,11 +96,33 @@ export async function POST(req: Request) {
       );
     }
 
-    await sendRegisterOtpEmail({
-      to: normalizedEmail,
-      otp: entry.otp,
-      expiresInMin: Math.floor(getRegisterOtpMeta().otpExpiresSec / 60),
+    const entry = await createRegisterOtpEntry({
+      email: normalizedEmail,
+      password: parsed.data.password,
+      fullName: parsed.data.fullName.trim(),
+      phone: normalizedPhone,
     });
+
+    try {
+      await sendRegisterOtpEmail({
+        to: normalizedEmail,
+        otp: entry.otp,
+        expiresInMin: Math.floor(getRegisterOtpMeta().otpExpiresSec / 60),
+      });
+    } catch (error) {
+      const admin = getSupabaseAdminClient();
+      const { error: cleanupError } = await admin
+        .from("register_otp_sessions")
+        .delete()
+        .eq("email", normalizedEmail);
+      if (cleanupError) {
+        console.warn("[register-otp-request] failed to cleanup OTP session after send failure", {
+          email: normalizedEmail,
+          error: cleanupError,
+        });
+      }
+      throw error;
+    }
 
     return jsonOk({
       sent: true,
@@ -116,6 +131,15 @@ export async function POST(req: Request) {
       ...(process.env.NODE_ENV !== "production" ? { debugOtp: entry.otp } : {}),
     });
   } catch (e: any) {
+    if (e?.code === "OTP_ENCRYPTION_KEY_MISSING") {
+      return jsonError(
+        {
+          code: "OTP_ENCRYPTION_KEY_MISSING",
+          message: "Konfigurasi keamanan OTP belum lengkap di server.",
+        },
+        503,
+      );
+    }
     if (e?.code === "MAIL_SEND_TIMEOUT") {
       return jsonError(
         {
@@ -125,13 +149,21 @@ export async function POST(req: Request) {
         504,
       );
     }
+    if (e?.code === "UNSUPPORTED_MEDIA_TYPE") {
+      return jsonError(
+        {
+          code: "UNSUPPORTED_MEDIA_TYPE",
+          message: "Content-Type harus application/json",
+        },
+        415,
+      );
+    }
     return jsonError(
       {
-        code: e?.code ?? "BAD_REQUEST",
-        message: e?.message ?? "Bad request",
-        details: e?.details,
+        code: "REGISTER_OTP_REQUEST_FAILED",
+        message: "Permintaan OTP registrasi gagal. Silakan coba lagi.",
       },
-      e?.code === "UNSUPPORTED_MEDIA_TYPE" ? 415 : 400,
+      500,
     );
   }
 }

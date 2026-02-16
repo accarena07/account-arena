@@ -107,10 +107,18 @@ create table if not exists public.profiles (
   full_name text,
   phone text,
   avatar_url text,
+  terms_accepted_at timestamptz,
+  terms_version text,
   status account_status not null default 'active',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.profiles
+  add column if not exists terms_accepted_at timestamptz;
+
+alter table public.profiles
+  add column if not exists terms_version text;
 
 create table if not exists public.user_roles (
   id bigserial primary key,
@@ -399,6 +407,7 @@ create table if not exists public.admin_audit_logs (
 -- =========================================================
 
 create index if not exists idx_profiles_status on public.profiles(status);
+create unique index if not exists uq_profiles_phone on public.profiles(phone) where phone is not null;
 create index if not exists idx_user_roles_user_id on public.user_roles(user_id);
 create index if not exists idx_register_otp_sessions_expires_at on public.register_otp_sessions(otp_expires_at);
 create index if not exists idx_password_reset_otp_sessions_expires_at on public.password_reset_otp_sessions(otp_expires_at);
