@@ -19,6 +19,18 @@ function nowMs() {
   return Date.now();
 }
 
+async function deleteRegisterOtpSession(email: string) {
+  const admin = getSupabaseAdminClient();
+  const { error } = await admin
+    .from("register_otp_sessions")
+    .delete()
+    .eq("email", email);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
 export function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
@@ -123,12 +135,19 @@ export async function verifyRegisterOtp(params: { email: string; otp: string }) 
   if (new Date(entry.otp_expires_at).getTime() < nowMs()) {
     return { ok: false as const, code: "OTP_EXPIRED" as const };
   }
-  if (entry.attempts >= MAX_ATTEMPTS) return { ok: false as const, code: "OTP_ATTEMPTS_EXCEEDED" as const };
+  if (entry.attempts >= MAX_ATTEMPTS) {
+    return { ok: false as const, code: "OTP_ATTEMPTS_EXCEEDED" as const };
+  }
   if (entry.otp_code !== params.otp) {
+    const nextAttempts = entry.attempts + 1;
+    if (nextAttempts >= MAX_ATTEMPTS) {
+      return { ok: false as const, code: "OTP_ATTEMPTS_EXCEEDED" as const };
+    }
+
     const { error: updateError } = await admin
       .from("register_otp_sessions")
       .update({
-        attempts: entry.attempts + 1,
+        attempts: nextAttempts,
         updated_at: new Date().toISOString(),
       })
       .eq("email", params.email);
@@ -138,13 +157,7 @@ export async function verifyRegisterOtp(params: { email: string; otp: string }) 
     return { ok: false as const, code: "OTP_INVALID" as const };
   }
 
-  const { error: deleteError } = await admin
-    .from("register_otp_sessions")
-    .delete()
-    .eq("email", params.email);
-  if (deleteError) {
-    throw new Error(deleteError.message);
-  }
+  await deleteRegisterOtpSession(params.email);
 
   return {
     ok: true as const,

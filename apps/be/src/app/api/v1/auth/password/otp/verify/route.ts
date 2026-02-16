@@ -41,10 +41,14 @@ export async function POST(req: Request) {
           : result.code === "OTP_ATTEMPTS_EXCEEDED" || result.code === "OTP_EXPIRED"
             ? 410
             : 400;
+      const message =
+        result.code === "OTP_ATTEMPTS_EXCEEDED"
+          ? "Batas percobaan OTP tercapai. Silakan minta OTP baru."
+          : "Verifikasi OTP gagal.";
       return jsonError(
         {
           code: result.code,
-          message: "Verifikasi OTP gagal.",
+          message,
         },
         status,
       );

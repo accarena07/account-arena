@@ -28,11 +28,19 @@ export async function POST(req: Request) {
 
     if (!otpVerified.ok) {
       const status =
-        otpVerified.code === "OTP_NOT_FOUND" ? 404 : otpVerified.code === "OTP_EXPIRED" ? 410 : 400;
+        otpVerified.code === "OTP_NOT_FOUND"
+          ? 404
+          : otpVerified.code === "OTP_EXPIRED" || otpVerified.code === "OTP_ATTEMPTS_EXCEEDED"
+            ? 410
+            : 400;
+      const message =
+        otpVerified.code === "OTP_ATTEMPTS_EXCEEDED"
+          ? "Batas percobaan OTP tercapai. Silakan minta OTP baru."
+          : "Verifikasi OTP gagal.";
       return jsonError(
         {
           code: otpVerified.code,
-          message: "Verifikasi OTP gagal.",
+          message,
         },
         status,
       );

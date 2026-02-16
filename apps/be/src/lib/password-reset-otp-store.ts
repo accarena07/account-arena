@@ -90,11 +90,18 @@ export async function verifyOtp(params: { identifier: string; otp: string }) {
   }
   if (!entry) return { ok: false as const, code: "OTP_NOT_FOUND" as const };
   if (new Date(entry.otp_expires_at).getTime() < nowMs()) return { ok: false as const, code: "OTP_EXPIRED" as const };
-  if (entry.attempts >= MAX_ATTEMPTS) return { ok: false as const, code: "OTP_ATTEMPTS_EXCEEDED" as const };
+  if (entry.attempts >= MAX_ATTEMPTS) {
+    return { ok: false as const, code: "OTP_ATTEMPTS_EXCEEDED" as const };
+  }
   if (entry.otp_code !== params.otp) {
+    const nextAttempts = entry.attempts + 1;
+    if (nextAttempts >= MAX_ATTEMPTS) {
+      return { ok: false as const, code: "OTP_ATTEMPTS_EXCEEDED" as const };
+    }
+
     const { error: updateError } = await admin
       .from("password_reset_otp_sessions")
-      .update({ attempts: entry.attempts + 1, updated_at: new Date().toISOString() })
+      .update({ attempts: nextAttempts, updated_at: new Date().toISOString() })
       .eq("identifier", params.identifier);
     if (updateError) {
       throw new Error(updateError.message);
